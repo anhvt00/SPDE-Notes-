@@ -1,0 +1,1020 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in]{geometry}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\DeclareMathOperator{\tr}{tr}
+\newcommand{\dual}[2]{{}_{V'}\langle #1, #2 \rangle_{V}}
+
+\title{Lecture 12: Proof of Lemma 3.14 and Tightness}
+\date{01.01.2026}
+\author{Tien Anh Vu}
+
+\begin{document}
+\maketitle
+
+Welcome to Lecture 12. Please settle down. Today, we are going to dive directly into the rigorous proof of Lemma 3.14, which is the absolute theoretical cornerstone of the weak (martingale) solution framework we established in our last session.
+
+If you recall, we dropped the Minty--Browder monotonicity trick in favor of a powerful topological approach, relying on the compact embedding of our spaces. Let us walk through the first page of today's notes meticulously to see exactly how we establish the tightness of our probability measures.
+
+\section*{1. The Setup and the A Priori Estimate}
+At the very top of the page, I restate our core SPDE:
+\[
+  du(t)=A(u(t))\,dt+B(u(t))\,dW(t).
+\]
+We are working with our finite-dimensional Galerkin approximation, denoted here as $u_N$, which lives in the span of our first $N$ basis vectors,
+\[
+  V_N=\mathrm{span}\{e_1,\dots,e_N\}.
+\]
+Notice that I explicitly reiterate our new, fundamental assumption: the highly regular space $V$ is compactly embedded into the central Hilbert space $H$,
+\[
+  V\hookrightarrow\hookrightarrow H.
+\]
+
+Just below this, I write the most important bound in all of SPDE theory, namely our a priori estimate. Because of the coercivity of our operators, we established earlier that the supremum over all approximation dimensions $N\ge 1$ of the expectation of the system's energy is finite. Specifically,
+\[
+  \sup_{N\ge 1}\mathbb E\Bigl(
+  \sup_{t\le T}\|u_N(t)\|_H^2+\int_0^T \|u_N(t)\|_V^2\,dt
+  \Bigr)<\infty.
+\]
+Because we are transitioning to the martingale problem, we can rewrite this expectation entirely in terms of the probability laws of our approximations, denoted by $P_N$, or equivalently by $\mathbb E_N$ for the expectation under this law. The bound remains identical:
+\[
+  \sup_{N\ge 1}\mathbb E_{P_N}\Bigl(
+  \sup_{t\le T}\|u(t)\|_H^2+\int_0^T \|u(t)\|_V^2\,dt
+  \Bigr)<\infty.
+\]
+This uniform bound is the raw material we will use to build our compact sets.
+
+\section*{2. Restating Lemma 3.14 and Tightness}
+We now formally begin the proof of Lemma 3.14. The lemma asserts that the sequence of probability measures $(P_n)$ is tight on the massive intersection space
+\[
+  \Omega:=C([0,T];V'_{\mathrm{weak}})\cap L^2([0,T];V)\cap L^2([0,T];H).
+\]
+To prove tightness on this complex space, we must prove it with respect to three distinct topologies, which I list explicitly:
+\begin{itemize}
+\item $\tau_1$ is the weak topology on $L^2([0,T];V)$;
+\item $\tau_2$ is the uniform topology on $C([0,T];V'_{\mathrm{weak}})$;
+\item $\tau_3$ is the strong topology on $L^2([0,T];H)$.
+\end{itemize}
+
+\begin{lemma}[Lemma 3.14]
+The sequence of probability measures $(P_n)$ is tight on
+\[
+  \Omega:=C([0,T];V'_{\mathrm{weak}})\cap L^2([0,T];V)\cap L^2([0,T];H)
+\]
+with respect to the three topologies
+\[
+  \tau_1,\tau_2,\tau_3,
+\]
+where $\tau_1$ is the weak topology on $L^2([0,T];V)$, $\tau_2$ is the uniform topology on $C([0,T];V'_{\mathrm{weak}})$, and $\tau_3$ is the strong topology on $L^2([0,T];H)$.
+\end{lemma}
+
+Before we attack $\tau_1$, let us define what tightness actually means in measure theory. A sequence of measures $(\mu_n)$ is tight on a space $E$ if and only if for every arbitrarily small $\varepsilon>0$, there exists a compact subset $K_\varepsilon\subseteq E$ such that
+\[
+  \mu_n(K_\varepsilon^c)\le \varepsilon
+  \qquad \text{for all } n.
+\]
+Thus the measure of the complement, namely the probability of escaping the compact set, is bounded by $\varepsilon$.
+
+\section*{3. Proof of $\tau_1$-Tightness}
+Let us now execute step 1 of the proof, namely establishing tightness with respect to the weak topology $\tau_1$.
+
+\begin{proof}[Proof of $\tau_1$-tightness]
+To do this, we must construct a specific set that is compact in $\tau_1$, and then prove that our process is overwhelmingly likely to stay inside it. Look at the set
+\[
+  K_1:=\Bigl\{
+  u\in L^2([0,T];V)\; \Big|\;
+  \int_0^T \|u(t)\|_V^2\,dt\le K
+  \Bigr\}.
+\]
+This set consists of all processes whose integrated $V$-norm squared is bounded by a strict constant $K$.
+
+Why is this set compact in our topology $\tau_1$? Because $L^2([0,T];V)$ is a reflexive Banach space, in fact a Hilbert space, and therefore every closed and bounded ball is weakly compact. This is the standard functional-analytic input, often cited through Banach--Alaoglu in this context. Therefore, $K_1$ is a perfectly valid compact set for the weak topology $\tau_1$.
+
+Now we must measure the probability that our approximate process $u$ escapes this compact set under the law $P_n$. We want to evaluate
+\[
+  P_n(K_1^c)
+  =
+  P_n\Bigl(
+  \int_0^T \|u(t)\|_V^2\,dt>K
+  \Bigr).
+\]
+To bound this, we use one of the most fundamental tools in probability, namely Markov's inequality. Recall that if $X\ge 0$ is a nonnegative random variable and $K>0$, then
+\[
+  \mathbb P(X>K)\le \frac{\mathbb E[X]}{K}.
+\]
+Here we apply this with
+\[
+  X=\int_0^T \|u(t)\|_V^2\,dt.
+\]
+This random variable is nonnegative, so Markov's inequality gives
+\[
+  P_n(K_1^c)
+  \le
+  \frac{1}{K}\,
+  \mathbb E_{P_n}\Bigl(
+  \int_0^T \|u(t)\|_V^2\,dt
+  \Bigr).
+\]
+This is where the grand design comes together. The expectation on the right-hand side is exactly the quantity controlled by our a priori estimate at the top of the page. Therefore there exists a constant $C<\infty$ such that
+\[
+  P_n(K_1^c)\le \frac{C}{K}
+  \qquad \text{for all } n.
+\]
+As indicated by the arrow $K\to\infty$, if we are given any $\varepsilon>0$, we simply choose
+\[
+  K\ge \frac{C}{\varepsilon},
+\]
+then
+\[
+  P_n(K_1^c)\le \varepsilon
+  \qquad \text{for all } n.
+\]
+Because this holds uniformly for all $n$, we have rigorously proved that the sequence of measures is tight with respect to the weak topology $\tau_1$.
+\end{proof}
+
+\section*{4. What Remains}
+At the very bottom of the page, one sees the heading for our next hurdle: ``2) $\tau_2$ - tightness''. Proving tightness in the uniform topology of the dual space will require a much more delicate argument involving time regularity and compactness in the dual space.
+
+The proof of Lemma 3.14 is therefore not finished yet. After $\tau_1$-tightness, the next tasks are the tightness with respect to $\tau_2$ and $\tau_3$. The latter is precisely where the compact embedding
+\[
+  V\hookrightarrow\hookrightarrow H
+\]
+plays its decisive role.
+
+\section*{5. Proof of $\tau_2$-Tightness}
+Excellent. Let us turn the page and continue. Having successfully secured tightness in the weak topology $\tau_1$, we now face a much more delicate challenge: proving $\tau_2$-tightness.
+
+Recall that $\tau_2$ is the uniform topology on the space of continuous functions taking values in the weak topology of our dual space,
+\[
+  C([0,T];V'_{\mathrm{weak}}).
+\]
+To prove tightness here, we must show that our approximate processes do not oscillate wildly or develop discontinuities in $V'$.
+
+\subsection*{5.1. The Compact Set $K_2$ and Arzel\`a--Ascoli}
+At the top of the page, one defines the candidate compact set
+\[
+  K_2
+  =
+  \left\{
+    u\in C([0,T];V'_{\mathrm{weak}})
+    :
+    \sup_{t\in[0,T]}\|u(t)\|_H\le k,\;
+    \sup_{0\le s<t\le T}\frac{\|u(t)-u(s)\|_{V'}}{|t-s|^\beta}\le k
+  \right\}.
+\]
+Thus a process $u$, viewed as a continuous path in $C([0,T];V'_{\mathrm{weak}})$, belongs to $K_2$ if it satisfies two conditions simultaneously, both controlled by the threshold $k>0$:
+\begin{itemize}
+\item uniform boundedness in $H$,
+\[
+  \sup_{t\in[0,T]}\|u(t)\|_H\le k;
+\]
+\item equicontinuity through a H\"older bound in $V'$,
+\[
+  \sup_{0\le s<t\le T}
+  \frac{\|u(t)-u(s)\|_{V'}}{|t-s|^\beta}\le k
+  \qquad \text{for some } \beta>0.
+\]
+\end{itemize}
+Why does this specific set work? By the formal Arzel\`a--Ascoli theorem stated in the appendix, it is enough to verify pointwise relative compactness and equicontinuity. In the present setting, the pointwise relative compactness comes from the $H$-bound together with Banach--Alaoglu, while the H\"older estimate gives the equicontinuity needed for the $\tau_2$-tightness argument.
+
+Our goal, exactly as before, is to prove that
+\[
+  P_n(K_2^c)\to 0
+  \qquad \text{uniformly in } n \text{ as } k\to\infty.
+\]
+
+\subsection*{5.2. Decomposing the Increment in $V'$}
+To control the H\"older norm, we analyze the increment $u(t)-u(s)$ in the dual space $V'$. The standard way to measure the $V'$-norm is to test against an arbitrary vector $h\in V$ with
+\[
+  \|h\|_V\le 1.
+\]
+Recall that the SPDE can be written in integral form as
+\[
+  u(t)
+  =
+  u(s)
+  +
+  \int_s^t A(u(r))\,dr
+  +
+  \int_s^t B_n(u(r))\,dW_n(r).
+\]
+Using the SPDE, we write
+\[
+  \dual{u(t)-u(s)}{h}
+  =
+  \int_s^t \dual{A(u(r))}{h}\,dr
+  +
+  \int_s^t \langle h,B_n(u(r))\,dW_n(r)\rangle.
+\]
+We then apply the triangle inequality and split the problem into two parts:
+\begin{align*}
+  |\dual{u(t)-u(s)}{h}|
+  &\le
+  \left|
+    \int_s^t \dual{A(u(r))}{h}\,dr
+  \right|
+  +
+  \left|
+    \int_s^t \langle h,B_n(u(r))\,dW_n(r)\rangle
+  \right| \\
+  &\le
+  \int_s^t |\dual{A(u(r))}{h}|\,dr
+  +
+  \left|
+    \int_s^t \langle h,B_n(u(r))\,dW_n(r)\rangle
+  \right|.
+\end{align*}
+\begin{itemize}
+\item the deterministic drift integral;
+\item the stochastic diffusion integral.
+\end{itemize}
+This decomposition is the guiding principle of the entire argument.
+
+\subsection*{5.3. Bounding the Deterministic Drift}
+We first estimate
+\[
+  \int_s^t |\dual{A(u(r))}{h}|\,dr.
+\]
+By the linear growth condition (V.3),
+\[
+  \|A(u)\|_{V'}\le M(1+\|u\|_V),
+\]
+and therefore
+\[
+  |\dual{A(u(r))}{h}|
+  \le
+  \|A(u(r))\|_{V'}\,\|h\|_V
+  \le
+  M(1+\|u(r)\|_V),
+\]
+where the factor $\|h\|_V\le 1$ has been absorbed into the constant $M$.
+After integration over $[s,t]$, we obtain
+\[
+  \int_s^t |\dual{A(u(r))}{h}|\,dr
+  \le
+  M\int_s^t (1+\|u(r)\|_V)\,dr.
+\]
+Applying Cauchy--Schwarz in time to the second term gives the estimate recalled in Appendix A.6:
+\[
+  \int_s^t \|u(r)\|_V\,dr
+  \le
+  |t-s|^{1/2}
+  \Bigl(\int_s^t \|u(r)\|_V^2\,dr\Bigr)^{1/2}.
+\]
+Since we are considering $0\le s<t\le T$, one has $|t-s|=t-s$; we keep the notation $|t-s|$ because H\"older continuity is conventionally written in terms of the distance between the two time points.
+Hence
+\[
+  \int_s^t |\dual{A(u(r))}{h}|\,dr
+  \le
+  M\Bigl(
+    |t-s|
+    +
+    |t-s|^{1/2}
+    \Bigl(\int_s^t \|u(r)\|_V^2\,dr\Bigr)^{1/2}
+  \Bigr).
+\]
+Thus the drift component exhibits $1/2$-H\"older continuity, driven by the same a priori energy term as before.
+
+\subsection*{5.4. Bounding the Stochastic Diffusion via BDG}
+We now turn to the stochastic integral
+\[
+  \int_s^t \langle h,B_n(u(r))\,dW_n(r)\rangle.
+\]
+The quantity to control is
+\[
+  \mathbb E_n\Bigl(
+    \sup_{r\in[s,t]}
+    \Bigl|
+      \int_s^r \langle h,B_n(u)\,dW_n\rangle
+    \Bigr|^p
+  \Bigr).
+\]
+Here one invokes the Burkholder--Davis--Gundy inequality recalled in Appendix A.7, which yields
+\[
+  \mathbb E_n\Bigl(
+    \sup_{r\in[s,t]}
+    \Bigl|
+      \int_s^r \langle h,B_n(u)\,dW_n\rangle
+    \Bigr|^p
+  \Bigr)
+  \le
+  C_p\,
+  \mathbb E_n\Bigl[
+    \Bigl(
+      \int_s^t \|B(u(r))\circ\sqrt Q\|_{L_2(U,H)}^2\,dr
+    \Bigr)^{p/2}
+  \Bigr].
+\]
+Using the sub-linear growth assumption (V.5),
+\[
+  \|B(u)\circ\sqrt Q\|_{L_2(U,H)}
+  \le
+  M(1+\|u\|_V^{1-\delta}),
+\]
+we obtain
+\begin{align*}
+  \Bigl(
+    \int_s^t \|B(u(r))\circ\sqrt Q\|_{L_2(U,H)}^2\,dr
+  \Bigr)^{p/2}
+  &\le
+  M
+  \Bigl(
+    \int_s^t (1+\|u(r)\|_V^{1-\delta})^2\,dr
+  \Bigr)^{p/2}
+  &&\text{(by (V.5))} \\
+  &\le
+  M
+  \Bigl(
+    \int_s^t 2\bigl(1+\|u(r)\|_V^{2(1-\delta)}\bigr)\,dr
+  \Bigr)^{p/2}
+  &&\text{(since $(1+a)^2\le 2(1+a^2)$)} \\
+  &\le
+  M
+  \Bigl(
+    |t-s|+\int_s^t \|u(r)\|_V^{2(1-\delta)}\,dr
+  \Bigr)^{p/2}
+  &&\text{(since $\int_s^t 1\,dr=|t-s|$, absorbing constants into $M$)}.
+\end{align*}
+Since $1-\delta\le 1$, H\"older's inequality yields
+\[
+  \int_s^t \|u(r)\|_V^{2(1-\delta)}\,dr
+  \le
+  |t-s|^\delta
+  \Bigl(\int_s^t \|u(r)\|_V^2\,dr\Bigr)^{1-\delta}.
+\]
+Therefore,
+\begin{align*}
+  \mathbb E_n\Bigl(
+    \sup_{r\in[s,t]}
+    \Bigl|
+      \int_s^r \langle h,B_n(u)\,dW_n\rangle
+    \Bigr|^p
+  \Bigr)
+  &\le
+  M\,
+  \mathbb E_n\Bigl[
+    \Bigl(
+      |t-s|
+      +
+      |t-s|^\delta
+      \Bigl(\int_s^t \|u(r)\|_V^2\,dr\Bigr)^{1-\delta}
+    \Bigr)^{p/2}
+  \Bigr].
+\end{align*}
+Using $(a+b)^{p/2}\le C_p(a^{p/2}+b^{p/2})$, we further obtain
+\begin{align*}
+  \mathbb E_n\Bigl(
+    \sup_{r\in[s,t]}
+    \Bigl|
+      \int_s^r \langle h,B_n(u)\,dW_n\rangle
+    \Bigr|^p
+  \Bigr)
+  &\le
+  M\Bigl(
+    |t-s|^{p/2}
+    +
+    |t-s|^{\delta p/2}
+    \mathbb E_n\Bigl[
+      \Bigl(\int_s^t \|u(r)\|_V^2\,dr\Bigr)^{(1-\delta)p/2}
+    \Bigr]
+  \Bigr) \\
+  &\le
+  M\Bigl(
+    |t-s|^{p/2}
+    +
+    |t-s|^{\delta p/2}
+    \mathbb E_n\Bigl[
+      \Bigl(\int_0^T \|u(r)\|_V^2\,dr\Bigr)^{(1-\delta)p/2}
+    \Bigr]
+  \Bigr).
+\end{align*}
+Hence, provided the corresponding moment of the energy is finite, we arrive at
+\[
+  \mathbb E_n\Bigl(
+    \sup_{r\in[s,t]}
+    \Bigl|
+      \int_s^r \langle h,B_n(u)\,dW_n\rangle
+    \Bigr|^p
+  \Bigr)
+  \le
+  C\,|t-s|^{\delta p/2}.
+\]
+If $p>2/\delta$, then $\delta p/2>1$, and Kolmogorov's continuity theorem yields a modification with H\"older exponent
+\[
+  \alpha<\frac{\delta p/2-1}{p}=\frac{\delta}{2}-\frac{1}{p}.
+\]
+More precisely, the scalar-valued process
+\[
+  X_h(t):=\int_0^t \langle h,B_n(u(r))\,dW_n(r)\rangle
+\]
+admits a modification whose sample paths are H\"older continuous of every order
+\[
+  \alpha<\frac{\delta}{2}-\frac{1}{p}.
+\]
+Thus, after testing against $h\in V$, the stochastic term yields the required time equicontinuity. In the Brownian case, the optimal regularity threshold is $1/2$, so one expects H\"older exponents strictly smaller than $1/2$.
+
+\subsection*{5.5. Final Conclusion via Markov's Inequality}
+We now combine the drift and diffusion estimates. Exactly as in the proof of $\tau_1$-tightness, we use Markov's inequality.
+
+The probability that the process violates either the $H$-bound or the H\"older equicontinuity bound, that is, the probability of escaping $K_2$, is controlled by
+Let
+\[
+  [u]_{C^\beta([0,T];V')}
+  :=
+  \sup_{0\le s<t\le T}\frac{\|u(t)-u(s)\|_{V'}}{|t-s|^\beta}.
+\]
+Then
+\begin{align*}
+  P_n(K_2^c)
+  &=
+  P_n\Bigl(
+    \sup_{0\le t\le T}\|u(t)\|_H>k
+    \ \text{or}\
+    [u]_{C^\beta([0,T];V')}>k
+  \Bigr) \\
+  &\le
+  P_n\Bigl(
+    \sup_{0\le t\le T}\|u(t)\|_H>k
+  \Bigr)
+  +
+  P_n\Bigl(
+    [u]_{C^\beta([0,T];V')}>k
+  \Bigr) \\
+  &\le
+  \frac{1}{k^2}\,
+  \mathbb E_n\Bigl(
+    \sup_{0\le t\le T}\|u(t)\|_H^2
+  \Bigr)
+  +
+  \frac{1}{k}\,
+  \mathbb E_n\Bigl(
+    [u]_{C^\beta([0,T];V')}
+  \Bigr).
+\end{align*}
+Since $k\ge 1$, this implies
+\[
+  P_n(K_2^c)
+  \le
+  \frac{1}{k}\,
+  \mathbb E_n\Bigl(
+    \sup_{0\le t\le T}\|u(t)\|_H^2
+    +
+    [u]_{C^\beta([0,T];V')}
+  \Bigr).
+\]
+By the drift estimate from Appendix A.6a and the stochastic estimate from Section 5.4, we obtain
+\[
+  \sup_n P_n(K_2^c)
+  \le
+  \frac{C}{k}\,
+  \mathbb E_n\Bigl(
+    \sup_{0\le t\le T}\|u(t)\|_H^2
+    +
+    \int_0^T \|u(t)\|_V^2\,dt
+  \Bigr).
+\]
+The expectation on the right-hand side is uniformly bounded by our global a priori estimate. Absorbing this bound into the constant $C$, we obtain
+\[
+  \sup_n P_n(K_2^c)\le \frac{C}{k}.
+\]
+Therefore, as $k\to\infty$, the probability of escaping the compact set $K_2$ goes to zero uniformly in $n$.
+
+We have thus proved $\tau_2$-tightness.
+
+\section*{6. Proof of $\tau_3$-Tightness via Aubin--Lions}
+Welcome to the final, spectacular culmination of Lemma 3.14. We have already conquered tightness in the weak topology $\tau_1$ and the dual uniform topology $\tau_2$. Now we face the ultimate test: proving $\tau_3$-tightness, which demands strong compactness in the central space
+\[
+  L^2([0,T];H).
+\]
+To achieve this, we synthesize everything we have built so far by invoking the Aubin--Lions lemma.
+
+\subsection*{6.1. The Statement of Aubin--Lions (Lemma 3.15)}
+Look at the precise statement of Lemma 3.15. We are given a sequence $(u_n)_n$ satisfying two core properties:
+\begin{itemize}
+\item it is bounded in $L^2([0,T];V)\cap L^\infty([0,T];H)$;
+\item it is equicontinuous as a $V'$-valued function, with initial condition
+\[
+  u_n(0)\to u_0 \qquad \text{in } H.
+\]
+\end{itemize}
+These are exactly the properties secured on the previous pages using the a priori estimates and the Arzel\`a--Ascoli theorem.
+
+\begin{lemma}[Aubin--Lions, Lemma 3.15]
+Let $(u_n)_n$ be a sequence such that
+\[
+  (u_n)_n \text{ is bounded in } L^2([0,T];V)\cap L^\infty([0,T];H),
+\]
+and suppose that $(u_n)_n$ is equicontinuous as $V'$-valued functions, with initial conditions satisfying
+\[
+  u_n(0)\to u_0 \qquad \text{in } H.
+\]
+Then there exists a subsequence $(u_{n_k})_k$ and a limit $u$ such that
+\[
+  u_{n_k}\to u
+  \qquad \text{strongly in } L^2([0,T];H).
+\]
+\end{lemma}
+
+This lemma provides the exact bridge we need for $\tau_3$-tightness. The entire proof hinges on a brilliant interpolation inequality.
+
+\subsection*{6.2. The Engine: The Interpolation Fact}
+This is the mathematical engine behind the Aubin--Lions lemma. Because we assumed that
+\[
+  V\hookrightarrow\hookrightarrow H,
+\]
+the following estimate holds.
+
+\begin{lemma}[Interpolation fact]
+Then for every $\varepsilon>0$ there exists a constant $C_\varepsilon>0$ such that
+\[
+  \|u\|_H
+  \le
+  \varepsilon\|u\|_V + C_\varepsilon\|u\|_{V'}
+  \qquad \text{for all } u\in V.
+\]
+\end{lemma}
+
+This estimate says that one can control the intermediate $H$-norm of a function using an arbitrarily small multiple of its strong $V$-norm, provided one compensates with a large multiple of its weak $V'$-norm.
+
+\subsection*{6.3. Proof of the Interpolation Fact}
+\begin{proof}
+Suppose, for contradiction, that the statement is false. Then there exists some $\varepsilon_0>0$ such that for every $n\ge 1$ one can find $u_n\in V$ with
+\[
+  \|u_n\|_H\ge \varepsilon_0\|u_n\|_V+n\|u_n\|_{V'}
+  \qquad \text{for all } n.
+\]
+To analyze this pathological sequence, we normalize it and define
+\[
+  \widetilde u_n:=\frac{u_n}{\|u_n\|_H}.
+\]
+Then
+\[
+  1=\|\widetilde u_n\|_H
+  \qquad \text{for all } n,
+\]
+and dividing the previous inequality by $\|u_n\|_H$ gives
+\[
+  1=\|\widetilde u_n\|_H\ge \varepsilon_0\|\widetilde u_n\|_V+n\|\widetilde u_n\|_{V'}.
+\]
+Hence
+\[
+  \|\widetilde u_n\|_V\le \frac{1}{\varepsilon_0},
+  \qquad
+  \|\widetilde u_n\|_{V'}\le \frac{1}{n}.
+\]
+Thus $(\widetilde u_n)_n$ is bounded in $V$. Since $V$ is reflexive, Banach--Alaoglu implies that bounded sets are weakly relatively compact, so there exists a subsequence $(\widetilde u_{n_k})_k$ and some $\widetilde u\in V$ such that
+\[
+  \widetilde u_{n_k}\rightharpoonup \widetilde u
+  \qquad \text{weakly in } V.
+\]
+Because the embedding $V\hookrightarrow\hookrightarrow H$ is compact, this bounded subsequence admits a further subsequence $(\widetilde u_{n_{k_\ell}})_\ell$ such that
+\[
+  \widetilde u_{n_{k_\ell}}\to \widetilde u
+  \qquad \text{strongly in } H.
+\]
+At the same time, since
+\[
+  \|\widetilde u_{n_{k_\ell}}\|_{V'}\le \frac{1}{n_{k_\ell}},
+\]
+and $n_{k_\ell}\to\infty$ as $\ell\to\infty$, we obtain
+\[
+  \|\widetilde u_{n_{k_\ell}}\|_{V'}\to 0.
+\]
+Hence
+\[
+  \widetilde u_{n_{k_\ell}}\to 0
+  \qquad \text{strongly in } V'.
+\]
+On the other hand, since
+\[
+  \widetilde u_{n_{k_\ell}}\to \widetilde u
+  \qquad \text{strongly in } H,
+\]
+and the embedding $H\hookrightarrow V'$ is continuous, it follows that
+\[
+  \widetilde u_{n_{k_\ell}}\to \widetilde u
+  \qquad \text{strongly in } V'.
+\]
+By uniqueness of the limit in $V'$, we must therefore have
+\[
+  \widetilde u=0
+  \qquad \text{in } V'.
+\]
+Hence the strong limit in $H$ must be zero. But this is impossible, because
+\[
+  \|\widetilde u_{n_{k_\ell}}\|_H=1
+  \qquad \text{for all } \ell,
+\]
+and strong convergence in $H$ implies
+\[
+  \|\widetilde u\|_H=\lim_{\ell\to\infty}\|\widetilde u_{n_{k_\ell}}\|_H=1.
+\]
+Thus the limit would have to be simultaneously $0$ and norm $1$, a contradiction. The interpolation fact is proved.
+\end{proof}
+
+\subsection*{6.4. Executing the Proof of Aubin--Lions}
+\begin{proof}
+Because we have equicontinuity in $V'$, there exists a subsequence $(u_{n_k})_k$ and some limit $u$ such that
+\[
+  u_{n_k}\to u
+  \qquad \text{in } C([0,T];V'_{\mathrm{weak}}).
+\]
+To prove strong convergence in $L^2([0,T];H)$, we apply the interpolation fact to the difference $u_{n_k}(t)-u(t)$, square the inequality, and integrate over time:
+\[
+\int_0^T \|u_{n_k}(t)-u(t)\|_H^2\,dt
+\le
+\varepsilon \int_0^T \|u_{n_k}(t)-u(t)\|_V^2\,dt
++
+C_\varepsilon \int_0^T \|u_{n_k}(t)-u(t)\|_{V'}^2\,dt.
+\]
+We now analyze the two terms on the right-hand side.
+
+For the $V$-term, we do not have strong convergence in $V$. However, the sequence is uniformly bounded in $L^2([0,T];V)$, so
+\[
+  \int_0^T \|u_{n_k}(t)-u(t)\|_V^2\,dt
+  \le
+  2\int_0^T \|u_{n_k}(t)\|_V^2\,dt
+  +
+  2\int_0^T \|u(t)\|_V^2\,dt.
+\]
+Thus the first term is bounded by a finite constant times $\varepsilon$.
+
+For the $V'$-term, the convergence in the dual space implies that
+\[
+  \int_0^T \|u_{n_k}(t)-u(t)\|_{V'}^2\,dt\to 0
+  \qquad \text{as } k\to\infty.
+\]
+
+Therefore
+\[
+  \limsup_{k\to\infty}
+  \int_0^T \|u_{n_k}(t)-u(t)\|_H^2\,dt
+  \le
+  C\varepsilon.
+\]
+Since $\varepsilon>0$ is arbitrary, it follows that
+\[
+  u_{n_k}\to u
+  \qquad \text{strongly in } L^2([0,T];H).
+\]
+Thus we have extracted a strongly convergent subsequence. This is exactly the compactness needed for $\tau_3$-tightness, and Lemma 3.14 is complete.
+\end{proof}
+
+\section*{Appendix: Functional-Analytic Side Note}
+As a brief functional-analytic side note, if $(\mu_n)$ is a tight sequence of probability measures on $U$, then Prokhorov's theorem yields a subsequence $(\mu_{n_k})$ that converges weakly to some limit measure $\mu$.
+
+What does weak convergence mean? It means that for every bounded continuous test function $\ell\in C_b(U)$,
+\[
+  \int_U \ell\,d\mu_{n_k}\to \int_U \ell\,d\mu.
+\]
+
+If $\ell\in C_b(U)$ is any bounded continuous test function, then along this subsequence one has
+\[
+  \Phi(\ell):=\lim_{k\to\infty}\int_U \ell\,d\mu_{n_k}
+  \qquad \text{for all } \ell\in C_b(U).
+\]
+This defines a linear functional $\Phi$ on $C_b(U)$, and it is positive because $\ell\ge 0$ implies
+\[
+  \int_U \ell\,d\mu_{n_k}\ge 0.
+\]
+
+\begin{theorem}[Riesz--Markov--Kakutani representation theorem]
+Let $U$ be a suitable topological space and let $\Phi$ be a positive linear functional on a space of continuous test functions on $U$. Then there exists a unique finite Borel measure $\mu$ on $U$ such that
+\[
+  \Phi(\ell)=\int_U \ell\,d\mu
+  \qquad \text{for all admissible test functions } \ell.
+\]
+\end{theorem}
+
+By this Riesz--Markov--Kakutani representation theorem, there exists a probability measure $\mu$ on $U$ such that
+\[
+  \Phi(\ell)=\int_U \ell\,d\mu
+  \qquad \text{for all } \ell\in C_b(U).
+\]
+This measure $\mu$ is exactly the weak limit measure. This is the essence of Prokhorov's theorem in the present setting.
+
+\section*{Appendix: Arzel\`a--Ascoli}
+\begin{theorem}[Arzel\`a--Ascoli theorem]
+Let $K$ be a compact metric space, let $E$ be a metric space, and let $C(K;E)$ denote the space of continuous functions from $K$ into $E$. Let $\mathcal F\subset C(K;E)$. If
+\begin{itemize}
+\item for every $t\in K$, the set $\{f(t):f\in \mathcal F\}$ is relatively compact in $E$;
+\item $\mathcal F$ is equicontinuous,
+\end{itemize}
+then $\mathcal F$ is relatively compact in $C(K;E)$ for the uniform topology.
+\end{theorem}
+
+Informally, a family of continuous functions $\mathcal F$ is precompact in the uniform norm if it is pointwise precompact and uniformly equicontinuous.
+
+In Section 5.1, we apply this with $K=[0,T]$ and $E=V'_{\mathrm{weak}}$. The $H$-bound together with Banach--Alaoglu gives the required pointwise relative compactness, while the H\"older estimate gives equicontinuity.
+
+\section*{Appendix: Equicontinuity of $V'$-Valued Functions}
+\begin{definition}[Equicontinuity of $V'$-valued functions]
+Let $(u_n)_n$ be a family of functions from $[0,T]$ into $V'$. We say that $(u_n)_n$ is equicontinuous as a family of $V'$-valued functions if the family of paths
+\[
+  u_n:[0,T]\to V'
+\]
+is equicontinuous uniformly in $n$. Formally, for every $\varepsilon>0$ there exists $\delta>0$ such that whenever $|t-s|<\delta$,
+\[
+  \|u_n(t)-u_n(s)\|_{V'}<\varepsilon
+  \qquad \text{for all } n.
+\]
+In other words, the same $\delta$ works for every function $u_n$, not just for one fixed $n$.
+\end{definition}
+
+A uniform H\"older estimate of the form
+\[
+  \|u_n(t)-u_n(s)\|_{V'}
+  \le
+  C|t-s|^\beta
+  \qquad \text{for all } n
+\]
+immediately implies equicontinuity.
+
+\section*{Appendix: Kolmogorov Continuity Theorem}
+\begin{theorem}[Kolmogorov continuity theorem]
+Let $(X_t)_{t\in[0,T]}$ be a stochastic process with values in a Banach space $E$. Suppose there exist constants $p\ge 1$, $\beta>0$, and $C>0$ such that
+\[
+  \mathbb E\bigl[\|X_t-X_s\|_E^p\bigr]
+  \le
+  C|t-s|^{1+\beta}
+  \qquad \text{for all } s,t\in[0,T].
+\]
+Then $X$ admits a modification whose sample paths are H\"older continuous of every order
+\[
+  \alpha<\frac{\beta}{p}.
+\]
+\end{theorem}
+
+Informally, if the moments of the increments decay sufficiently fast as $|t-s|\to 0$, then the sample paths cannot oscillate too wildly and therefore admit a H\"older-continuous modification. More concretely, for one sample path $t\mapsto X_t(\omega)$, this means there is quantitative control of the form
+\[
+  \|X_t(\omega)-X_s(\omega)\|_E
+  \le
+  C(\omega)\,|t-s|^\alpha
+\]
+for nearby times $s,t$. Thus, when $t$ is close to $s$, the value of the path cannot change too much.
+
+In Section 5.4, we apply this to the scalar-valued stochastic integral after deriving a moment estimate of the form
+\[
+  \mathbb E\bigl[|X_t-X_s|^p\bigr]\le C|t-s|^{1+\beta}.
+\]
+This yields time H\"older continuity for every exponent $\alpha<\beta/p$.
+
+\section*{Appendix: Meaning of the Three Topologies}
+In this context, a topology tells us what it means for a sequence of paths to converge, and therefore what the compact sets are when we speak about tightness. Since Lemma 3.14 is stated on the intersection space
+\[
+  \Omega:=C([0,T];V'_{\mathrm{weak}})\cap L^2([0,T];V)\cap L^2([0,T];H),
+\]
+we must specify the topology in each component.
+
+\subsection*{A.1. The Weak Topology $\tau_1$}
+The topology $\tau_1$ is the weak topology on $L^2([0,T];V)$. A sequence $u_n$ converges to $u$ in this topology if
+\[
+  u_n\rightharpoonup u
+  \qquad \text{in } L^2([0,T];V),
+\]
+that is, if for every continuous linear functional $\Lambda$ on $L^2([0,T];V)$ one has
+\[
+  \Lambda(u_n)\to \Lambda(u).
+\]
+Equivalently, using the Hilbert space pairing, this means that for every $v\in L^2([0,T];V)$,
+\[
+  \int_0^T \langle u_n(t),v(t)\rangle_V\,dt
+  \to
+  \int_0^T \langle u(t),v(t)\rangle_V\,dt.
+\]
+Thus weak convergence is convergence only after testing against all linear functionals; it is weaker than norm convergence.
+
+\subsection*{A.2. The Uniform Topology $\tau_2$}
+The topology $\tau_2$ is the uniform topology on $C([0,T];V'_{\mathrm{weak}})$. Here the paths take values in $V'$, but $V'$ is equipped with its weak topology. A sequence $u_n$ converges to $u$ in this topology if for every $v\in V$,
+\[
+  \sup_{t\in[0,T]}
+  \left|
+    \dual{u_n(t)-u(t)}{v}
+  \right|
+  \to 0.
+\]
+So one first tests the path against a fixed vector $v\in V$, obtaining a scalar-valued function of time, and then requires uniform convergence in time of those scalar functions.
+
+\subsection*{A.3. The Strong Topology $\tau_3$}
+The topology $\tau_3$ is the strong topology on $L^2([0,T];H)$, namely the usual norm topology. A sequence $u_n$ converges to $u$ in this topology if
+\[
+  \|u_n-u\|_{L^2([0,T];H)}\to 0,
+\]
+equivalently,
+\[
+  \int_0^T \|u_n(t)-u(t)\|_H^2\,dt \to 0.
+\]
+This is stronger than weak convergence because it controls the full $L^2([0,T];H)$ norm of the difference.
+
+\subsection*{A.4. Open Neighborhoods in the Three Topologies}
+A topology is a choice of open sets on a space. Equivalently, one may describe it by specifying a family of basic open neighborhoods around each point. In the present setting, the three topologies can be described as follows.
+
+The weak topology has fewer open sets than the strong topology, so it is coarser. The strong topology has more open sets, so it is finer. This is exactly why strong convergence implies weak convergence, but not conversely.
+
+For the strong topology $\tau_3$ on $L^2([0,T];H)$, a basic open neighborhood of $u$ is the norm ball
+\[
+  B^{\mathrm{strong}}_\varepsilon(u)
+  :=
+  \left\{
+    v\in L^2([0,T];H):
+    \|v-u\|_{L^2([0,T];H)}<\varepsilon
+  \right\}.
+\]
+
+For the weak topology $\tau_1$ on $L^2([0,T];V)$, a basic open neighborhood of $u$ is
+\[
+  U(u;\Lambda_1,\dots,\Lambda_m,\varepsilon)
+  :=
+  \left\{
+    v\in L^2([0,T];V):
+    |\Lambda_j(v-u)|<\varepsilon,\quad j=1,\dots,m
+  \right\},
+\]
+where $\Lambda_1,\dots,\Lambda_m$ are continuous linear functionals on $L^2([0,T];V)$. Equivalently, one may write
+\[
+  U(u;g_1,\dots,g_m,\varepsilon)
+  :=
+  \left\{
+    v:
+    \left|
+      \int_0^T \langle v(t)-u(t),g_j(t)\rangle_V\,dt
+    \right|<\varepsilon,\quad j=1,\dots,m
+  \right\},
+\]
+with $g_1,\dots,g_m\in L^2([0,T];V)$.
+
+For the uniform topology $\tau_2$ on $C([0,T];V'_{\mathrm{weak}})$, a basic open neighborhood of $u$ is
+\[
+  U(u;v_1,\dots,v_m,\varepsilon)
+  :=
+  \left\{
+    w\in C([0,T];V'_{\mathrm{weak}}):
+    \sup_{t\in[0,T]}
+    \left|
+      \dual{w(t)-u(t)}{v_j}
+    \right|<\varepsilon,\quad j=1,\dots,m
+  \right\},
+\]
+where $v_1,\dots,v_m\in V$.
+
+\subsection*{A.5. Why the Topologies Matter}
+Tightness is a statement about compact sets, and compactness depends on the topology. This is why Lemma 3.14 must specify $\tau_1,\tau_2,\tau_3$ explicitly:
+\begin{itemize}
+\item $\tau_1$ is used because the a priori estimate gives weak compactness in $L^2([0,T];V)$;
+\item $\tau_2$ is used to control continuity of the trajectories in the dual space;
+\item $\tau_3$ is the crucial strong topology on $L^2([0,T];H)$, where the compact embedding $V\hookrightarrow\hookrightarrow H$ gives the extra compactness needed in the argument.
+\end{itemize}
+
+\subsection*{A.5a. Compact Embedding}
+\begin{definition}[Compact embedding]
+Let $X$ and $Y$ be Banach spaces with a continuous embedding $X\hookrightarrow Y$. We say that the embedding
+\[
+  X\hookrightarrow\hookrightarrow Y
+\]
+is compact if every bounded sequence in $X$ admits a subsequence that converges strongly in $Y$.
+\end{definition}
+
+In particular, if
+\[
+  V\hookrightarrow\hookrightarrow H,
+\]
+then every bounded sequence in $V$ has a subsequence converging strongly in $H$.
+
+\subsection*{A.5b. Continuous Embedding and Strong Convergence}
+\begin{definition}[Continuous embedding]
+Let $X$ and $Y$ be Banach spaces. We say that
+\[
+  X\hookrightarrow Y
+\]
+continuously if there exists a constant $C>0$ such that
+\[
+  \|x\|_Y\le C\|x\|_X
+  \qquad \text{for all } x\in X.
+\]
+\end{definition}
+
+In this case, strong convergence in the stronger space $X$ implies strong convergence in the weaker space $Y$. Indeed, if
+\[
+  x_n\to x
+  \qquad \text{strongly in } X,
+\]
+then
+\[
+  \|x_n-x\|_Y
+  \le
+  C\|x_n-x\|_X\to 0,
+\]
+and therefore
+\[
+  x_n\to x
+  \qquad \text{strongly in } Y.
+\]
+
+\subsection*{A.5c. Hausdorff Spaces and Uniqueness of Limits}
+\begin{definition}[Hausdorff space]
+A topological space $X$ is called Hausdorff if for every pair of distinct points $x\neq y$ in $X$, there exist open sets $U,V\subset X$ such that
+\[
+  x\in U,\qquad y\in V,\qquad U\cap V=\varnothing.
+\]
+\end{definition}
+
+In a Hausdorff space, limits are unique. In particular, all normed spaces and Banach spaces are Hausdorff, so a sequence cannot converge to two different limits in the same topology.
+
+\subsection*{A.6. H\"older Inequality and $1/2$-H\"older Continuity}
+The time-regularity estimate for the drift term comes from the elementary inequality
+\[
+  \int_s^t \|u(r)\|_V\,dr
+  \le
+  |t-s|^{1/2}
+  \Bigl(\int_s^t \|u(r)\|_V^2\,dr\Bigr)^{1/2},
+\]
+which is just H\"older's inequality in time, or equivalently Cauchy--Schwarz. Because the right-hand side contains the factor $|t-s|^{1/2}$, this shows that the drift increment has $1/2$-H\"older continuity in time, up to the energy term $\int_s^t \|u(r)\|_V^2\,dr$.
+
+\subsection*{A.6a. Proof of the Drift H\"older-Seminorm Estimate}
+Let
+\[
+  D(t):=\int_0^t A(u(r))\,dr.
+\]
+We claim that for every $\beta\in(0,1/2]$,
+\[
+  [D]_{C^\beta([0,T];V')}
+  \le
+  M\Bigl(
+    T^{1-\beta}
+    +
+    T^{1/2-\beta}
+    \Bigl(\int_0^T \|u(r)\|_V^2\,dr\Bigr)^{1/2}
+  \Bigr).
+\]
+Indeed, for $0\le s<t\le T$, the growth condition on $A$ gives
+\begin{align*}
+  \|D(t)-D(s)\|_{V'}
+  &=\left\|\int_s^t A(u(r))\,dr\right\|_{V'} \\
+  &\le
+  \int_s^t \|A(u(r))\|_{V'}\,dr
+  &&\text{(triangle inequality for the integral)} \\
+  &\le
+  M\int_s^t (1+\|u(r)\|_V)\,dr
+  &&\text{(by (V.3))} \\
+  &\le
+  M\Bigl(
+    |t-s|
+    +
+    |t-s|^{1/2}
+    \Bigl(\int_s^t \|u(r)\|_V^2\,dr\Bigr)^{1/2}
+  \Bigr)
+  &&\text{(since $\int_s^t 1\,dr=|t-s|$ and by H\"older/Cauchy--Schwarz)} \\
+  &\le
+  M\Bigl(
+    |t-s|
+    +
+    |t-s|^{1/2}
+    \Bigl(\int_0^T \|u(r)\|_V^2\,dr\Bigr)^{1/2}
+  \Bigr)
+  &&\text{(since $[s,t]\subset[0,T]$)}.
+\end{align*}
+Dividing by $|t-s|^\beta$ and using $|t-s|\le T$, we obtain
+\begin{align*}
+  \frac{\|D(t)-D(s)\|_{V'}}{|t-s|^\beta}
+  &\le
+  M\Bigl(
+    |t-s|^{1-\beta}
+    +
+    |t-s|^{1/2-\beta}
+    \Bigl(\int_0^T \|u(r)\|_V^2\,dr\Bigr)^{1/2}
+  \Bigr)
+  &&\text{(dividing by $|t-s|^\beta$)} \\
+  &\le
+  M\Bigl(
+    T^{1-\beta}
+    +
+    T^{1/2-\beta}
+    \Bigl(\int_0^T \|u(r)\|_V^2\,dr\Bigr)^{1/2}
+  \Bigr)
+  &&\text{(since $|t-s|\le T$ and $\beta\le 1/2$)}.
+\end{align*}
+Taking the supremum over $0\le s<t\le T$ proves the claim.
+
+\subsection*{A.7. Burkholder--Davis--Gundy Inequality}
+Let $M_t$ be a continuous local martingale and let $p\ge 1$. Then there exists a constant $C_p>0$ such that
+\[
+  \mathbb E\Bigl(\sup_{r\in[s,t]} |M_r-M_s|^p\Bigr)
+  \le
+  C_p\,\mathbb E\bigl(\langle M\rangle_t-\langle M\rangle_s\bigr)^{p/2}.
+\]
+In Section 5.4, this is applied to the stochastic integral
+\[
+  M_r:=\int_s^r \langle h,B_n(u(\rho))\,dW_n(\rho)\rangle,
+\]
+so that the supremum of the stochastic increment is controlled by the corresponding quadratic variation.
+
+\end{document}
