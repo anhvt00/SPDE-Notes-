@@ -1,0 +1,331 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in]{geometry}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\DeclareMathOperator{\tr}{tr}
+\newcommand{\dual}[2]{{}_{V'}\langle #1, #2 \rangle_{V}}
+
+\title{Lecture 1: Introduction to SPDEs and the Heat Equation}
+\date{16.10.2025}
+\author{Tien Anh Vu}
+
+\begin{document}
+\maketitle
+
+Good morning. Let us begin our introduction to Stochastic Partial Differential Equations, or SPDEs.
+
+Today, we will build some intuition by looking at a classic example that motivates the Dean-Kawasaki equation, originally introduced in the works of Dean in 1996 and Kawasaki in 1998. We will start from a microscopic particle system and observe how it leads us to a macroscopic partial differential equation.
+
+\section*{1. Microscopic Particle System}
+Let us consider a system of independent Brownian motions, which we will denote as $B^1, B^2, B^3, \ldots$. We also take a test function $f$ that is smooth. Specifically, we require $f\in C_b^2(\mathbb{R})$, which means that $f$ is twice continuously differentiable and has bounded derivatives.
+
+\begin{definition}[Empirical average]
+We can define the empirical average of this system of $N$ particles at time $t$ as $\eta_t^N(f)$. We write this as:
+\[
+\eta_t^N(f):=\frac{1}{N}\sum_{i=1}^{N} f\bigl(B_t^i+x_0\bigr).
+\]
+Different choices of $f$ probe different features:
+\begin{itemize}
+\item if $f(x)=x$, then we are averaging particle positions (mean position);
+\item if $f(x)=x^2$, then we are averaging squared positions (second moment/spread);
+\end{itemize}
+If we want to emphasize sample-wise evaluation, we write
+\[
+\eta_t^N(f)(\omega):=\frac{1}{N}\sum_{i=1}^{N} f\bigl(B_t^i(\omega)+x_0\bigr).
+\]
+where $x_0$ represents the starting position of our particles. We can equivalently express this empirical average as an integral with respect to the empirical measure, utilizing the Dirac delta measure $\delta$:
+\[
+\eta_t^N(f)=\int f\,d\!\left(\frac{1}{N}\sum_{i=1}^{N}\delta_{B_t^i+x_0}\right).
+\]
+This is shorthand for the same integral with the variable shown explicitly:
+\[
+\eta_t^N(f)=\int_{\mathbb R} f(x)\,d\!\left(\frac{1}{N}\sum_{i=1}^{N}\delta_{B_t^i+x_0}\right)(x).
+\]
+\end{definition}
+
+\section*{2. Macroscopic Limit via SLLN}
+Now, we want to understand the macroscopic behavior of this system as the number of particles grows very large. We apply the Strong Law of Large Numbers (SLLN). As $N\to\infty$, this empirical average converges almost surely with respect to $P$-measure to the expected value:
+\[
+\eta_t^N(f)\xrightarrow[N\to\infty]{\text{a.s. w.r.t. }P}\mathbb{E}\bigl[f(B_t+x_0)\bigr].
+\]
+
+Since $B_t$ is a standard Brownian motion, a clean way to write this is
+\[
+B_t+x_0\sim \mathcal N(x_0,t),\qquad \mu_t(dx)=p(t,x)\,dx,
+\]
+with
+\[
+p(t,x)=\frac{1}{\sqrt{2\pi t}}\exp\!\left(-\frac{(x-x_0)^2}{2t}\right).
+\]
+Here $\mu_t$ is the probability distribution of $B_t+x_0$ at time $t$, and $p(t,x)$ is the density of $\mu_t$ (equivalently, of $B_t+x_0$) with respect to Lebesgue measure.
+Then the expectation becomes
+\[
+\mathbb{E}\bigl[f(B_t+x_0)\bigr]=\int_{\mathbb{R}} f(x)p(t,x)\,dx.
+\]
+Intuitively, we are averaging the values of $f$ over all positions $x$, weighted by how likely the Brownian particle is to be at $x$ at time $t$.
+
+\section*{3. Governing PDE: Heat Equation}
+The natural question now is to identify the governing equation for this probability density $p(t,x)$. It turns out that $p(t,x)$ is the fundamental solution of the Heat Equation. The system is:
+\[
+\partial_t p(t,x)=\frac{1}{2}\partial_{xx}p(t,x),\qquad t>0,\;x\in\mathbb{R},
+\]
+coupled with the initial condition as $t\to0$:
+\[
+p(t,x)dx\to\delta_{x_0}(dx).
+\]
+
+\section*{4. Physical Intuition}
+To build a physical intuition for the heat equation, consider the relationship between the time derivative $\partial_t p$ and the spatial second derivative $\partial_{xx}p$. If you plot the density $p(t,x)$ and look at a region with negative curvature---such as a local peak---the second spatial derivative $\partial_{xx}p(t,x)$ is negative. According to the heat equation, this means the time derivative $\partial_t p(t,x)$ must also be negative. Consequently, at points of negative curvature, the ``temperature'' or probability density will go down, which has the effect of smoothing out the distribution over time.
+
+We will stop here for this step of the derivation. Are there any questions on the transition from the empirical average to the heat equation?
+
+\section*{Appendix}
+\subsection*{A.1. Brownian Motion}
+\begin{definition}[Brownian motion]
+Let $(\Omega,\mathcal F,(\mathcal F_t)_{t\ge0},\mathbb P)$ be a filtered probability space. A process $(W_t)_{t\ge0}$ is a standard Brownian motion if:
+\begin{itemize}
+\item $W_0=0$ almost surely;
+\item for every $0\le s<t$, $W_t-W_s\sim\mathcal N(0,t-s)$;
+\item increments on disjoint time intervals are independent;
+\item sample paths are continuous.
+\end{itemize}
+In this lecture, the particle position is modeled by $X_t^i=B_t^i+x_0$, where each $B^i$ is a Brownian motion.
+\end{definition}
+
+\subsection*{A.2. Empirical Average}
+\begin{definition}[General empirical average]
+Let $E$ be a measurable space, let $Y^1,\dots,Y^N$ be $E$-valued random variables, and let $f:E\to\mathbb R$ be bounded measurable. The empirical average is
+\[
+\eta^N(f)(\omega):=\frac{1}{N}\sum_{i=1}^N f\bigl(Y^i(\omega)\bigr).
+\]
+This quantity is the sample mean of the observable $f$ evaluated on the $N$ particles.
+In this lecture, we take
+\[
+Y^i=X_t^i:=B_t^i+x_0,
+\]
+so
+\[
+\eta_t^N(f)(\omega)=\frac{1}{N}\sum_{i=1}^N f\bigl(B_t^i+x_0\bigr)(\omega).
+\]
+Thus $\eta_t^N(f)$ is the particle-system average of $f$ at time $t$.
+\end{definition}
+
+\subsection*{A.3. Empirical}
+\begin{definition}[Empirical measure]
+For $Y^1,\dots,Y^N$ as above, define
+\[
+\mu^N(\omega):=\frac{1}{N}\sum_{i=1}^N \delta_{Y^i(\omega)}.
+\]
+Then
+\[
+\eta^N(f)(\omega)=\int_E f(y)\,\mu^N(\omega)(dy).
+\]
+This identity says that taking an empirical average is equivalent to integrating against the empirical measure.
+In this lecture, at time $t$,
+\[
+\mu_t^N(\omega):=\frac{1}{N}\sum_{i=1}^N \delta_{B_t^i(\omega)+x_0}.
+\]
+Hence
+\[
+\eta_t^N(f)(\omega)=\int_{\mathbb R} f(x)\,\mu_t^N(\omega)(dx).
+\]
+So the random measure $\mu_t^N$ stores particle locations, and testing it with $f$ gives the empirical average.
+\end{definition}
+
+\subsection*{A.4. Strong Law of Large Numbers (SLLN)}
+\begin{theorem}[SLLN]
+Let $(Z_i)_{i\ge1}$ be i.i.d.\ random variables with $\mathbb E[|Z_1|]<\infty$. Then
+\[
+\frac{1}{N}\sum_{i=1}^N Z_i
+\xrightarrow[N\to\infty]{\text{a.s.}}
+\mathbb E[Z_1].
+\]
+This says that the sample average converges almost surely to the true expectation.
+\end{theorem}
+
+\begin{remark}[Application in this lecture]
+For fixed $t$ and fixed test function $f$, take
+\[
+Z_i:=f(B_t^i+x_0).
+\]
+Since $(B_t^i)_i$ are independent and identically distributed, so are $(Z_i)_i$. Therefore
+\[
+\eta_t^N(f)
+=
+\frac{1}{N}\sum_{i=1}^N f(B_t^i+x_0)
+\xrightarrow[N\to\infty]{\text{a.s.}}
+\mathbb E[f(B_t+x_0)].
+\]
+This is exactly the convergence used in Section 2.
+\end{remark}
+
+\subsection*{A.5. Types of Convergence for Random Variables}
+\begin{definition}[Almost sure convergence]
+We say $X_n\to X$ almost surely (a.s.) if
+\[
+\mathbb P\Bigl(\bigl\{\omega:\,\lim_{n\to\infty}X_n(\omega)=X(\omega)\bigr\}\Bigr)=1.
+\]
+In words: for almost every outcome $\omega$, if we look at the sequence $X_n(\omega)$, it converges pointwise to $X(\omega)$.
+\end{definition}
+
+\begin{definition}[Convergence in probability]
+We say $X_n\to X$ in probability if for every $\varepsilon>0$,
+\[
+\lim_{n\to\infty}\mathbb P(|X_n-X|>\varepsilon)=0.
+\]
+So if you fix any error tolerance $\varepsilon$, the chance that $X_n$ is farther than $\varepsilon$ from $X$ goes to zero as $n$ increases.
+\end{definition}
+
+\begin{definition}[Convergence in $L^p$]
+For $p\ge1$, we say $X_n\to X$ in $L^p$ if
+\[
+\lim_{n\to\infty}\mathbb E\bigl[|X_n-X|^p\bigr]=0.
+\]
+You can think of this as mean convergence with a $p$-power penalty on the error; larger $p$ puts more weight on large deviations.
+\end{definition}
+
+\begin{definition}[Convergence in distribution]
+We say $X_n\to X$ in distribution (or weakly) if
+\[
+\lim_{n\to\infty}\mathbb E[\phi(X_n)]=\mathbb E[\phi(X)]
+\]
+for every bounded continuous test function $\phi$.
+Equivalently, if $F_n$ and $F$ are the distribution functions of $X_n$ and $X$, then
+\[
+\lim_{n\to\infty}F_n(x)=F(x)
+\]
+at every continuity point $x$ of $F$. Here we are not tracking sample paths directly; we are saying that the probability laws themselves converge.
+\end{definition}
+
+\begin{remark}[Standard implications]
+The main implication chain is
+\[
+X_n\to X\text{ in }L^p
+\;\Longrightarrow\;
+X_n\to X\text{ in probability}
+\;\Longrightarrow\;
+X_n\to X\text{ in distribution}.
+\]
+Also, almost sure convergence implies convergence in probability.
+When teaching this, a useful rule of thumb is: stronger notions (like a.s.\ or $L^p$) usually give weaker ones (probability, then distribution).
+\end{remark}
+
+\subsection*{A.6. Expectation}
+\begin{definition}[Expectation]
+Let $(\Omega,\mathcal F,\mathbb P)$ be a probability space and let $X:\Omega\to\mathbb R$ be an integrable random variable (that is, $\mathbb E[|X|]<\infty$). Its expectation is
+\[
+\mathbb E[X]:=\int_{\Omega} X(\omega)\,\mathbb P(d\omega).
+\]
+If $X$ has distribution $\mu_X$ on $\mathbb R$, then equivalently
+\[
+\mathbb E[X]=\int_{\mathbb R} x\,\mu_X(dx).
+\]
+More generally, for measurable $f$ with $\mathbb E[|f(X)|]<\infty$,
+\[
+\mathbb E[f(X)]=\int_{\mathbb R} f(x)\,\mu_X(dx).
+\]
+In our lecture notation, this is exactly the form
+\[
+\mathbb E[f(B_t+x_0)]=\int_{\mathbb R} f(x)\,p(t,x)\,dx.
+\]
+\end{definition}
+
+\subsection*{A.7. Distribution $\mu_X$}
+\begin{definition}[Distribution (probability law) of a random variable]
+Let $X:(\Omega,\mathcal F,\mathbb P)\to\mathbb R$ be a random variable. Its distribution (or probability law, equivalently probability distribution) is the measure $\mu_X$ on $\mathbb R$ defined by
+\[
+\mu_X(A):=\mathbb P(X\in A),
+\]
+for every Borel set $A\subseteq\mathbb R$.
+
+So ``distribution of $X$,'' ``probability law of $X$,'' ``probability distribution of $X$,'' and ``the probability measure induced by $X$'' all refer to this same measure $\mu_X$.
+So $\mu_X$ tells us how the values of $X$ are distributed, without referring to the sample space directly.
+\end{definition}
+
+\begin{remark}
+For any bounded measurable $f$,
+\[
+\int_{\mathbb R} f(x)\,\mu_X(dx)=\mathbb E[f(X)].
+\]
+This is why we can rewrite expectations as integrals with respect to $\mu_X$.
+\end{remark}
+
+\begin{remark}[Pushforward measure viewpoint]
+The same measure can be written as
+\[
+\mu_X = \mathbb P\circ X^{-1},
+\]
+read as ``the pushforward of $\mathbb P$ by $X$.'' Concretely, this means
+\[
+(\mathbb P\circ X^{-1})(A)=\mathbb P\!\bigl(X^{-1}(A)\bigr)=\mathbb P(X\in A),
+\]
+which is exactly the definition of $\mu_X$ above.
+\end{remark}
+
+\subsection*{A.8. Density}
+\begin{definition}[Density of a random variable]
+Let $X$ be a real-valued random variable with law $\mu_X$. We say that $X$ has a density $p_X$ if
+\[
+\mu_X(A)=\int_A p_X(x)\,dx
+\]
+for every Borel set $A\subseteq\mathbb R$.
+Equivalently, $\mu_X$ is absolutely continuous with respect to Lebesgue measure $\lambda$ (written $\mu_X\ll\lambda$), and $p_X$ is the Radon--Nikodym derivative:
+\[
+p_X=\frac{d\mu_X}{d\lambda},
+\]
+which describes how the probability mass is distributed over $\mathbb R$.
+\end{definition}
+
+\begin{remark}
+If $X$ has density $p_X$, then for every bounded measurable $f$,
+\[
+\mathbb E[f(X)]=\int_{\mathbb R} f(x)\,p_X(x)\,dx.
+\]
+In our lecture, $X=B_t+x_0$ has Gaussian density
+\[
+p(t,x)=\frac{1}{\sqrt{2\pi t}}\exp\!\left(-\frac{(x-x_0)^2}{2t}\right),
+\]
+so
+\[
+\mathbb E[f(B_t+x_0)]=\int_{\mathbb R} f(x)\,p(t,x)\,dx.
+\]
+\end{remark}
+
+\subsection*{A.9. Meaning of $\delta_{x_0}(dx)$}
+\begin{definition}[Dirac measure at $x_0$]
+The symbol $\delta_{x_0}$ denotes the Dirac measure concentrated at the point $x_0$. It is defined by
+\[
+\delta_{x_0}(A)=\mathbf 1_A(x_0)
+\]
+for every Borel set $A\subseteq\mathbb R$. Equivalently,
+\[
+\delta_{x_0}(A)=
+\begin{cases}
+1, & \text{if } x_0\in A,\\
+0, & \text{if } x_0\notin A.
+\end{cases}
+\]
+\end{definition}
+
+\begin{remark}
+Writing $\delta_{x_0}(dx)$ emphasizes that this is a measure in the variable $x$. Its key property is
+\[
+\int_{\mathbb R} f(x)\,\delta_{x_0}(dx)=f(x_0).
+\]
+So in our note,
+\[
+p(t,x)\,dx\to\delta_{x_0}(dx)\quad (t\downarrow0)
+\]
+means the probability law with density $p(t,x)$ converges to a point mass at $x_0$.
+\end{remark}
+
+\end{document}

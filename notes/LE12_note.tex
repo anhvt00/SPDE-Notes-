@@ -14,7 +14,7 @@
 \DeclareMathOperator{\tr}{tr}
 \newcommand{\dual}[2]{{}_{V'}\langle #1, #2 \rangle_{V}}
 
-\title{Lecture 12: Proof of Lemma 3.14 and Tightness}
+\title{Lecture 12: Tightness (Lemma 3.14) and Rough SPDE Regularity}
 \date{01.01.2026}
 \author{Tien Anh Vu}
 
@@ -708,6 +708,172 @@ Since $\varepsilon>0$ is arbitrary, it follows that
 Thus we have extracted a strongly convergent subsequence. This is exactly the compactness needed for $\tau_3$-tightness, and Lemma 3.14 is complete.
 \end{proof}
 
+\section*{7. Lecture 9: Rough SPDEs}
+Good morning, everyone. Let us begin Lecture 9. Today, we discuss Rough Stochastic Partial Differential Equations (Rough SPDEs). Our primary reference is the 2011 paper by Martin Hairer in \emph{Communications on Pure and Applied Mathematics}.
+
+\subsection*{7.1. Equation, Noise, and Setting}
+We consider the stochastic PDE
+\begin{equation}
+du
+=
+\partial_{xx}u\,dt
++f(u)\,dt
++g(u)\partial_x u\,dt
++\sigma\,dW_t.
+\tag{1}
+\end{equation}
+We analyze this equation on $L^2([0,2\pi])$ with periodic boundary conditions.
+
+The term $du$ is the stochastic differential of the field $u$. On the right-hand side, we have the heat operator $\partial_{xx}u\,dt$, a reaction term $f(u)\,dt$, a nonlinear gradient term $g(u)\partial_xu\,dt$, and a noise term $\sigma dW_t$.
+
+\paragraph{Noise Representation and Goal.}
+The noise $W_t(x)$ is space-time white noise, formally expanded as
+\[
+W_t(x)=\sum_{k=1}^{\infty}\beta_k(t)e_k(x),
+\]
+where $(e_k)$ is a spatial basis and $(\beta_k)$ are independent standard Brownian motions.
+
+Our main goal is to give a rigorous meaning to solutions of (1).
+
+\subsection*{7.2. Variational Obstruction and Mild Formulation}
+In the variational approach, one tests the equation against a test function and integrates by parts. Specifically, if we try to bound the term
+\[
+\langle g(u)\partial_xu,u\rangle,
+\]
+we cannot bound it by the standard terms required for coercivity, which typically take the form
+\[
+\gamma\|u\|_{H^1}^2+M\|u\|_{L^2}^2+C.
+\]
+Because we cannot establish this bound, equation (1) is not coercive, and consequently, it cannot be solved in the standard variational setting.
+
+\paragraph{Mild Formulation.}
+To bypass this, we use the mild approach. Let
+\[
+P_t=e^{t\partial_{xx}}
+\]
+be the heat semigroup. The mild formulation is
+\[
+u(t)
+=
+P_tu_0
++\int_0^t P_{t-s}\bigl(f(u(s))+g(u(s))\partial_xu(s)\bigr)\,ds
++\sigma\int_0^t P_{t-s}\,dW_s.
+\]
+Thus $u(t)$ has three parts: evolution of the initial condition, the semigroup-convoluted nonlinear drift, and the stochastic convolution.
+
+\paragraph{Spectral Form of the Stochastic Convolution.}
+To analyze the stochastic convolution rigorously, recall the spectrum of $\partial_{xx}$ on the periodic domain. Its eigenvalues are $-k^2$, with $L^2$-normalized eigenfunctions
+\[
+e_0(x)=\frac{1}{\sqrt{2\pi}},\qquad
+e_k(x)=\frac{1}{\sqrt{\pi}}\cos(kx),\qquad
+f_k(x)=\frac{1}{\sqrt{\pi}}\sin(kx),\quad k\ge1.
+\]
+Applying the semigroup mode by mode gives
+\[
+\int_0^t P_{t-s}\,dW_s
+=
+\int_0^t d\beta_0(s)\,e_0(x)
++\sum_{k=1}^{\infty}\int_0^t e^{-k^2(t-s)}\,d\beta_k(s)\,e_k(x).
+\]
+The first term is $\beta_0(t)e_0(x)$. The infinite sum is a series of independent stochastic integrals, each mode damped by $e^{-k^2(t-s)}$.
+
+This mild representation provides the structural foundation for handling rough noise and nonlinearities in the analysis to follow.
+
+\section*{8. Regularity of the Stochastic Convolution}
+\subsection*{8.1. Full Mode Expansion}
+Let us continue where we left off by completing the expansion of our stochastic convolution. Adding the sine terms to the cosine and zero modes we discussed previously, the full representation of the stochastic convolution is:
+\[
+\int_0^t P_{t-s}\,dW_s
+=
+\int_0^t d\beta_0(s)\,e_0(x)
++\sum_{k=1}^{\infty}\int_0^t e^{-k^2(t-s)}\,d\beta_k(s)\,e_k(x)
++\sum_{k=1}^{\infty}\int_0^t e^{-k^2(t-s)}\,d\widetilde\beta_k(s)\,f_k(x).
+\]
+With this explicit representation, we must now ask a fundamental question: what is the regularity of this stochastic convolution? This is paramount because the regularity of this noise term limits the regularity of our mild solution $u(t,x)$.
+
+\subsection*{8.2. Regularity Estimate in $H^{\alpha,2}$}
+To analyze this, we calculate the expectation of the squared norm of the stochastic convolution in the fractional Sobolev space $H^{\alpha,2}$. Let me define this space for you. Based on the Fourier coefficients $u_k$, the space is defined as:
+\[
+H^{\alpha,2}
+:=
+\left\{
+u\in L^2:
+\sum_{k=1}^{\infty}u_k^2\,(k^{2\alpha}+1)<\infty
+\right\}.
+\]
+We want to evaluate the expectation:
+\[
+\mathbb E\!\left(
+\left\|
+\int_0^t P_{t-s}\,dW_s
+\right\|_{H^{\alpha,2}}^2
+\right).
+\]
+By applying It\^o's isometry and utilizing our expansion, we convert the expectation of the squared norm into a sum of time integrals of the variances of our independent modes. Taking into account the contributions from both the cosine and sine modes, we obtain:
+\[
+\mathbb E\!\left(
+\left\|
+\int_0^t P_{t-s}\,dW_s
+\right\|_{H^{\alpha,2}}^2
+\right)
+=
+t+2\sum_{k=1}^{\infty}k^{2\alpha}\int_0^t e^{-k^2(t-s)}\,ds.
+\]
+We can compute the integral $\int_0^t e^{-k^2(t-s)}\,ds$ explicitly. It evaluates to $\frac{1}{k^2}(1-e^{-k^2t})$. Substituting this back into our expression gives us:
+\[
+\mathbb E\!\left(
+\left\|
+\int_0^t P_{t-s}\,dW_s
+\right\|_{H^{\alpha,2}}^2
+\right)
+=
+t+2\sum_{k=1}^{\infty}k^{2\alpha-2}\bigl(1-e^{-k^2t}\bigr).
+\]
+Now, we must determine under what conditions this sum is finite. For large $t$, the term $(1-e^{-k^2t})$ approaches $1$, so the convergence depends entirely on the series $\sum k^{2\alpha-2}$. A series of the form $\sum x^\beta$ converges if and only if $\beta<-1$.
+
+Applying this convergence test to our exponent, we require $2\alpha-2<-1$. Solving this inequality, we find that the sum converges if and only if $\alpha<1/2$.
+
+This is a critical mathematical result. It tells us that the stochastic convolution has a spatial H\"older continuity of an order strictly less than $1/2$. In terms of spatial regularity, it behaves much like a Brownian motion path.
+
+The conclusion we must draw from this is severe: no spatial derivative $\partial_xu$ can be expected to exist for the mild solution in any classical or strong sense.
+
+This presents a significant problem for our original SPDE, which contains the nonlinear gradient term $g(u)\partial_xu$. If the spatial derivative of $u$ does not exist, how do we make sense of this equation?
+
+\section*{9. Decomposition of the Mild Solution}
+\subsection*{9.1. Ansatz and Remainder Equation}
+To resolve this, we can decompose the mild solution. The underlying idea is to separate the highly irregular stochastic convolution from a smoother remainder. Let us denote the stochastic convolution as $W_{\partial_{xx}}(t)$. We introduce the following ansatz for our solution:
+\[
+u(t,x)=v(t,x)+\sigma W_{\partial_{xx}}(t).
+\]
+Here, $v(t,x)$ is a remainder process that we expect to be more regular than $u(t,x)$. By substituting this ansatz into our mild formulation, the troublesome gradient term $g(u)\partial_xu$ splits into two components: $g(u)\partial_xv$ and $g(u)\partial_xW_{\partial_{xx}}$. We can write the equation governing the remainder $v(t,x)$ as follows:
+\[
+v(t,x)=P_tu_0(x)+\int_0^t P_{t-s}\bigl(f(u(s,\cdot))+g(u(s,\cdot))\partial_xv(s,\cdot)\bigr)(x)\,ds+\int_0^t\!\int_0^{2\pi}P_{t-s}(x-y)g(u(s,y))\partial_yW_{\partial_{xx}}(s,y)\,dy\,ds.
+\]
+Let us look closely at the right-hand side. The term involving $\partial_xv$ is manageable because we expect $v$ to possess sufficient regularity. The difficulty has been isolated in the final integral, which explicitly contains the ill-defined spatial derivative of the rough noise: $\partial_yW_{\partial_{xx}}(s,y)$.
+
+\subsection*{9.2. Formal Integration by Parts}
+However, because this rough derivative appears inside a spatial integral against a smooth heat kernel $P_{t-s}(x-y)$, we can perform a formal integration by parts. This operation shifts the derivative away from the rough noise and onto the smoother terms. Specifically, the term $\partial_yW_{\partial_{xx}}(s,y)\,dy$ becomes:
+\[
+\int_0^{2\pi}
+P_{t-s}(x-y)\,g(u(s,y))\,\partial_y W_{\partial_{xx}}(s,y)\,dy
+=
+-\int_0^{2\pi}
+\partial_y\!\bigl(P_{t-s}(x-y)g(u(s,y))\bigr)\,W_{\partial_{xx}}(s,y)\,dy.
+\]
+By shifting the derivative in this manner, we eliminate the need to evaluate the non-existent spatial derivative of the stochastic convolution. It is worth noting that while this procedure introduces a non-adaptedness with respect to space, the overall formulation retains its martingale structure in time.
+
+\subsection*{9.3. Relation to Variation of Constants}
+This decomposition technique is a highly sophisticated adaptation of the classical variation of constants formula used for linear SPDEs. Recall that for a linear equation of the form
+\[
+dX_t=AX_t\,dt+dW_t,
+\]
+the solution is given by
+\[
+X_t=e^{tA}X_0+\int_0^t e^{(t-s)A}\,dW_s.
+\]
+Our approach here is a nonlinear extension of this foundational martingale structure, allowing us to handle equations driven by rough noise.
+The key point of Section 9 is that this decomposition isolates the rough noise and transfers derivatives onto smoother terms, which is exactly what makes the nonlinear SPDE formulation tractable.
+
 \section*{Appendix: Functional-Analytic Side Note}
 As a brief functional-analytic side note, if $(\mu_n)$ is a tight sequence of probability measures on $U$, then Prokhorov's theorem yields a subsequence $(\mu_{n_k})$ that converges weakly to some limit measure $\mu$.
 
@@ -1149,5 +1315,83 @@ We conclude that
   \qquad \text{as } R\to\infty.
 \]
 Thus the sequence $(P_n)_n$ is tight in the strong topology $\tau_3$ on $L^2([0,T];H)$.
+
+\subsection*{A.9. Fractional Sobolev Space $H^{\alpha,2}$}
+\begin{definition}[Fractional Sobolev space]
+Let $\Omega\subset\mathbb R^d$, let $s\in(0,1)$ and $1<p<\infty$. Define the fractional seminorm
+\[
+\lvert u\rvert_{W^{s,p}(\Omega)}^p
+:=
+\int_\Omega\int_\Omega
+\frac{|u(x)-u(y)|^p}{|x-y|^{d+sp}}\,dx\,dy.
+\]
+Then
+\[
+W^{s,p}(\Omega)
+:=
+\left\{
+u\in L^p(\Omega):
+\lvert u\rvert_{W^{s,p}(\Omega)}<\infty
+\right\},
+\]
+with norm
+\[
+\|u\|_{W^{s,p}(\Omega)}
+:=
+\bigl(\|u\|_{L^p(\Omega)}^p+\lvert u\rvert_{W^{s,p}(\Omega)}^p\bigr)^{1/p}.
+\]
+In the Hilbert case $p=2$, one writes
+\[
+H^{s,2}(\Omega):=W^{s,2}(\Omega).
+\]
+In words, the seminorm measures average oscillation across pairs of points: finite seminorm means differences $u(x)-u(y)$ decay fast enough as $x$ approaches $y$, i.e.\ fractional smoothness of order $s$.
+\end{definition}
+
+\subsection*{A.10. Spectral Form of an Operator}
+\begin{definition}[Spectral form]
+Let $A$ be a self-adjoint operator on a Hilbert space $H$. A spectral form of $A$ is given by an orthonormal basis $(\varphi_k)_{k\ge1}\subset H$ and real eigenvalues $(\lambda_k)_{k\ge1}$ such that
+\[
+A\varphi_k=\lambda_k\varphi_k
+\qquad\text{for all }k.
+\]
+Equivalently, for $u\in D(A)$,
+\[
+u=\sum_{k\ge1}\langle u,\varphi_k\rangle_H\,\varphi_k,
+\qquad
+Au=\sum_{k\ge1}\lambda_k\langle u,\varphi_k\rangle_H\,\varphi_k.
+\]
+In words, the operator is diagonal in its eigenbasis: each mode evolves independently and is scaled by its eigenvalue.
+\end{definition}
+
+\subsection*{A.11. Regularity of the Stochastic Convolution}
+Let
+\[
+Z(t):=\int_0^t P_{t-s}\,dW_s.
+\]
+Using It\^o isometry and the mode expansion from Section 7,
+\[
+\mathbb E\bigl(\|Z(t)\|_{H^{\alpha,2}}^2\bigr)
+=
+t+2\sum_{k=1}^{\infty}k^{2\alpha}\int_0^t e^{-k^2(t-s)}\,ds.
+\]
+Since
+\[
+\int_0^t e^{-k^2(t-s)}\,ds
+=
+\frac{1}{k^2}(1-e^{-k^2t}),
+\]
+we get
+\[
+\mathbb E\bigl(\|Z(t)\|_{H^{\alpha,2}}^2\bigr)
+=
+t+2\sum_{k=1}^{\infty}k^{2\alpha-2}(1-e^{-k^2t}).
+\]
+For large $t$, $(1-e^{-k^2t})\to 1$, so convergence is governed by $\sum k^{2\alpha-2}$. Because $\sum k^\beta$ converges iff $\beta<-1$, we require
+\[
+2\alpha-2<-1
+\quad\Longleftrightarrow\quad
+\alpha<\frac12.
+\]
+Therefore the stochastic convolution is spatially rough (regularity strictly below $1/2$), so one cannot expect a classical strong derivative $\partial_xu$ for the mild solution.
 
 \end{document}
