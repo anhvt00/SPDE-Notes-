@@ -7,6 +7,7 @@
 \newtheorem{definition}{Definition}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
 
 \theoremstyle{remark}
 \newtheorem{remark}{Remark}
@@ -23,7 +24,7 @@
 
 Good morning. Let us begin our introduction to Stochastic Partial Differential Equations, or SPDEs.
 
-Today, we will build some intuition by looking at a classic example that motivates the Dean-Kawasaki equation, originally introduced in the works of Dean in 1996 and Kawasaki in 1998. We will start from a microscopic particle system and observe how it leads us to a macroscopic partial differential equation.
+Today, we will build some intuition by looking at a classic example that motivates the Dean-Kawasaki equation, originally introduced in the works of Dean in 1996 and Kawasaki in 1998. These ideas also connect to modern statistical models, where time reversal of stochastic differential equations plays an important role. We will start from a microscopic particle system and observe how it leads us to a macroscopic partial differential equation.
 
 \section*{1. Microscopic Particle System}
 Let us consider a system of independent Brownian motions, which we will denote as $B^1, B^2, B^3, \ldots$. We also take a test function $f$ that is smooth. Specifically, we require $f\in C_b^2(\mathbb{R})$, which means that $f$ is twice continuously differentiable and has bounded derivatives.
@@ -42,7 +43,7 @@ If we want to emphasize sample-wise evaluation, we write
 \[
 \eta_t^N(f)(\omega):=\frac{1}{N}\sum_{i=1}^{N} f\bigl(B_t^i(\omega)+x_0\bigr).
 \]
-where $x_0$ represents the starting position of our particles. We can equivalently express this empirical average as an integral with respect to the empirical measure, utilizing the Dirac delta measure $\delta$:
+where $x_0$ represents the starting position of our particles. We can equivalently express this empirical average as an integral with respect to the empirical measure, utilizing the Dirac measure $\delta$:
 \[
 \eta_t^N(f)=\int f\,d\!\left(\frac{1}{N}\sum_{i=1}^{N}\delta_{B_t^i+x_0}\right).
 \]
@@ -82,9 +83,12 @@ coupled with the initial condition as $t\to0$:
 \[
 p(t,x)dx\to\delta_{x_0}(dx).
 \]
+In this sense, this is not a classical solution at $t=0$, because the initial condition is not a function. Rather, the equation should be understood in a weak or distributional sense with initial datum given by the Dirac measure.
 
 \section*{4. Physical Intuition}
 To build a physical intuition for the heat equation, consider the relationship between the time derivative $\partial_t p$ and the spatial second derivative $\partial_{xx}p$. If you plot the density $p(t,x)$ and look at a region with negative curvature---such as a local peak---the second spatial derivative $\partial_{xx}p(t,x)$ is negative. According to the heat equation, this means the time derivative $\partial_t p(t,x)$ must also be negative. Consequently, at points of negative curvature, the ``temperature'' or probability density will go down, which has the effect of smoothing out the distribution over time.
+
+At points of positive curvature, such as local minima, the second spatial derivative is positive, so the density increases there. In this way, the heat equation averages out local extrema and smooths the profile over time.
 
 We will stop here for this step of the derivation. Are there any questions on the transition from the empirical average to the heat equation?
 
@@ -109,6 +113,7 @@ d\!\left(
 
 When we expand $df(B_t^i+x_0)$ using the standard rules of stochastic calculus, we decompose the dynamic into two fundamentally distinct components: an It\^o integral and a correction term (the drift). The expansion gives us:
 \[
+d\eta_t^N(f)
 =
 \frac{1}{N}\sum_{i=1}^N f'(B_t^i+x_0)\,dB_t^i
 +
@@ -135,6 +140,7 @@ To prove that the fluctuations vanish, we compute the expected value of the squa
 
 By It\^o isometry, we transform the stochastic integral into a Riemann integral:
 \[
+\mathbb E[(M_t^N(f))^2]
 =
 \frac{1}{N^2}\sum_{i=1}^N
 \mathbb E\!\left[
@@ -144,6 +150,7 @@ By It\^o isometry, we transform the stochastic integral into a Riemann integral:
 
 Since the $N$ Brownian motions are identically distributed, the expectation is the same for every particle $i$. This allows us to simplify the sum completely:
 \[
+\mathbb E[(M_t^N(f))^2]
 =
 \frac{1}{N}
 \mathbb E\!\left[
@@ -152,7 +159,7 @@ Since the $N$ Brownian motions are identically distributed, the expectation is t
 \]
 
 \subsection*{5.4. Quadratic Variation}
-We can apply the exact same logic to compute the quadratic variation of the martingale, $\langle M^N(f)\rangle_t$. Evaluating the quadratic variation yields:
+We can apply the exact same logic to compute the quadratic variation of the martingale:
 \[
 \langle M^N(f)\rangle_t
 =
@@ -162,6 +169,7 @@ We can apply the exact same logic to compute the quadratic variation of the mart
 
 This expression can be rewritten by pulling the $\frac{1}{N}$ factor out and recognizing the remaining sum as the empirical measure applied to $(f')^2$. Thus, we obtain:
 \[
+\langle M^N(f)\rangle_t
 =
 \frac{1}{N}\int_0^t \eta_s^N((f')^2)\,ds.
 \]
@@ -170,6 +178,785 @@ The critical insight here is that the quadratic variation is of order $O\!\left(
 
 \subsection*{5.5. Conclusion}
 This demonstrates the Law of Large Numbers for our empirical measure. The stochastic noise that characterizes the microscopic gas molecules dissipates entirely, leaving only the deterministic correction term. This remaining term dictates the macroscopic description of the system, effectively deriving the governing PDE from the underlying stochastic particle dynamics.
+
+\section*{6. Stochastic Dynamics of the Empirical Measure}
+So far, we have introduced the particle system, defined the empirical measure, and identified the heat equation as the macroscopic limit. We now examine the stochastic dynamics of the empirical measure and its fluctuations.
+
+\subsection*{6.1. The Evolution Equation for the Empirical Measure}
+We start with the fundamental stochastic differential equation for the empirical measure $\eta_t^N$ tested against a function $f$. The equation reads:
+\[
+d\eta_t^N(f)=dM_t^N(f)+\eta_t^N\!\left(\frac{1}{2}f''\right)dt.
+\]
+Here, the evolution of our empirical measure is decomposed into two parts:
+\begin{itemize}
+\item A martingale term $dM_t^N(f)$, which captures the stochastic noise of the system. As $N\to\infty$, this term vanishes and goes to $0$ due to the Law of Large Numbers.
+\item A drift term $\eta_t^N\!\left(\frac{1}{2}f''\right)dt$, which represents the deterministic macroscopic evolution driven by the Laplacian (here, the second derivative $\frac{1}{2}f''$ since we are dealing with standard Brownian motion).
+\end{itemize}
+
+\subsection*{6.2. Expanding into Integral Form and Density Assumptions}
+We then rewrite this differential equation into its integral form:
+\[
+\eta_t^N(f)=\eta_0^N(f)+\int_0^t \eta_s^N\!\left(\frac{1}{2}f''\right)\,ds.
+\]
+Below this, we expand the measure into an integral over space:
+\[
+\eta_t^N(f)=\eta_0^N(f)+\int_0^t \int \frac{1}{2}f''(x)\eta_s(x)\,dx\,ds.
+\]
+To do this, assume the empirical measure can be represented by a density $\eta_s(x)$ with respect to the Lebesgue measure.
+
+The discrete empirical measure for our $N$ particles is:
+\[
+\eta_s^N(x)=\frac{1}{N}\sum_{i=1}^N \delta_{B_s^i+x_0}(x).
+\]
+This shows that the measure is comprised of Dirac measures located at the positions of the individual independent Brownian particles, $B_s^i$, starting from some initial position $x_0$.
+
+\section*{7. Distributional Derivatives}
+We next arrive at a formal equivalence:
+\[
+\eta_t^N\!\left(\frac{1}{2}f''\right)dt=\frac{1}{2}\,\partial_{xx}\eta_t^N(f)\,dt.
+\]
+This is a crucial step. By using integration by parts, we can transfer the second derivative from our test function $f''$ directly onto the empirical measure itself, yielding the distributional derivative $\partial_{xx}\eta_t^N$. This is how the heat equation emerges in the macroscopic limit.
+
+\section*{8. Fluctuations and the Strong Law of Large Numbers}
+We now shift our focus to the fluctuations around the macroscopic limit as $N$ becomes large, but finite. Define the standardized fluctuation by
+\[
+\psi_t^N(f):=\sqrt{N}\bigl(\eta_t^N(f)-\eta_t(f)\bigr).
+\]
+Using the evolution equation for $\eta_t^N$ together with the heat equation satisfied by $\eta_t$, one obtains
+\[
+d\psi_t^N(f)=\sqrt{N}\,dM_t^N(f)+\psi_t^N\!\left(\frac{1}{2}f''\right)dt.
+\]
+This shows that the fluctuation field is driven by a rescaled martingale term together with the same second-order drift. The martingale term contains the random deviations from the macroscopic limit. When $N\to\infty$, this martingale term vanishes at the Law of Large Numbers scale, but after rescaling by $\sqrt{N}$, it survives and becomes the fluctuation field.
+
+We write out the explicit It\^o representation for the martingale term:
+\[
+M_t^N(f)=\frac{1}{N}\sum_{i=1}^N \int_0^t f'(B_s^i+x_0)\,dB_s^i.
+\]
+Its quadratic variation is
+\[
+\left\langle
+\frac{1}{N}\sum_{i=1}^N \int_0^t f'(B_s^i+x_0)\,dB_s^i
+\right\rangle_t
+=
+\frac{1}{N}\int_0^t \eta_s^N((f')^2)\,ds.
+\]
+The single Brownian integral has the same quadratic variation:
+\[
+\left\langle
+\frac{1}{\sqrt{N}}\int_0^t \sqrt{\eta_s^N((f')^2)}\,dB_s
+\right\rangle_t
+=
+\frac{1}{N}\int_0^t \eta_s^N((f')^2)\,ds.
+\]
+Therefore, the original martingale term has fluctuation size $N^{-1/2}$, and both sides below have the same fluctuation. For this reason, one writes
+\[
+\frac{1}{N}\sum_{i=1}^N \int_0^t f'(B_s^i+x_0)\,dB_s^i \simeq \frac{1}{\sqrt{N}}\int_0^t \sqrt{\eta_s^N((f')^2)}\,dB_s.
+\]
+The integrand $\eta_s^N((f')^2)$ corresponds to the quadratic variation, while $dB_s$ represents one Brownian motion. The $1/\sqrt{N}$ scaling is the classic Central Limit Theorem scaling characterizing the size of the fluctuations.
+
+\section*{9. The Space-Time Fluctuation Limit}
+Finally, we formalize this fluctuation using space-time calculus:
+\[
+\text{where }\eta_t(x)\,dx=p(t,x)\,dx.
+\]
+Thus, in the limit one has $\eta_t(x)=p(t,x)$, where $p(t,x)$ is the transition probability density, or heat kernel.
+
+Assuming that the empirical measure admits a density, so that $\eta_s^N(dx)=\eta_s^N(x)\,dx$, one has
+\[
+\eta_s^N((f')^2)=\int_{\mathbb R} (f'(x))^2 \eta_s^N(x)\,dx.
+\]
+Substituting this into the quadratic variation gives
+\[
+\left\langle
+\frac{1}{\sqrt{N}}\int_0^t \sqrt{\eta_s^N((f')^2)}\,dB_s
+\right\rangle_t
+=
+\int_0^t \frac{1}{N}\eta_s^N((f')^2)\,ds
+\]
+The corresponding space-time stochastic integral has the same quadratic variation:
+\[
+\left\langle
+\frac{1}{\sqrt{N}}\int_0^t \int_{\mathbb R} f'(x)\sqrt{\eta_s^N(x)}\,d\xi(s,x)
+\right\rangle_t
+=
+\frac{1}{N}\int_0^t \eta_s^N((f')^2)\,ds
+=
+\frac{1}{N}\int_0^t \int_{\mathbb R} (f'(x))^2 \eta_s^N(x)\,dx\,ds.
+\]
+Thus, one writes
+\[
+dM_t^N(f)\simeq \frac{1}{\sqrt{N}}\int_{\mathbb R} f'(x)\sqrt{\eta_t^N(x)}\,d\xi(t,x).
+\]
+Thus, at a formal level, the martingale term may be represented by the space-time integral above, where the noise is written as a space-time differential $d\xi(s,x)$ or $dB(s,x)$.
+
+\section*{10. The Central Limit Theorem for the Martingale Term}
+We have derived the evolution equation for the empirical measure and identified the martingale term as the source of the fluctuations. We now study its fluctuation limit and connect the finite-particle system with the formal SPDE governing its fluctuations.
+
+We now scale the martingale term $M_t^N(f)$ by $\sqrt{N}$ and examine its fluctuation limit:
+\[
+\sqrt{N}\,M_t^N(f)\to \int_0^t \sqrt{\eta_s\bigl((f')^2\bigr)}\,dB_s.
+\]
+The limit is a Gaussian martingale represented as an It\^o integral with respect to a standard Brownian motion. For each fixed time $t$, the Central Limit Theorem for martingales gives the Normal law
+\[
+\mathcal N\!\left(0,\int_0^t \eta_s\bigl((f')^2\bigr)\,ds\right).
+\]
+Thus, the asymptotic fluctuations of the empirical measure tested against $f$ are characterized by a Gaussian variance determined by the macroscopic density $\eta_s$ and the squared gradient $(f')^2$.
+
+\section*{11. The Approximate Stochastic Differential Equation}
+Synthesizing this, we write down the approximate SDE for our empirical measure:
+\[
+d\eta_t^N(f)\approx \eta_t^N\!\left(\frac{1}{2}f''\right)dt+\frac{1}{\sqrt{N}}\sqrt{\eta_t^N((f')^2)}\,dB_t.
+\]
+This encapsulates both the deterministic drift, namely the Laplacian term derived earlier, and the newly scaled fluctuation term driven by a single Brownian motion $dB_t$. The variance of the It\^o integral is equal to the expectation of the integral of the squared integrand. Here,
+\[
+\operatorname{Var}\!\left(\frac{1}{\sqrt{N}}\int_0^t \sqrt{\eta_s^N((f')^2)}\,dB_s\right)
+=
+\mathbb E\!\left[\left(\frac{1}{\sqrt{N}}\int_0^t \sqrt{\eta_s^N((f')^2)}\,dB_s\right)^2\right]
+=
+\frac{1}{N}\,\mathbb E\!\left[\int_0^t \eta_s^N((f')^2)\,ds\right].
+\]
+
+\section*{12. Space-Time White Noise and Variance Equivalence}
+To move from a weak formulation tested against $f$ to a strong distributional formulation, we introduce space-time white noise $\xi(t,x)$ with covariance
+\[
+\mathbb E(\xi(t,x)\xi(s,y))=\delta(t-s)\delta(x-y).
+\]
+This indicates that the noise is completely uncorrelated in both space and time. For this to work formally, we write
+\[
+\eta_s^N(dx)=\eta_s^N(x)\,dx,
+\]
+so that the empirical measure is represented by a spatial density.
+
+We now show that the space-time white noise formulation matches the variance of the original particle system. First, we look at the scaled variance
+\[
+\frac{1}{N}\,\mathbb E\!\left(\int_0^t \eta_s^N((f')^2)\,ds\right)
+=
+\frac{1}{N}\,\mathbb E\!\left(\int_0^t \eta_s^N((f')^2)\,ds\right).
+\]
+Next, we expand the empirical measure into its explicit spatial integral:
+\[
+\frac{1}{N}\,\mathbb E\!\left(\int_0^t \eta_s^N((f')^2)\,ds\right)
+=
+\frac{1}{N}\,\mathbb E\!\left(\int_0^t \int_{\mathbb R} (f'(x))^2\eta_s^N(x)\,dx\,ds\right).
+\]
+Finally, applying It\^o isometry in reverse with the space-time white noise, we can express this same expectation as the square of a stochastic integral:
+\[
+\frac{1}{N}\,\mathbb E\!\left(\int_0^t \eta_s^N((f')^2)\,ds\right)
+=
+\frac{1}{N}\,\mathbb E\!\left[\left(\int_0^t \int_{\mathbb R} f'(x)\sqrt{\eta_s^N(x)}\,d\xi(s,x)\right)^2\right].
+\]
+This is the critical mathematical bridge. It proves that the macroscopic noise acting on the system can be represented by integrating $f'(x)$ against $\sqrt{\eta_s^N(x)}$ multiplied by the space-time white noise $d\xi(s,x)$.
+
+\section*{13. The Dean-Kawasaki Equation}
+Recalling the earlier evolution equation
+\[
+d\eta_t^N(f)=dM_t^N(f)+\eta_t^N\!\left(\frac{1}{2}f''\right)dt,
+\]
+and using the space-time noise representation obtained earlier,
+\[
+dM_t^N(f)\simeq \frac{1}{\sqrt{N}}\int_{\mathbb R} f'(x)\sqrt{\eta_t^N(x)}\,d\xi(t,x),
+\]
+one arrives at the weak approximation
+\[
+d\eta_t^N(f)\simeq \eta_t^N\!\left(\frac{1}{2}f''\right)dt+\frac{1}{\sqrt{N}}\int_{\mathbb R} f'(x)\sqrt{\eta_t^N(x)}\,d\xi(t,x).
+\]
+To rewrite this in density form, formally assume that the empirical measure admits a density $\eta_t^N(x)$. Then the drift term becomes
+\[
+\eta_t^N\!\left(\frac{1}{2}f''\right)=\int_{\mathbb R} \frac{1}{2}f''(x)\eta_t^N(x)\,dx=\int_{\mathbb R} f(x)\,\frac{1}{2}\partial_{xx}\eta_t^N(x)\,dx,
+\]
+again formally by integration by parts. For the noise term, one likewise writes
+\[
+\int_{\mathbb R} f'(x)\sqrt{\eta_t^N(x)}\,d\xi(t,x)=-\int_{\mathbb R} f(x)\,\partial_x\bigl(\sqrt{\eta_t^N(x)}\,\xi(t,x)\bigr)\,dx,
+\]
+and the sign may be absorbed into the noise, since replacing $\xi$ by $-\xi$ does not change its law. On the left-hand side, the weak form of the time derivative is
+\[
+d\eta_t^N(f)=\int_{\mathbb R} f(x)\,\partial_t\eta_t^N(x)\,dx\,dt
+\]
+so the weak approximation can be rewritten as
+\[
+\int_{\mathbb R} f(x)\,\partial_t\eta_t^N(x)\,dx\,dt \simeq \int_{\mathbb R} f(x)\left[\frac{1}{2}\partial_{xx}\eta_t^N(x)+\frac{1}{\sqrt{N}}\partial_x\bigl(\sqrt{\eta_t^N(x)}\,\xi(t,x)\bigr)\right]dx\,dt.
+\]
+Since this identity holds for all test functions $f$, one reads off the formal distributional equation
+\[
+\partial_t\eta_t^N=\frac{1}{2}\partial_{xx}\eta_t^N(x)+\frac{1}{\sqrt{N}}\partial_x\bigl(\sqrt{\eta_t^N(x)}\,\xi(t,x)\bigr).
+\]
+
+This equation still describes the empirical density at finite $N$. To pass to the fluctuation equation, center and rescale:
+\[
+\psi_t^N=\sqrt{N}\bigl(\eta_t^N-\eta_t\bigr),
+\]
+and expect the fluctuation field to converge to a limiting process $\psi_t$. In the formal limit, this leads to the Dean-Kawasaki SPDE
+\[
+\partial_t\psi_t=\frac{1}{2}\partial_{xx}\psi_t+\partial_x\bigl(\sqrt{\eta_t(x)}\,\xi(t,x)\bigr).
+\]
+Thus, the equation for $\eta_t^N$ is the pre-limit heuristic equation, whereas the equation for $\psi_t$ is the limiting fluctuation equation.
+
+\subsection*{13.1. A Crucial Warning on Well-Posedness}
+The solution theory of this SPDE is largely open, since its precise mathematical formulation is unclear. In particular, it is not clear whether the asymptotic fluctuations can really be represented as the integral of a test function against a signed density, let alone a sufficiently differentiable one. This indicates that some of the assumptions made in the formal derivation are not easy to justify rigorously. Thus, while the Dean-Kawasaki equation is a useful formal model for fluctuating hydrodynamics, it remains severely ill-posed in rigorous mathematics.
+
+\section*{14. A Linear Comparison}
+Finally, one may compare this with the linear equation
+\[
+dX_t=AX_t\,dt+CdW_t,
+\]
+which is the standard form of an Ornstein-Uhlenbeck process. This provides a useful contrast between the highly non-linear, ill-posed nature of the Dean-Kawasaki SPDE and a well-understood, solvable linear stochastic differential equation.
+
+\section*{15. Stochastic Analysis on Hilbert Space}
+We now turn to a new foundational topic: stochastic analysis on Hilbert space. The goal is to move from finite-dimensional intuition to infinite-dimensional spaces and the probability measures defined on them.
+
+\subsection*{15.1. The Setting: Hilbert Spaces and Operators}
+We begin with the classical space $(L^2(\mu),\langle\cdot,\cdot\rangle)$ of square-integrable functions with respect to a measure $\mu$, equipped with its inner product. A Hilbert space is a complete normed vector space, where the norm is induced by the inner product and completeness means that every Cauchy sequence converges within the space.
+
+We also consider linear operators acting between Hilbert spaces. If $L:U\to V$, where $U$ and $V$ are Hilbert spaces, then
+\[
+L \text{ is continuous} \iff \sup_{\|u\|_U\le 1}\|Lu\|_V<\infty.
+\]
+Thus, a linear operator is continuous if and only if it is bounded. This is a basic principle of functional analysis.
+
+\subsection*{15.2. A Canonical Example: The $\ell^2$ Sequence Space}
+To make things concrete, consider the space of square-summable sequences,
+\[
+\ell^2=\left\{(u_k)_{k\in\mathbb N}\in\mathbb R:\sum_{k=1}^\infty u_k^2<\infty\right\}.
+\]
+This is a fundamental example of an infinite-dimensional Hilbert space. Its inner product is given by
+\[
+\langle u,v\rangle=\sum_{k=1}^\infty u_kv_k,
+\]
+which is the infinite-dimensional analogue of the Euclidean dot product.
+
+\subsection*{15.3. Separability}
+A Hilbert space is called separable if there exists a countable dense subset $H_0\subset H$. This is an important topological requirement, because it implies that every element of the space can be approximated by a sequence from a countable set and, in particular, guarantees the existence of a countable orthonormal basis. This makes the construction of measures and integrals much more manageable.
+
+\subsection*{15.4. Gaussian Measures on Hilbert Spaces}
+We now move from deterministic functional analysis to probability theory.
+
+\begin{definition}[Gaussian measure on a Hilbert space]
+A probability measure $\mu$ on $(H,\mathcal B(H))$ is called a Gaussian measure if, for every $h\in H$, the linear functional
+\[
+\ell_h:H\to\mathbb R,\qquad g\mapsto \langle g,h\rangle_H
+\]
+is normally distributed under $\mu$.
+\end{definition}
+
+Thus, a measure on a Hilbert space is Gaussian if every one-dimensional projection is a Gaussian random variable. By the Riesz representation theorem, every continuous linear functional on a Hilbert space can be represented as an inner product with some element $h\in H$, so this definition captures all continuous linear observations of the space.
+
+\subsection*{15.5. The Characteristic Function}
+The Gaussian property can be expressed through the characteristic function. There exist $m(h)\in\mathbb R$ and $\sigma^2(h)\in\mathbb R_+$ such that for all $t\in\mathbb R$,
+\[
+\int_H e^{it\ell_h(g)}\,\mu(dg)=e^{itm(h)-\frac12 t^2\sigma^2(h)}.
+\]
+This is exactly the characteristic function of a one-dimensional normal distribution with mean $m(h)$ and variance $\sigma^2(h)$.
+
+The variance term $\sigma^2(h)$ has a quadratic dependence on $h$. This points toward the covariance operator, which encodes the variance structure of the Gaussian measure across the infinite-dimensional space.
+
+\subsection*{15.6. Linearity of the Mean}
+Finally, the mean functional is linear. Indeed,
+\[
+\int_H \ell_{h_1+h_2}(g)\,\mu(dg)=\int_H \ell_{h_1}(g)\,\mu(dg)+\int_H \ell_{h_2}(g)\,\mu(dg).
+\]
+Since the mean of the projection $\ell_h$ is given by its integral with respect to $\mu$, it follows that
+\[
+m(h_1+h_2)=m(h_1)+m(h_2).
+\]
+
+This prepares the way for studying Gaussian noise in infinite-dimensional settings, which will be essential when returning to objects such as space-time white noise in SPDEs.
+
+\section*{16. Chapter 1: Stochastic Analysis on Hilbert Space}
+We now shift our focus to a new, deeply foundational topic: stochastic analysis on Hilbert space. This part introduces the concepts of infinite-dimensional spaces and the measures defined on them.
+
+\subsection*{16.1. The Setting: Hilbert Spaces and Operators}
+The fundamental mathematical stage for this chapter is the Hilbert space
+\[
+(L^2(\mu),\langle\cdot,\cdot\rangle),
+\]
+which represents the classic $L^2$ space of square-integrable functions with respect to a measure $\mu$, equipped with an inner product. A Hilbert space is a complete normed vector space. The inner product induces the norm, and completeness means that every Cauchy sequence converges within the space.
+
+Next consider linear operators acting between spaces. Let
+\[
+L:U\to V,
+\]
+where $U$ and $V$ are Hilbert spaces. A crucial analytic property is
+\[
+L \text{ is continuous}
+\quad\Longleftrightarrow\quad
+\sup_{\|u\|_U\le 1}\|Lu\|_V<\infty.
+\]
+Thus, a linear operator is continuous if and only if it is bounded. This is a bedrock principle of functional analysis.
+
+\subsection*{16.2. A Canonical Example: The $\ell^2$ Sequence Space}
+A quintessential example of an infinite-dimensional Hilbert space is the space of square-summable sequences, denoted by $\ell^2$. It is defined by
+\[
+\ell^2=\left\{(u_k)_{k\in\mathbb N}\in\mathbb R:\sum_{k=1}^{\infty}u_k^2<\infty\right\}.
+\]
+This means that one considers infinite sequences of real numbers for which the sum of their squares converges to a finite value. Its inner product is
+\[
+\langle u,v\rangle=\sum_{k=1}^{\infty}u_kv_k.
+\]
+This is the infinite-dimensional analogue of the standard Euclidean dot product.
+
+A Hilbert space is called separable if there exists a countable dense subset $H_0\subset H$. In infinite dimensions, spaces can be extremely large. Having a countable dense subset means that every element of the space can be approximated by a sequence from a countable set, which guarantees the existence of a countable orthonormal basis. This makes defining integrals and measures much more manageable.
+
+\subsection*{16.3. The Core Concept: Gaussian Measures on Hilbert Spaces}
+We now move from deterministic functional analysis to probability theory.
+
+Here $\mathcal B(H)$ denotes the Borel $\sigma$-algebra generated by the open sets of the Hilbert space.
+
+\begin{definition}[Gaussian measure]
+A probability measure $\mu$ on $(H,\mathcal B(H))$ is called Gaussian if for all $h\in H$ the linear functional
+\[
+\ell_h:H\to\mathbb R,\qquad g\mapsto \langle g,h\rangle_H
+\]
+is normally distributed under $\mu$.
+\end{definition}
+
+This means that if $g$ is distributed according to $\mu$ on $H$, then the real-valued random variable
+\[
+\ell_h(g)=\langle g,h\rangle_H
+\]
+has a one-dimensional normal distribution on $\mathbb R$. In other words, a measure on a Hilbert space is Gaussian if every one-dimensional projection is a Gaussian random variable.
+
+By the Riesz representation theorem, any continuous linear functional can be represented as a scalar product with an element of the Hilbert space. Thus, the inner products $\langle \cdot,h\rangle$ exhaust all continuous linear observations of the space.
+
+\subsection*{16.4. The Characteristic Function of the Projection $\ell_h$}
+To formalize the Gaussian property, there exist $m(h)\in\mathbb R$ and $\sigma^2(h)\in\mathbb R_+$ such that for all $t\in\mathbb R$,
+\[
+\int_H e^{it\ell_h(g)}\,\mu(dg)=e^{itm(h)-\frac12 t^2\sigma^2(h)}.
+\]
+This is the characteristic function of the real-valued random variable $\ell_h(g)=\langle g,h\rangle_H$ when $g$ is distributed according to $\mu$. It is exactly the characteristic function of a one-dimensional normal distribution with mean $m(h)$ and variance $\sigma^2(h)$.
+
+The variance term $\sigma^2(h)$ is not an arbitrary function of $h$. It has a quadratic dependence on $h$, meaning that there is a covariance operator $Q$ such that
+\[
+\sigma^2(h)=\langle Qh,h\rangle_H.
+\]
+Here the map $h\mapsto Qh$ is linear, and the variance is obtained by pairing $Qh$ again with $h$. This operator $Q$ encodes how the Gaussian measure spreads in different directions of the Hilbert space.
+
+Finally, the mean functional is linear. Indeed,
+\[
+\int_H \ell_{h_1+h_2}(g)\,\mu(dg)=\int_H \ell_{h_1}(g)\,\mu(dg)+\int_H \ell_{h_2}(g)\,\mu(dg).
+\]
+Because the mean of the projection $\ell_h$ is exactly its integral with respect to $\mu$, one has
+\[
+m(h_1+h_2)
+=
+\int_H \ell_{h_1+h_2}(g)\,\mu(dg)
+=
+\int_H \ell_{h_1}(g)\,\mu(dg)+\int_H \ell_{h_2}(g)\,\mu(dg)
+=
+m(h_1)+m(h_2).
+\]
+
+This page sets the stage for Gaussian noise spread across infinite dimensions, a concept that will be essential when returning to objects such as space-time white noise in stochastic partial differential equations.
+
+\section*{17. Gaussian Measures on Hilbert Spaces}
+We now continue from the previous discussion on defining Gaussian distributions via one-dimensional projections and formalize this with Theorem 1.6.
+
+\subsection*{17.1. The Characteristic Function of the Projection $\langle g,h\rangle_H$}
+\begin{theorem}[Theorem 1.6]
+A probability measure $\mu$ on $(H,\mathcal B(H))$ is Gaussian if and only if
+\[
+\int_H e^{i\langle g,h\rangle_H}\,\mu(dg)=e^{i\langle m,h\rangle_H-\frac12 \langle Qh,h\rangle_H}
+\qquad \text{for all } h\in H.
+\]
+\end{theorem}
+
+The left-hand side is the characteristic function of the real-valued projection $\langle g,h\rangle_H$, and the right-hand side is the infinite-dimensional analogue of the one-dimensional Gaussian Fourier transform
+\[
+e^{itm-\frac12 t^2\sigma^2},
+\]
+where the mean is represented by the inner product $\langle m,h\rangle_H$ and the variance is replaced by the quadratic form $\langle Qh,h\rangle_H$.
+Thus, this is the concrete Hilbert-space version of the abstract formula in 16.5, with $m(h)=\langle m,h\rangle_H$ and $\sigma^2(h)=\langle Qh,h\rangle_H$.
+
+\subsection*{17.2. The Parameters: Mean Vector and Covariance Operator}
+Below the theorem, the properties of the objects $m$ and $Q$ determine the shape of the Gaussian measure.
+
+First, $m\in H$ is the mean vector. Since $H$ is a Hilbert space, the mean is itself an element of the space.
+
+Next, the covariance operator
+\[
+Q:H\to H
+\]
+is linear and continuous, and it is symmetric in the sense that
+\[
+\langle Qh_1,h_2\rangle_H=\langle h_1,Qh_2\rangle_H.
+\]
+It is also positive semidefinite, that is,
+\[
+\langle Qh,h\rangle_H\ge 0
+\qquad \text{for all } h\in H.
+\]
+This is required because variances must be non-negative.
+
+\subsection*{17.3. The Trace Class Requirement}
+A crucial infinite-dimensional condition is that $Q$ must have finite trace. The trace is defined by
+\[
+\operatorname{tr}(Q)=\sum_{k=1}^{\infty}\langle Qe_k,e_k\rangle_H<\infty,
+\]
+where $\{e_k\}_{k\ge 1}$ is a complete orthonormal system (CONS) of the Hilbert space. The trace is finite for one, and hence for all, complete orthonormal systems of $H$. Thus, the total variance of the Gaussian measure is an invariant of the operator $Q$ and does not depend on the particular basis used to compute it.
+One cannot take the identity as the covariance operator in infinite dimensions. If the covariance were the identity, then all directions would carry the same variance. Geometrically, this means that small balls behave uniformly under rotations: one can rotate the same ball along different coordinate directions, and all these copies would have the same volume. In infinitely many dimensions, this would produce infinitely many disjoint balls of the same volume inside a bounded region. Then the total volume would be the same positive number added infinitely many times, which is impossible. Thus, the identity cannot be the covariance operator of a genuine Gaussian measure on an infinite-dimensional Hilbert space.
+
+The formula version is
+\[
+Q
+=
+\operatorname{Id}_H
+\quad\Longrightarrow\quad
+\operatorname{tr}(Q)
+=
+\operatorname{tr}(\operatorname{Id}_H)
+=
+\sum_{k=1}^{\infty}\langle e_k,e_k\rangle_H
+=
+\sum_{k=1}^{\infty}1
+=
+\infty.
+\]
+This violates the finite trace condition.
+Another way to see this is through Gaussian mass of balls in high dimensions: for every finite $R$,
+\[
+\mathcal N(0,\operatorname{Id}_n)\bigl(B_R(0)\bigr)\to 0
+\qquad \text{as } n\to\infty.
+\]
+Thus, if a standard normal distribution on an infinite-dimensional Hilbert space existed, it would assign zero mass to every finite-radius ball, which contradicts the fact that the whole space has mass one.
+
+More generally, there can be no Gaussian measure $\mu=\mathcal N(0,Q)$ on $H$ with bounded inverse $Q^{-1}$. To realize a Gaussian measure with covariance operator $\operatorname{Id}_H$, one must embed $H$ into a larger Hilbert space $H_1$ such that the embedding
+\[
+J:H\hookrightarrow H_1
+\]
+is Hilbert-Schmidt, that is,
+\[
+\sum_{k=1}^{\infty}\|Je_k\|_{H_1}^2<\infty
+\]
+for one, and hence for all, complete orthonormal systems $(e_k)$ of $H$.
+
+In this case one writes
+\[
+\mu=\mathcal N(m,Q),
+\]
+meaning that $\mu$ is the Gaussian measure with mean vector $m$ and covariance operator $Q$. The operator $Q$ is called the covariance operator of $\mu$.
+
+\subsection*{17.4. A Spectral Fact for Trace-Class Operators}
+The following functional analytic fact will be used repeatedly.
+
+\begin{proposition}[Proposition 1.10]
+Let $Q$ be linear, continuous, symmetric, positive semidefinite, and assume that
+\[
+\operatorname{tr}(Q)<\infty.
+\]
+Then there exists a complete orthonormal system $(e_k)_{k\ge 1}$ of $H$ consisting of eigenvectors of $Q$, that is,
+\[
+Qe_k=\lambda_k e_k,
+\qquad
+\lambda_k\ge 0.
+\]
+Moreover, $0$ is the only accumulation point of the sequence of eigenvalues $(\lambda_k)_{k\ge 1}$, and
+\[
+\sum_{k=1}^{\infty}\lambda_k=\operatorname{tr}(Q)<\infty.
+\]
+\end{proposition}
+
+This gives the canonical spectral decomposition of a positive trace-class operator and prepares the way for representing Gaussian measures through their eigenvalues and eigenvectors.
+
+\subsection*{17.5. Three Fundamental Properties}
+Three basic identities follow from the definition.
+Recall that
+\[
+\ell_h:H\to\mathbb R,\qquad \ell_h(x)=\langle x,h\rangle_H.
+\]
+So $\ell_h$ is the linear functional associated with the vector $h$. It takes an element $x\in H$ and returns the scalar projection of $x$ onto $h$.
+
+That is why
+\[
+E_\mu(\ell_h)
+=
+\int_H \ell_h(x)\,\mu(dx)
+=
+\int_H \langle x,h\rangle_H\,\mu(dx).
+\]
+
+First, the expected value of a linear projection is
+\[
+\int_H \langle x,h\rangle_H\,\mu(dx)=\langle m,h\rangle_H.
+\]
+
+Second, the covariance between two linear projections is
+\begin{align*}
+\operatorname{Cov}(\ell_{h_1},\ell_{h_2})
+&=
+E_\mu\bigl[(\ell_{h_1}-E_\mu\ell_{h_1})(\ell_{h_2}-E_\mu\ell_{h_2})\bigr] \\
+&=
+\int_H
+\bigl(\langle x,h_1\rangle_H-\langle m,h_1\rangle_H\bigr)
+\bigl(\langle x,h_2\rangle_H-\langle m,h_2\rangle_H\bigr)\,\mu(dx) \\
+&=
+\langle Qh_1,h_2\rangle_H \\
+&=
+\langle h_1,Qh_2\rangle_H.
+\end{align*}
+This shows how the operator $Q$ acts in practice: the covariance between two projections is obtained by applying $Q$ to one direction and taking the inner product with the other.
+
+Third, the expected squared distance from the mean is
+\[
+\int_H \|x-m\|_H^2\,\mu(dx).
+\]
+Using Parseval's identity with an orthonormal basis $\{e_k\}$ gives
+\[
+\int_H \|x-m\|_H^2\,\mu(dx)
+=
+\int_H \sum_{k=1}^{\infty}\langle x-m,e_k\rangle_H^2\,\mu(dx).
+\]
+By Fubini's theorem, or by monotone convergence,
+\[
+\int_H \|x-m\|_H^2\,\mu(dx)
+=
+\sum_{k=1}^{\infty}\int_H \langle x-m,e_k\rangle_H^2\,\mu(dx).
+\]
+Recall the covariance identity
+\[
+\int_H
+\bigl(\langle x,h_1\rangle_H-\langle m,h_1\rangle_H\bigr)
+\bigl(\langle x,h_2\rangle_H-\langle m,h_2\rangle_H\bigr)\,\mu(dx)
+=
+\langle Qh_1,h_2\rangle_H.
+\]
+Applying this identity with $h_1=h_2=e_k$ gives
+\[
+\int_H \langle x-m,e_k\rangle_H^2\,\mu(dx)=\langle Qe_k,e_k\rangle_H.
+\]
+Therefore,
+\[
+\int_H \|x-m\|_H^2\,\mu(dx)
+=
+\sum_{k=1}^{\infty}\langle Qe_k,e_k\rangle_H
+=
+\operatorname{tr}(Q).
+\]
+This proves that the expected squared deviation of a Gaussian random variable in a Hilbert space is exactly the trace of its covariance operator.
+Recall Parseval's identity:
+\[
+\|x\|_H^2=\sum_{i=1}^{\infty}x_i^2=\sum_{i=1}^{\infty}\langle x,e_i\rangle_H^2.
+\]
+This summarizes the trace computation above. It says that the squared norm of an element of the Hilbert space can be decomposed into the sum of the squared projections along an orthonormal basis.
+
+\section*{18. Wiener Measure}
+We now transition from the abstract definitions of Gaussian measures on Hilbert spaces to one of the most important concrete examples in probability theory: the Wiener measure.
+
+\subsection*{18.1. The Path Mapping: Random Variables as Functions}
+Consider a standard one-dimensional Brownian motion $(\beta(t))_{t\in[0,T]}$ on a probability space $(\Omega,\mathcal F,\mathbb P)$. The goal is to use this Brownian motion to construct a measure on a Hilbert space.
+
+The key observation is that in infinite dimensions one maps an outcome not to a real number, but to an entire function. Define
+\[
+\beta_{\cdot}:\Omega\to C([0,T])\subseteq L^2([0,T]),
+\qquad
+\omega\mapsto (t\mapsto \beta(t,\omega)),
+\]
+This is the sample path, or trajectory, of the Brownian motion. One often writes $\beta(\cdot)$ when the dependence on $\omega$ is suppressed. Since every continuous function on $[0,T]$ is square-integrable, one has
+\[
+C([0,T])\subseteq L^2([0,T]).
+\]
+Therefore the Brownian path can be viewed as an element of the Hilbert space $L^2([0,T])$.
+
+\subsection*{18.2. Measurability and the Induced Measure}
+For this construction to be rigorous, the mapping $\beta_{\cdot}$ must be measurable with respect to the Borel $\sigma$-algebra on $L^2([0,T])$. Since it is measurable, one can push the underlying probability measure forward and define a new measure on the Hilbert space by
+\[
+\mu(A)=\mathbb P(\beta(\cdot)\in A),
+\qquad
+A\in \mathcal B(L^2([0,T])).
+\]
+This measure $\mu$ is the Wiener measure. It gives the probability that the Brownian trajectory belongs to a measurable set of functions $A$.
+
+\subsection*{18.3. Proving that the Mean is Zero}
+The next claim is that $\mu$ is Gaussian with mean $0$, that is, it is centered. To prove this, one checks that the expectation of each linear projection is zero.
+
+Let $h\in L^2([0,T])$. Then
+\[
+\mathbb E_{\mu}(\ell_h)
+=
+\mathbb E(\ell_h(\beta))
+=
+\mathbb E(\ell_h(\beta(\cdot))).
+\]
+By the Riesz representation theorem, the linear functional $\ell_h$ can be written as an inner product in $L^2([0,T])$, so
+\[
+\ell_h(f)=\langle f,h\rangle_{L^2([0,T])}=\int_0^T f(s)h(s)\,ds
+\]
+for $f\in L^2([0,T])$. Applying this with $f=\beta$ in $L^2([0,T])$ gives
+\[
+\mathbb E_{\mu}(\ell_h)
+=
+\mathbb E\left(\int_0^T h(s)\beta(s)\,ds\right).
+\]
+By Fubini's theorem,
+\[
+\mathbb E_{\mu}(\ell_h)
+=
+\int_0^T h(s)\mathbb E(\beta(s))\,ds.
+\]
+Since a standard Brownian motion satisfies
+\[
+\mathbb E(\beta(s))=0
+\qquad \text{for all } s\in[0,T],
+\]
+it follows that
+\[
+\mathbb E_{\mu}(\ell_h)=0.
+\]
+Therefore the mean vector of the Wiener measure on $L^2([0,T])$ is the zero function.
+
+\section*{19. The Covariance Operator of the Wiener Measure}
+We now turn to the second fundamental characteristic of the Wiener measure on the Hilbert space $L^2([0,T])$: the covariance operator $Q$. The goal is to identify this operator explicitly.
+
+\subsection*{19.1. Formulating the Covariance}
+Since the Wiener measure is centered, one has $E_\mu(\ell_g)=E_\mu(\ell_h)=0$, and therefore the covariance reduces to the expectation of the product:
+\[
+\operatorname{Cov}(\ell_g,\ell_h)=\mathbb E(\ell_g\ell_h).
+\]
+Substituting the Brownian path into the functionals gives
+\[
+\operatorname{Cov}(\ell_g,\ell_h)=\mathbb E(\ell_g(\beta)\ell_h(\beta)).
+\]
+
+\subsection*{19.2. Expanding into Double Integrals and Applying Fubini's Theorem}
+Using the Riesz representation theorem, the linear functionals can be written as $L^2$ inner products over the interval $[0,T]$, so
+\[
+\operatorname{Cov}(\ell_g,\ell_h)
+=
+\mathbb E\left(\left(\int_0^T g(s)\beta(s)\,ds\right)\left(\int_0^T h(t)\beta(t)\,dt\right)\right).
+\]
+Rewriting the product of integrals as a double integral and applying Fubini's theorem yields
+\[
+\operatorname{Cov}(\ell_g,\ell_h)
+=
+\int_0^T\int_0^T g(s)h(t)\mathbb E(\beta(s)\beta(t))\,ds\,dt.
+\]
+For a standard Brownian motion,
+\[
+\mathbb E(\beta(s)\beta(t))=s\wedge t=\min(s,t).
+\]
+Substituting this identity gives
+\[
+\operatorname{Cov}(\ell_g,\ell_h)
+=
+\int_0^T\int_0^T g(s)h(t)(s\wedge t)\,ds\,dt.
+\]
+
+\subsection*{19.3. Isolating the Covariance Operator $Q$}
+By definition, the covariance operator is characterized by the bilinear form
+\[
+\operatorname{Cov}(\ell_g,\ell_h)=\langle Qg,h\rangle_{L^2([0,T])}.
+\]
+To identify $Q$, rewrite the double integral in the form of an $L^2$ inner product:
+\[
+\operatorname{Cov}(\ell_g,\ell_h)
+=
+\int_0^T \left(\int_0^T g(s)(s\wedge t)\,ds\right)h(t)\,dt.
+\]
+View the inner integral as a function of $t$ and denote it by $Qg$, where $Q$ is the integral operator
+\[
+Qg(t)=\int_0^T g(s)(s\wedge t)\,ds.
+\]
+Then, by definition of the $L^2$ inner product,
+\[
+\langle Qg,h\rangle
+=
+\int_0^T \left(\int_0^T g(s)(s\wedge t)\,ds\right)h(t)\,dt,
+\]
+which identifies $Q$ as the covariance operator.
+
+\subsection*{19.4. Splitting the Integral Operator}
+Because the minimum $s\wedge t$ changes its form according to whether $s\le t$ or $s>t$, split the integral over $[0,T]$ into the intervals $[0,t]$ and $[t,T]$. On $[0,t]$, one has $s\wedge t=s$, while on $[t,T]$, one has $s\wedge t=t$. Therefore,
+\[
+Qg(t)
+=
+\int_0^t g(s)s\,ds+t\int_t^T g(s)\,ds.
+\]
+This is a useful explicit form of the covariance operator.
+
+This operator is closely related to the fundamental solution of the Laplace operator. Its boundary behavior can be read off from the explicit formula.
+
+At $t=0$,
+\[
+Qg(0)=0,
+\]
+which is a Dirichlet boundary condition.
+
+At the other endpoint, the derivative satisfies
+\[
+(Qg)'(T)=0,
+\]
+which is a Neumann boundary condition.
+
+Differentiate the split formula:
+\[
+(Qg)'(t)
+=
+\frac{d}{dt}\left(\int_0^t g(s)s\,ds+t\int_t^T g(s)\,ds\right).
+\]
+Using the fundamental theorem of calculus on the first term and the product rule on the second term gives
+\[
+(Qg)'(t)
+=
+g(t)t+\frac{d}{dt}\left(t\int_t^T g(s)\,ds\right).
+\]
+For the second term,
+\[
+\frac{d}{dt}\left(t\int_t^T g(s)\,ds\right)
+=
+\int_t^T g(s)\,ds+t\frac{d}{dt}\left(\int_t^T g(s)\,ds\right)
+=
+\int_t^T g(s)\,ds-tg(t).
+\]
+Hence,
+\[
+(Qg)'(t)=g(t)t+\int_t^T g(s)\,ds-tg(t).
+\]
+The terms $g(t)t$ and $-tg(t)$ cancel, so
+\[
+(Qg)'(t)=\int_t^T g(s)\,ds.
+\]
+Evaluating at $t=T$ yields
+\[
+(Qg)'(T)=\int_T^T g(s)\,ds=0,
+\]
+which proves the Neumann boundary condition. Differentiating once more gives
+\[
+(Qg)''(t)=-g(t),
+\]
+showing that $Q$ is the inverse of the Laplacian in this sense.
+
+\section*{20. The Covariance Operator as the Inverse Laplacian}
+The covariance operator of the Wiener measure can be identified with the inverse of the negative Laplacian.
+
+From the previous derivation,
+\[
+(Qg)'(t)=\int_t^T g(s)\,ds.
+\]
+Applying the fundamental theorem of calculus,
+\[
+\frac{d}{dt}\int_t^T g(s)\,ds=-g(t).
+\]
+Therefore, differentiating once more gives
+\[
+(Qg)''(t)=-g(t).
+\]
+This leads directly to the realization that
+\[
+Q=(-\Delta)^{-1},
+\]
+that is, the covariance operator for the standard Wiener measure is the inverse of the negative one-dimensional Laplacian.
+
+This inversion is not understood without boundary conditions. A differential operator such as the Laplacian cannot simply be inverted on its own, since one must specify the boundary conditions. Here one denotes the Laplace operator by $\Delta_x$ and imposes Dirichlet boundary conditions. Probabilistically, this corresponds to a fixed starting point at $0$, which matches the condition
+\[
+Qg(0)=0.
+\]
+
+Different boundary conditions lead to different Gaussian path measures. In particular, pinning both endpoints leads to the Brownian bridge, which may be viewed as a related Gaussian measure on path space.
+
+\section*{21. The Impossibility of Lebesgue Measure in Infinite Dimensions}
+One cannot identify a Lebesgue measure on an infinite-dimensional space. In finite dimensions, Lebesgue measure is translation-invariant, so a set keeps the same volume under translation. In infinite dimensions, one may take a small ball and rotate it along different coordinate directions; under a Lebesgue-type measure, all of these rotated balls would have the same volume, and one could produce infinitely many such disjoint balls inside a bounded region. This would lead to
+\[
+\sum_{i=1}^{\infty} \operatorname{Vol}(\text{ball}).
+\]
+Because one is adding the same non-zero number infinitely many times, the sum diverges. It cannot be equal to $1$.
 
 \section*{Appendix}
 \subsection*{A.1. Brownian Motion}
@@ -262,7 +1049,7 @@ Since $(B_t^i)_i$ are independent and identically distributed, so are $(Z_i)_i$.
 \xrightarrow[N\to\infty]{\text{a.s.}}
 \mathbb E[f(B_t+x_0)].
 \]
-This is exactly the convergence used in Section 2.
+This is exactly the convergence used earlier in the notes.
 \end{remark}
 
 \subsection*{A.5. Types of Convergence for Random Variables}
@@ -423,6 +1210,338 @@ So in our note,
 p(t,x)\,dx\to\delta_{x_0}(dx)\quad (t\downarrow0)
 \]
 means the probability law with density $p(t,x)$ converges to a point mass at $x_0$.
+\end{remark}
+
+\subsection*{A.10. Notation for $\eta_t^N$, $\eta_t$, and Their Densities}
+\begin{remark}[Notation guide]
+Several closely related symbols appear throughout these notes:
+\[
+\eta_t^N(f)=\frac{1}{N}\sum_{i=1}^N f(B_t^i+x_0).
+\]
+This is the empirical average of the test function $f$ over the $N$ particles at time $t$.
+
+The corresponding empirical measure is
+\[
+\eta_t^N(dx)=\frac{1}{N}\sum_{i=1}^N \delta_{B_t^i+x_0}(dx).
+\]
+Thus $\eta_t^N(f)$ means the empirical measure tested against $f$:
+\[
+\eta_t^N(f)=\int_{\mathbb R} f(x)\,\eta_t^N(dx).
+\]
+
+In the macroscopic limit, the deterministic limiting measure is denoted by
+\[
+\eta_t(dx)=p(t,x)\,dx.
+\]
+Accordingly,
+\[
+\eta_t(f)=\int_{\mathbb R} f(x)\,\eta_t(dx)=\int_{\mathbb R} f(x)\,p(t,x)\,dx.
+\]
+
+Whenever we formally write $\eta_t^N(x)$ or $\eta_t(x)$, this means that the corresponding measure is being represented by a density with respect to Lebesgue measure:
+\[
+\eta_t^N(dx)=\eta_t^N(x)\,dx,
+\qquad
+\eta_t(dx)=\eta_t(x)\,dx.
+\]
+In particular, for the limiting measure one has
+\[
+\eta_t(x)=p(t,x).
+\]
+Here $\eta_t$ denotes the measure, while $\eta_t(x)$ denotes its density with respect to Lebesgue measure.
+Thus, $\eta_t(x)=p(t,x)$ means that the density of the limiting measure $\eta_t$ is exactly the heat kernel $p(t,x)$.
+\end{remark}
+
+\subsection*{A.11. Space-Time White Noise}
+\begin{definition}[Space-time white noise]
+Space-time white noise is a generalized Gaussian field $\xi(t,x)$ with covariance
+\[
+\mathbb E[\xi(t,x)\xi(s,y)]=\delta(t-s)\delta(x-y).
+\]
+This means that the noise is formally uncorrelated in both time and space.
+\end{definition}
+
+\begin{remark}
+The symbol $\xi(t,x)$ should not be understood as an ordinary function of $(t,x)$. It is a distribution-valued object, so expressions such as $\xi(t,x)$ or $d\xi(t,x)$ are formal notations for stochastic integration against this noise.
+\end{remark}
+
+\begin{remark}
+Formally, one may think of $\xi(t,x)$ as the derivative of a Brownian sheet $W(t,x)$:
+\[
+\xi(t,x)=\partial_t\partial_x W(t,x).
+\]
+This identity is only symbolic, because the Brownian sheet is not classically differentiable in either variable.
+\end{remark}
+
+\begin{remark}
+Accordingly, an expression of the form
+\[
+\int_0^t \int_{\mathbb R} g(s,x)\,d\xi(s,x)
+\]
+denotes stochastic integration with respect to space-time white noise. Its quadratic variation is given formally by
+\[
+\left\langle \int_0^t \int_{\mathbb R} g(s,x)\,d\xi(s,x)\right\rangle_t
+=
+\int_0^t \int_{\mathbb R} g(s,x)^2\,dx\,ds.
+\]
+\end{remark}
+
+\subsection*{A.12. Brownian Sheet}
+\begin{definition}[Brownian sheet]
+A Brownian sheet is a two-parameter Gaussian random field
+\[
+W(t,x), \qquad t\ge 0,\ x\ge 0,
+\]
+with mean zero and covariance
+\[
+\mathbb E[W(t,x)W(s,y)]=(t\wedge s)(x\wedge y).
+\]
+\end{definition}
+
+\begin{remark}
+It is the natural two-parameter analogue of Brownian motion. While Brownian motion is indexed by one variable, usually time, the Brownian sheet is indexed by both time and space and can be viewed heuristically as a random surface.
+\end{remark}
+
+\begin{remark}
+Space-time white noise can be understood formally as the mixed derivative of the Brownian sheet:
+\[
+\xi(t,x)=\partial_t\partial_x W(t,x).
+\]
+This identity is only symbolic, since the Brownian sheet is not classically differentiable in either variable.
+\end{remark}
+
+\subsection*{A.13. Quadratic Variation Identities Used in the Fluctuation Argument}
+\begin{lemma}
+For the martingale term
+\[
+M_t^N(f)=\frac{1}{N}\sum_{i=1}^N \int_0^t f'(B_s^i+x_0)\,dB_s^i,
+\]
+one has
+\[
+\left\langle
+\frac{1}{N}\sum_{i=1}^N \int_0^t f'(B_s^i+x_0)\,dB_s^i
+\right\rangle_t
+=
+\frac{1}{N}\int_0^t \eta_s^N((f')^2)\,ds.
+\]
+Moreover,
+\[
+\left\langle
+\frac{1}{\sqrt{N}}\int_0^t \sqrt{\eta_s^N((f')^2)}\,dB_s
+\right\rangle_t
+=
+\frac{1}{N}\int_0^t \eta_s^N((f')^2)\,ds.
+\]
+\end{lemma}
+
+\begin{proof}
+For the first identity, use that the Brownian motions $B^1,\dots,B^N$ are independent. Hence the cross-variations vanish, and
+\[
+\left\langle
+\frac{1}{N}\sum_{i=1}^N \int_0^\cdot f'(B_s^i+x_0)\,dB_s^i
+\right\rangle_t
+=
+\frac{1}{N^2}\sum_{i=1}^N
+\left\langle
+\int_0^\cdot f'(B_s^i+x_0)\,dB_s^i
+\right\rangle_t.
+\]
+The quadratic variation of each It\^o integral is the time integral of the squared integrand, so
+\[
+=
+\frac{1}{N^2}\sum_{i=1}^N \int_0^t f'(B_s^i+x_0)^2\,ds.
+\]
+Recognizing the empirical measure in the sum gives
+\[
+=
+\frac{1}{N}\int_0^t \eta_s^N((f')^2)\,ds.
+\]
+
+For the second identity, apply the general rule
+\[
+\left\langle \int_0^t H_s\,dB_s\right\rangle_t=\int_0^t H_s^2\,ds
+\]
+with
+\[
+H_s=\frac{1}{\sqrt{N}}\sqrt{\eta_s^N((f')^2)}.
+\]
+Then
+\[
+\left\langle
+\frac{1}{\sqrt{N}}\int_0^t \sqrt{\eta_s^N((f')^2)}\,dB_s
+\right\rangle_t
+=
+\int_0^t \frac{1}{N}\eta_s^N((f')^2)\,ds
+=
+\frac{1}{N}\int_0^t \eta_s^N((f')^2)\,ds.
+\]
+This proves the claim.
+\end{proof}
+
+\subsection*{A.14. Random Elements Distributed According to a Measure}
+\begin{definition}[Law of a random element]
+Let $(\Omega,\mathcal F,\mathbb P)$ be a probability space and let
+\[
+g:\Omega\to H
+\]
+be an $H$-valued random element. Its law is the probability measure $\mu$ on $(H,\mathcal B(H))$ defined by
+\[
+\mu(A)=\mathbb P(g\in A),
+\qquad A\in\mathcal B(H).
+\]
+\end{definition}
+
+\begin{remark}
+Saying that $g$ is distributed according to $\mu$ means exactly that the law of $g$ is $\mu$. In other words, for every Borel set $A\subset H$,
+\[
+\mathbb P(g\in A)=\mu(A).
+\]
+Thus $\mu$ describes how the random point $g$ is distributed over the Hilbert space.
+\end{remark}
+
+\begin{remark}
+If $h\in H$ is fixed, then
+\[
+\ell_h(g)=\langle g,h\rangle_H
+\]
+is a real-valued random variable obtained by projecting the random element $g$ onto the direction $h$. This is the object whose distribution is required to be Gaussian in the definition of a Gaussian measure on a Hilbert space.
+\end{remark}
+
+\subsection*{A.15. The First Two Identities for the Gaussian Measure}
+\begin{lemma}
+Let $\mu=\mathcal N(m,Q)$ on $(H,\mathcal B(H))$. Then for all $h,h_1,h_2\in H$,
+\[
+\int_H \langle x,h\rangle_H\,\mu(dx)=\langle m,h\rangle_H
+\]
+and
+\[
+\int_H
+\bigl(\langle x,h_1\rangle_H-\langle m,h_1\rangle_H\bigr)
+\bigl(\langle x,h_2\rangle_H-\langle m,h_2\rangle_H\bigr)\,\mu(dx)
+=
+\langle Qh_1,h_2\rangle_H.
+\]
+\end{lemma}
+
+\begin{proof}
+Fix $h\in H$. By the characteristic function formula,
+\[
+\varphi_h(t):=\int_H e^{it\langle x,h\rangle_H}\,\mu(dx)
+=
+e^{it\langle m,h\rangle_H-\frac12 t^2\langle Qh,h\rangle_H}.
+\]
+Differentiating at $t=0$ gives
+\[
+\varphi_h'(0)
+=
+i\int_H \langle x,h\rangle_H\,\mu(dx)
+=
+i\langle m,h\rangle_H.
+\]
+Therefore,
+\[
+\int_H \langle x,h\rangle_H\,\mu(dx)=\langle m,h\rangle_H.
+\]
+
+For the covariance identity, fix $h_1,h_2\in H$ and consider the centered random variables
+\[
+Y_j(x):=\langle x,h_j\rangle_H-\langle m,h_j\rangle_H,
+\qquad j=1,2.
+\]
+For $s,t\in\mathbb R$, the characteristic function of $sY_1+tY_2$ is
+\[
+\int_H e^{i(sY_1(x)+tY_2(x))}\,\mu(dx)
+=
+e^{-\frac12\langle Q(sh_1+th_2),sh_1+th_2\rangle_H}.
+\]
+Expanding the quadratic form gives
+\[
+\langle Q(sh_1+th_2),sh_1+th_2\rangle_H
+=
+s^2\langle Qh_1,h_1\rangle_H+2st\langle Qh_1,h_2\rangle_H+t^2\langle Qh_2,h_2\rangle_H.
+\]
+Differentiating the characteristic function once in $s$ and once in $t$ at $(0,0)$ yields
+\[
+-\int_H Y_1(x)Y_2(x)\,\mu(dx)=-\langle Qh_1,h_2\rangle_H.
+\]
+Hence
+\[
+\int_H
+\bigl(\langle x,h_1\rangle_H-\langle m,h_1\rangle_H\bigr)
+\bigl(\langle x,h_2\rangle_H-\langle m,h_2\rangle_H\bigr)\,\mu(dx)
+=
+\langle Qh_1,h_2\rangle_H.
+\]
+This proves the claim.
+\end{proof}
+
+\subsection*{A.16. Gaussian Martingales}
+\begin{definition}[Gaussian martingale]
+A continuous martingale $(M_t)_{t\ge 0}$ is called a Gaussian martingale if, for every finite collection of times
+\[
+0\le t_1<\cdots < t_n,
+\]
+the random vector
+\[
+(M_{t_1},\dots,M_{t_n})
+\]
+has a multivariate Gaussian distribution.
+\end{definition}
+
+\begin{remark}
+Brownian motion is the standard example of a Gaussian martingale. More generally, if
+\[
+M_t=\int_0^t H_s\,dB_s
+\]
+with deterministic square-integrable integrand $H$, then $M$ is again a Gaussian martingale and
+\[
+\langle M\rangle_t=\int_0^t H_s^2\,ds.
+\]
+If the bracket is not equal to $t$, then $M$ is usually not a Brownian motion, even though it is still Gaussian.
+\end{remark}
+
+\begin{remark}
+In the fluctuation argument of this lecture, the limit
+\[
+\int_0^t \sqrt{\eta_s((f')^2)}\,dB_s
+\]
+is described as a Gaussian martingale. For each fixed time $t$, it is a centered normal random variable with variance
+\[
+\int_0^t \eta_s((f')^2)\,ds,
+\]
+and as a process its covariance structure is determined by its quadratic variation.
+\end{remark}
+
+\subsection*{A.17. Characteristic Functions in Finite and Infinite Dimensions}
+\begin{remark}
+If $X$ is an $\mathbb R^n$-valued random variable, then its characteristic function is
+\[
+\varphi_X(\xi)=\mathbb E\bigl[e^{i\xi\cdot X}\bigr],
+\qquad
+\xi\in\mathbb R^n.
+\]
+For a Gaussian random vector $X\sim \mathcal N(m,Q)$ on $\mathbb R^n$, this becomes
+\[
+\varphi_X(\xi)=e^{i\xi\cdot m-\frac12 \xi\cdot Q\xi}.
+\]
+\end{remark}
+
+\begin{remark}
+On a Hilbert space $H$, one uses the same idea, but the role of the finite-dimensional parameter $\xi$ is taken by a direction $h\in H$. If $\mu$ is a probability measure on $H$, then the characteristic function of the one-dimensional projection
+\[
+\ell_h(g)=\langle g,h\rangle_H
+\]
+is
+\[
+\int_H e^{i\langle g,h\rangle_H}\,\mu(dg).
+\]
+If $\mu=\mathcal N(m,Q)$ is Gaussian on $H$, then
+\[
+\int_H e^{i\langle g,h\rangle_H}\,\mu(dg)
+=
+e^{i\langle m,h\rangle_H-\frac12\langle Qh,h\rangle_H}.
+\]
+Thus, the infinite-dimensional formula is the Hilbert-space analogue of the finite-dimensional Gaussian characteristic function, with the scalar product replacing the Euclidean dot product.
 \end{remark}
 
 \end{document}
