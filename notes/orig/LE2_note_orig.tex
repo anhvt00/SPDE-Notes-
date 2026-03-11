@@ -25,22 +25,29 @@
 This lecture develops Gaussian measures on Hilbert spaces, establishes the trace and spectral properties of the covariance operator, and introduces the canonical construction of the \(Q\)-Wiener process.
 
 \section*{1. Foundation: Gaussian Measures on Hilbert Spaces}
-We establish our setting on a real, separable Hilbert space, denoted as $H$, equipped with an inner product $\langle \cdot,\cdot\rangle$.
+We begin by fixing a real, separable Hilbert space, denoted by $H$, equipped with an inner product $\langle \cdot,\cdot\rangle$.
 
-We define a probability measure $\mu$ on the Borel $\sigma$-algebra $(H,\mathcal B(H))$ to be a Gaussian measure if and only if its characteristic function satisfies the following equality for all $h\in H$:
+We define a probability measure $\mu$ on the Borel $\sigma$-algebra $(H,\mathcal B(H))$ to be a Gaussian measure if and only if, for every $h\in H$, the one-dimensional projection
 \[
-\int_H e^{i\langle h,u\rangle}\,\mu(du)=e^{im(h)-\frac{1}{2}\sigma^2(h)}.
+\ell_h(u)=\langle h,u\rangle
+\]
+has characteristic function
+\[
+\int_H e^{it\ell_h(u)}\,\mu(du)=e^{itm(h)-\frac{1}{2}t^2\sigma^2(h)}
+\qquad \text{for all } t\in\mathbb R.
 \]
 
 \section*{2. Theorem 1.6: Characterization of the Measure}
-Theorem 1.6 gives us the explicit conditions for this measure.
+Having fixed the setting, we now state the abstract characterization of Gaussian measures on $H$.
 
 \begin{theorem}[Theorem 1.6]
-The measure $\mu$ is Gaussian on $H$ if and only if the characteristic function can be represented as
+The measure $\mu$ is Gaussian on $H$ if and only if its characteristic function in the direction $h$ can be represented as
 \[
 \int_H e^{i\langle h,u\rangle}\,\mu(du)=e^{i\langle m,h\rangle-\frac{1}{2}\langle Qh,h\rangle}.
 \]
 \end{theorem}
+
+The left-hand side is the characteristic function of the measure $\mu$ in the direction $h$, equivalently the characteristic function of the real-valued projection $\ell_h(u)=\langle h,u\rangle$.
 
 From this theorem, we extract two fundamental components mapping from $H$:
 
@@ -55,7 +62,8 @@ For this to hold, the covariance operator $Q$ must satisfy strict conditions: it
 If the trace is finite for one CONS, it is finite for all such systems.
 
 \section*{3. Application: The Brownian Bridge and the Inverse Dirichlet Laplacian}
-Before turning to the proof of Theorem 1.6, note a practical illustration involving a Brownian bridge process defined on the time interval $[0,T]$.
+With the general characterization in place, consider a first example given by the Brownian bridge on the time interval $[0,T]$.
+The Brownian bridge process may be viewed as Brownian motion conditioned to return to the prescribed terminal point at time $T$. Equivalently, the law of the Brownian bridge is the distribution of Brownian motion under this conditioning. In the present case, the process is pinned at $0$ at the initial time and again at $0$ at time $T$, although one could also choose arbitrary initial and terminal positions.
 
 We consider the inverse Dirichlet Laplacian operator, denoted $(-\Delta_D)^{-1}$, acting on the space $L^2([0,T])$. The action of this operator on a function $g(t)$ is given by the integral equation
 \[
@@ -64,31 +72,46 @@ We consider the inverse Dirichlet Laplacian operator, denoted $(-\Delta_D)^{-1}$
 The kernel of this integral, \(\left(s\wedge t-\frac{st}{T}\right)\), is the fundamental solution. By evaluating this fundamental solution at the boundaries $t=0$ and $t=T$, one sees that it trivially equals $0$, satisfying the required Dirichlet boundary conditions.
 
 \section*{4. Sketch of the Proof for Theorem 1.6}
-Return now to the proof of Theorem 1.6, and outline the forward implication \(\Rightarrow\).
+After this example, return to the forward implication \(\Rightarrow\) in Theorem 1.6.
+What one has is that for every \(h\in H\), the projection \(\ell_h(u)=\langle h,u\rangle\) is a one-dimensional Gaussian random variable under \(\mu\). The goal is to point out that there exist a mean vector \(m\in H\) and a covariance operator \(Q\) such that these scalar Gaussian projections admit the Hilbert-space representation \(\mu=\mathcal N(m,Q)\).
 
-First, we define a functional
+The sketch of the proof is as follows:
+\begin{itemize}
+\item First, define the functional
 \[
 \ell_h(u):=\langle h,u\rangle,
 \]
-which is both linear and continuous. One must show that the mapping \(h\mapsto m(h)\) is equal to the expectation of this functional, \(E(\ell_h)\).
+which is linear and continuous. This identifies the one-dimensional projections that appear in the definition of the Gaussian measure.
 
-To rigorously establish this, one must prove that the operator norm is bounded, meaning
+\item Next, show that the mapping \(h\mapsto m(h)\) is equal to the expectation of this functional, \(E(\ell_h)\), and prove that it is bounded on the unit ball in order to obtain continuity, that is,
 \[
 \sup_{\|h\|\le 1} m(h)<\infty.
 \]
-To this end, define closed subsets \(H_n\) within our Hilbert space by
+This gives the existence of a continuous linear functional representing the mean.
+
+\item To obtain this boundedness, introduce the closed subsets
 \[
-H_n:=\left\{h\in H:\int_H |\ell_h(u)|\,\mu(du)\le n\right\}\subset H.
+H_n:=\left\{h\in H:\int_H |\ell_h(u)|\,\mu(du)\le n\right\}\subset H,
 \]
-The proof concludes by applying the Baire Category Theorem, utilizing the fact that the entire Hilbert space can be represented as the countable union of these closed subsets:
+and use the decomposition
 \[
 H=\bigcup_{n\ge 1} H_n.
 \]
+This is not merely a formal decomposition. It reflects that the Gaussian measure is concentrated on the underlying Hilbert space, so the relevant first moments of the projections remain finite on \(H\).
+The Baire Category Theorem then yields an interior point argument that gives the desired bound on \(m\), and therefore the existence of a mean vector \(m\in H\).
 
-As we already established the closed subsets $H_n$ to investigate the boundedness of our mean functional, we now do the rigorous extraction of those bounds using the Baire Category Theorem, and then construct the covariance operator.
+\item Finally, use the centered second moments of the projections to define the covariance bilinear form and thereby construct the covariance operator \(Q\). This establishes the existence of the covariance operator and completes the Hilbert-space representation \(\mu=\mathcal N(m,Q)\).
+\end{itemize}
+
+We now make this boundedness argument rigorous and then construct the covariance operator.
 
 \section*{5. Fatou's Lemma and the Closedness of $H_n$}
-One must first confirm that the subsets $H_n$ are closed. Let $h_n\to h$ be a convergent sequence in our Hilbert space $H$. By the continuity of the inner product, our linear functional converges pointwise:
+To begin the proof, first show that the sets $H_n$ are closed. Let $(h_n)_{n\ge 1}$ be a sequence in $H_n$ such that
+\[
+h_n\to h
+\qquad \text{in } H.
+\]
+By the continuity of the inner product, our linear functional converges pointwise:
 \[
 |\ell_{h_n}(u)|\to |\ell_h(u)|.
 \]
@@ -96,29 +119,42 @@ Apply Fatou's Lemma to the integrals with respect to our measure $\mu$:
 \[
 \int_H |\ell_h(u)|\,\mu(du)\le \liminf_{n\to\infty}\int_H |\ell_{h_n}(u)|\,\mu(du).
 \]
-This inequality rigorously proves that the sets $H_n$ are closed.
+But every $h_n\in H_n$, so
+\[
+\int_H |\ell_{h_n}(u)|\,\mu(du)\le n
+\qquad \text{for all } n.
+\]
+Hence
+\[
+\liminf_{n\to\infty}\int_H |\ell_{h_n}(u)|\,\mu(du)\le n.
+\]
+Therefore
+\[
+\int_H |\ell_h(u)|\,\mu(du)\le n,
+\]
+which means
+\[
+h\in H_n.
+\]
+So every limit of a convergent sequence from $H_n$ stays in $H_n$. This is exactly the definition of closedness.
 
 \section*{6. Applying the Baire Category Theorem}
-Since the entire Hilbert space is the countable union of these closed subsets,
+Once the closed sets $H_n$ are available, apply the Baire Category Theorem. Since the entire Hilbert space is the countable union of these closed subsets,
 \[
 H=\bigcup_{n\ge 1} H_n,
 \]
-the Baire Category Theorem dictates that at least one of these subsets must have a non-empty interior. Denote this specific subset by $H_{n_0}$. Because its interior is non-empty, there exists a strictly positive radius $\varepsilon>0$ and a center point $h_0\in H$ such that the open ball
+the Baire Category Theorem dictates that at least one of these subsets must have non-empty interior. Denote this specific subset by $H_{n_0}$ and write
 \[
-B_\varepsilon(h_0)
+H^\circ_{n_0}\neq\varnothing.
 \]
-is completely contained within $H_{n_0}$.
+Therefore, there exists a strictly positive radius $\varepsilon>0$ and a center point $h_0\in H$ such that the open ball $B_\varepsilon(h_0)$ is completely contained within $H_{n_0}$.
 
 \section*{7. Bounding the Mean Functional $m(h)$}
-To prove the functional is bounded, evaluate $h\in H$ subject to $\|h\|\le 1$. Use an algebraic manipulation to scale and shift $h$ directly into the defined ball $B_\varepsilon(h_0)$:
+Having found a set with non-empty interior, use this information to bound the map $h\mapsto m(h)$ on the unit ball. This shows that $h\mapsto m(h)$ is a continuous linear functional on $H$, and therefore, by the Riesz representation theorem, there exists a unique vector in $H$ representing it. To prove this boundedness, evaluate $h\in H$ subject to $\|h\|\le 1$. Use an algebraic manipulation to scale and shift $h$ directly into the defined ball $B_\varepsilon(h_0)$:
 \[
 h=\frac{2}{\varepsilon}\left(\frac{\varepsilon}{2}h+h_0-h_0\right).
 \]
-Observe the term
-\[
-\left(\frac{\varepsilon}{2}h+h_0\right).
-\]
-Its distance from the center $h_0$ is exactly
+The vector \(\frac{\varepsilon}{2}h+h_0\) has distance from the center \(h_0\) equal to
 \[
 \left\|\frac{\varepsilon}{2}h+h_0-h_0\right\|=\frac{\varepsilon}{2}\|h\|\le \frac{\varepsilon}{2}<\varepsilon.
 \]
@@ -134,6 +170,15 @@ Applying the triangle inequality separates the terms:
 \[
 |m(h)|\le \frac{2}{\varepsilon}\left|m\left(\frac{\varepsilon}{2}h+h_0\right)\right|+\frac{2}{\varepsilon}|m(h_0)|.
 \]
+The term \(m(h_0)\) is finite because \(h_0\in H_{n_0}\). Indeed,
+\[
+|m(h_0)|
+=
+\left|\int_H \langle h_0,u\rangle\,\mu(du)\right|
+\le
+\int_H |\langle h_0,u\rangle|\,\mu(du)
+\le n_0.
+\]
 Because the vector \(\left(\frac{\varepsilon}{2}h+h_0\right)\) resides within $H_{n_0}$, evaluate its integral representation:
 \[
 \left|m\left(\frac{\varepsilon}{2}h+h_0\right)\right|
@@ -144,59 +189,84 @@ Because the vector \(\left(\frac{\varepsilon}{2}h+h_0\right)\) resides within $H
 \le n_0.
 \]
 This gives a hard upper bound. The mean functional is bounded on the unit ball, and therefore continuous.
+Since \(h\mapsto m(h)\) is now a continuous linear functional on \(H\), the Riesz representation theorem implies that there exists a unique vector \(m\in H\) such that
+\[
+m(h)=\langle m,h\rangle
+\qquad \text{for all } h\in H.
+\]
 
 \section*{8. Construction of the Covariance Operator $Q$}
-Concerning the covariance operator $Q$, one must define its action across the Hilbert space. For all $q,g\in H$, there exists an operator mapping $q\mapsto Q(q)$ such that the bilinear form \(\langle Q(q),g\rangle\) is defined. Define this mapping \(g\mapsto \langle Q(q),g\rangle\) explicitly as the integral of the centered inner products:
+Once the mean vector has been identified, construct the covariance operator $Q$. For each \(h\in H\), one defines the linear functional \(g\mapsto \langle Qh,g\rangle\) through the centered second moments. Define this mapping explicitly by
 \[
-\int_H (\langle q,u\rangle-\langle q,m\rangle)(\langle g,u\rangle-\langle g,m\rangle)\,\mu(du).
-\]
-Thus,
-\[
-\langle Q(q),g\rangle
+\langle Qh,g\rangle
 =
-\int_H (\langle q,u\rangle-\langle q,m\rangle)(\langle g,u\rangle-\langle g,m\rangle)\,\mu(du).
+\int_H (\langle h,u\rangle-\langle h,m\rangle)(\langle g,u\rangle-\langle g,m\rangle)\,\mu(du).
 \]
-This successfully establishes the existence and representation of the covariance operator $Q$, completing the structural requirements for the Gaussian measure.
+This establishes the representation of the covariance bilinear form. The existence of the vector \(Qh\in H\) then follows from the Riesz representation theorem, and this yields the covariance operator
+\[
+Q:H\to H,
+\qquad
+h\mapsto Qh.
+\]
+The continuity of the corresponding linear functional may be established by a similar Baire-category argument to the one used for the mean functional.
+The operator is symmetric and positive semidefinite, because
+\[
+\langle Qh,g\rangle=\langle h,Qg\rangle
+\qquad \text{and} \qquad
+\langle Qh,h\rangle\ge 0.
+\]
+This establishes the existence and representation of the covariance operator $Q$, completing the structural requirements for the Gaussian measure.
 
-As we already established the existence and basic positive semi-definite property of the covariance operator \(\langle Qh,h\rangle\ge 0\), we now address the rigorous justification of the finite trace condition.
+The next step is to prove that the covariance operator $Q$ is trace class, that is, that \(\tr(Q)<\infty\).
 
 \section*{9. The Trace Bound Lemma}
+After the existence of the covariance operator has been established, the remaining structural point is the finite trace condition.
+
 \begin{lemma}[Trace bound lemma]
 Assume a centered Gaussian measure,
 \[
-\mu=N(0,Q).
+\mu=\mathcal N(0,Q).
 \]
 Then the trace is bounded by the inverse square of the exponential expectation:
 \[
 1+\tr(Q)\le \left(\int_H e^{-\frac{1}{2}\|x\|^2}\,\mu(dx)\right)^{-2}<\infty.
 \]
+In particular,
+\[
+\int_H e^{-\frac{1}{2}\|x\|^2}\,\mu(dx)>0,
+\]
+and therefore
+\[
+\left(\int_H e^{-\frac{1}{2}\|x\|^2}\,\mu(dx)\right)^{-2}<\infty.
+\]
 \end{lemma}
 
-\section*{10. Side Remark: Girsanov's Theorem}
-Before continuing the proof of the trace bound lemma, record a brief side remark concerning absolute continuity of measures.
+\section*{10. Side Remark: The Deterministic-Drift Case of Girsanov's Theorem}
+Before returning to the trace estimate, record the deterministic-shift case of Girsanov's theorem.
 
-\begin{theorem}[Girsanov's theorem]
-Consider a path \(h\) on \([0,T]\) such that
+\begin{theorem}[Deterministic-drift case of Girsanov's theorem]
+Let \(h\) be a deterministic function, or drift, on \([0,T]\). Consider the shifted Brownian motion \((B_t+h_t)_{t\in[0,T]}\). Its law is absolutely continuous with respect to the Wiener measure if and only if \(h\) is absolutely continuous. Equivalently, \(h\) is weakly differentiable and can be written as
 \[
 h_t=\int_0^t \dot h_s\,ds
 \]
-with finite kinetic energy, meaning
+with
 \[
 \int_0^T |\dot h_s|^2\,ds<\infty.
 \]
-Then the shifted Wiener process \((B_t+h_t)_t\) induces a measure that is absolutely continuous with respect to the standard Wiener measure. This is an immediate consequence of Girsanov's Theorem.
+The finiteness of this quantity is exactly the condition under which the corresponding Girsanov transform is well defined. The set of all such drift functions is the Cameron-Martin space.
+In finite dimensions, a full-support density may be shifted in any direction and remain absolutely continuous. In the Wiener-space setting, by contrast, this property holds only along Cameron-Martin directions. Thus the deterministic shifts that preserve absolute continuity form only a very small subset of the whole path space. In fact, the Cameron-Martin space itself has Wiener measure zero. The admissible shift directions are therefore exceptional directions along which one may still compare the shifted law with the original Wiener measure.
 \end{theorem}
 
 \section*{11. Proof of the Trace Bound Lemma (Finite-Dimensional Case)}
 \begin{proof}
-Return now to the trace bound proof. Restrict first to the finite-dimensional setting and set
+Return now to the trace bound proof and begin with the finite-dimensional setting:
 \[
 \dim H=n<\infty
 \qquad \text{for } n\in\mathbb N.
 \]
 Let \(\sigma_1^2,\ldots,\sigma_n^2\) be the eigenvalues of $Q$. Define
 \[
-\mu_n=N(0,Q_n)
+\mu_n=\mathcal N(0,Q_n)
 \]
 as the distribution of \(\mu\) with respect to the projection
 \[
@@ -206,7 +276,7 @@ h\mapsto (\langle h,e_1\rangle,\ldots,\langle h,e_n\rangle).
 \]
 This projection is defined over a Complete Orthonormal System (CONS) \((e_1,e_2,\ldots)\) consisting strictly of the eigenvectors of $Q_n$. Without loss of generality, assume strictly positive eigenvalues \(\sigma_i^2>0\).
 
-Because the measure \(N(0,Q_n)\) is absolutely continuous with respect to the Lebesgue measure \(dx\), write its density explicitly:
+Because the measure \(\mathcal N(0,Q_n)\) is absolutely continuous with respect to the Lebesgue measure \(dx\), write its density explicitly:
 \[
 \frac{d\mu_n}{dx}
 =
@@ -261,7 +331,7 @@ Therefore,
 \]
 \end{proof}
 
-As we already completed the finite-dimensional calculation for the trace bound lemma, we now execute the limit to infinite dimensions and establish the canonical representation of Gaussian measures.
+Having established the finite-dimensional estimate, pass next to the infinite-dimensional limit.
 
 \section*{12. Completing the Trace Bound Proof: The Infinite Limit}
 \begin{proof}
@@ -275,7 +345,14 @@ From our finite-dimensional projection, we established the fundamental inequalit
 =
 \left(\int_{\mathbb R^n} e^{-\frac{1}{2}\|x\|^2}\,\mu_n(dx)\right)^{-2}.
 \]
-To generalize this to our infinite-dimensional Hilbert space $H$, take the limit as \(n\to\infty\). First, observe the left side concerning the trace operator:
+To generalize this to our infinite-dimensional Hilbert space $H$, take the limit as \(n\to\infty\):
+\[
+\lim_{n\to\infty}\bigl(1+\tr(Q_n)\bigr)
+\le
+\lim_{n\to\infty}\left(\int_{\mathbb R^n} e^{-\frac{1}{2}\|x\|^2}\,\mu_n(dx)\right)^{-2},
+\]
+so the inequality is preserved in the limit once both sides are shown to converge.
+First, observe the left side concerning the trace operator:
 \[
 \lim_{n\to\infty}\tr(Q_n)
 =
@@ -305,10 +382,11 @@ Because this integral is strictly positive, its inverse square is finite, rigoro
 \[
 1+\tr(Q)\le \left(\int_H e^{-\frac{1}{2}\|x\|_H^2}\,\mu(dx)\right)^{-2}<\infty.
 \]
+This has a direct support interpretation: if the variances were not summable, then the limiting Gaussian measure would no longer be supported on the Hilbert space \(H\), but only on a larger space with a weaker norm.
 \end{proof}
 
 \section*{13. Spectral Properties of the Covariance Operator}
-Having established \(\tr(Q)<\infty\), the finite trace property now allows the spectral decomposition of the covariance operator. Formalize the properties of $Q$ via the following proposition.
+Once \(\tr(Q)<\infty\) has been established, the finite trace property yields the spectral decomposition of the covariance operator. Formalize the properties of $Q$ via the following proposition.
 
 \begin{proposition}
 Let $Q$ be a linear, continuous, symmetric, and positive semi-definite operator with \(\tr(Q)<\infty\). By the spectral theorem for compact self-adjoint operators, there exists a Complete Orthonormal System (CONS), denoted as \((e_k)_{k\ge 1}\) in $H$, consisting entirely of the eigenvectors of $Q$. This means the action of $Q$ is purely diagonalized on this basis:
@@ -326,18 +404,18 @@ A critical topological consequence of this structure is that \(0\) is the only a
 \end{proposition}
 
 \section*{14. The Abstract Fourier Series Foundation}
-To construct our Gaussian random variable, first recall the deterministic framework of the abstract Fourier series. Given the CONS \((e_k)_k\) in $H$, any arbitrary element \(x\in H\) can be uniquely represented by the expansion
+With the spectral data now available, recall the deterministic framework of the abstract Fourier series. Given the CONS \((e_k)_k\) in $H$, any arbitrary element \(x\in H\) can be uniquely represented by the expansion
 \[
 x=\sum_{k=1}^\infty \langle x,e_k\rangle e_k.
 \]
 
 \section*{15. Canonical Representation of a Gaussian Measure}
-We now synthesize these components into a central proposition, the canonical representation, often referred to as the Karhunen--Lo\`eve expansion.
+These ingredients now combine into the canonical representation, often referred to as the Karhunen--Lo\`eve expansion.
 
 \begin{proposition}
 Let \(m\in H\), \(Q\in L(H)\) as defined above, and let \((e_k)\) be our specific CONS of eigenvectors. Let \(X\) be an \(H\)-valued random variable defined on a standard probability space \((\Omega,\mathcal F,\mathbb P)\). The random variable \(X\) follows a Gaussian distribution,
 \[
-X\sim N(m,Q),
+X\stackrel{\hat{\ }}{=}\mathcal N(m,Q),
 \]
 if and only if it can be decomposed into the following infinite series:
 \[
@@ -345,21 +423,23 @@ X=\sum_{k=1}^\infty \sqrt{\lambda_k}\,\beta_k e_k+m.
 \]
 In this representation, the coefficients \(\beta_k\) are independent and identically distributed standard normal random variables, meaning
 \[
-\beta_k\sim N(0,1).
+\beta_k\stackrel{\hat{\ }}{=}\mathcal N(0,1).
 \]
 For this representation to be valid, ensure the series converges. It is a strict property of this expansion that the series converges \(\mathbb P\)-almost surely. Furthermore, the convergence is strong enough to hold in \(L^p\) for all \(p<\infty\).
 \end{proposition}
 
-As we already established the canonical representation for a static Gaussian random variable, we now dynamically extend this framework to define and construct the infinite-dimensional \(Q\)-Wiener process.
+This representation also gives a practical way to simulate an infinite-dimensional Gaussian random variable on a computer: truncate the series after finitely many terms, sample the corresponding independent normal coefficients, and control the approximation error through the discarded tail.
+
+Before passing to time-dependent processes, we first examine the one-dimensional projections of the Gaussian random variable in the eigenbasis of \(Q\).
 
 \section*{16. The One-Dimensional Projections of the Gaussian Variable}
-Given our Gaussian random variable \(X\sim N(m,Q)\), project it onto our Complete Orthonormal System \((e_k)\). The inner product \(\langle X,e_k\rangle\) yields a one-dimensional Gaussian distribution:
+To prepare for the process case, project the Gaussian random variable \(X\stackrel{\hat{\ }}{=}\mathcal N(m,Q)\) onto the Complete Orthonormal System \((e_k)\). The inner product \(\langle X,e_k\rangle\) yields a one-dimensional Gaussian distribution:
 \[
-\langle X,e_k\rangle\sim N(\langle m,e_k\rangle,\langle Qe_k,e_k\rangle).
+\langle X,e_k\rangle\stackrel{\hat{\ }}{=}\mathcal N(\langle m,e_k\rangle,\langle Qe_k,e_k\rangle).
 \]
 Because \(e_k\) are the eigenvectors of \(Q\), the variance term simplifies to the eigenvalue \(\lambda_k\), allowing one to express this projection in distribution as
 \[
-\sqrt{\lambda_k}\,N(0,1)+\langle m,e_k\rangle.
+\langle X,e_k\rangle\stackrel{\hat{\ }}{=}\sqrt{\lambda_k}\,\mathcal N(0,1)+\langle m,e_k\rangle.
 \]
 This directly justifies our expansion of \(X\) in the Hilbert space:
 \[
@@ -367,11 +447,14 @@ X=\sum_{k=1}^\infty \langle X,e_k\rangle e_k,
 \]
 which is equal in distribution to
 \[
-\sum_{k=1}^\infty \sqrt{\lambda_k}\,N(0,1)e_k+\sum_{k=1}^\infty \langle m,e_k\rangle e_k.
+X\stackrel{\hat{\ }}{=}\sum_{k=1}^\infty \sqrt{\lambda_k}\,\mathcal N(0,1)e_k+\sum_{k=1}^\infty \langle m,e_k\rangle e_k.
 \]
 
+This pointwise decomposition is the static model for the next step, where the scalar Gaussian coefficients are replaced by one-dimensional Brownian motions.
+
 \section*{17. Definition of the \(Q\)-Wiener Process}
-Let \(H\) and \(U\) be separable Hilbert spaces. Define a \(U\)-valued stochastic process \((W_t)_{t\in[0,T]}\) on a standard probability space \((\Omega,\mathcal F,\mathbb P)\). This process is formally called a standard \(Q\)-Wiener process if and only if it satisfies three strict axioms:
+Having understood the static decomposition, replace the scalar Gaussian coefficients by time-dependent Brownian motions and define the corresponding process. Let \(H\) and \(U\) be separable Hilbert spaces. Define a \(U\)-valued stochastic process \((W_t)_{t\in[0,T]}\) on a standard probability space \((\Omega,\mathcal F,\mathbb P)\). This process is formally called a standard \(Q\)-Wiener process if and only if it satisfies three strict axioms:
+The notation is now switched from \(H\) to \(U\) in order to separate the state space of the Wiener process from the state space that will later be used for stochastic differential equations or stochastic partial differential equations. Once this state space is fixed, one cannot take the identity as covariance operator in infinite dimensions, because that would have infinite trace. For this reason the covariance is given by a trace-class operator \(Q\).
 
 \noindent (i) Initial Condition:
 \[
@@ -391,33 +474,42 @@ W_{t_i}-W_{t_{i-1}},
 \]
 are mutually independent. Furthermore, each increment strictly follows a Gaussian distribution
 \[
-N(0,(t_i-t_{i-1})Q).
+W_{t_i}-W_{t_{i-1}}\sim N(0,(t_i-t_{i-1})Q).
 \]
+If one works with a given filtration \((\mathcal F_t)_{t\in[0,T]}\), the corresponding filtered definition requires in addition that the process be adapted and that these increments are independent of the past \(\sigma\)-algebra \(\mathcal F_{t_{i-1}}\).
 
 \section*{18. Canonical Representation of the Wiener Process}
-We construct this \(Q\)-Wiener process explicitly via an infinite series expansion, analogous to our static variable. The canonical representation of \(W_t\) is
+Once the \(Q\)-Wiener process has been defined, construct its canonical series representation parallel to the static case. The canonical representation of \(W_t\) is
 \[
 W_t=\sum_{k=1}^\infty \sqrt{\lambda_k}\,\beta_k(t)e_k.
 \]
-In this representation, \(\beta_k(t)\) are independent standard one-dimensional Brownian motions. For this representation to be mathematically rigorous, one must establish its convergence properties. The series converges \(\mathbb P\)-almost surely in the space of continuous functions \(C([0,T],U)\), which guarantees uniform convergence with respect to time. Additionally, this convergence is strong enough to hold in
+In this representation, \(\beta_k(t)\) are independent standard one-dimensional Brownian motions. For this representation to be mathematically rigorous, one must establish its convergence properties. The series converges \(\mathbb P\)-almost surely in the space of continuous functions \(C([0,T],U)\), so the error along the partial sums tends to zero uniformly in time. Additionally, this convergence is strong enough to hold in
 \[
 L^p(\Omega,\mathcal F,\mathbb P;C([0,T],U))
 \qquad \text{for all } p<\infty.
 \]
+This means that the partial sums converge not only pathwise, but also in the sense that the \(p\)-th moment of the uniform error in time tends to zero, that is,
+\[
+\mathbb E\bigl[\|W^n-W\|_{C([0,T],U)}^p\bigr]\to 0.
+\]
+See Appendix A.14 for a brief explanation of this mode of convergence.
 
 \section*{19. Martingale Convergence and Doob's Inequality}
-To rigorously justify this uniform convergence over time, analyze the partial sums of this canonical series as a sequence of martingales, denoted \((M_t^n)_n\), where
+To justify the convergence asserted in the previous section, analyze the partial sums of this canonical series as a sequence of martingales, denoted \((M_t^n)_n\), where
 \[
 M_t^n:=\sum_{k=1}^n \sqrt{\lambda_k}\,\beta_k(t)e_k.
 \]
-If this sequence of martingales forms a Cauchy sequence at the terminal endpoint \(T\), Doob's inequality ensures that the sequence becomes uniformly close over the entire time interval \([0,T]\). Mathematically, if the sequence converges in \(L^p\) at time \(T\), meaning
+Here \(M_t\) denotes the limiting process of these partial sums.
+If this sequence of martingales is Cauchy in \(L^p(\Omega,\mathcal F,\mathbb P;U)\) at time \(T\), meaning
 \[
-\lim_{n,m\to\infty}\mathbb E\bigl[\|M_T^n-M_T^m\|^p\bigr]=0,
+\lim_{n,m\to\infty}\mathbb E\bigl[\|M_T^n-M_T^m\|_U^p\bigr]=0,
 \]
-it strictly implies that the probability of the supremum of the deviation exceeding any \(\varepsilon\) goes to zero. One writes this final limit as
+Doob's inequality then implies that the martingale partial sums become uniformly closer over the entire time interval \([0,T]\). Since the space \(C([0,T],U)\), equipped with the uniform norm in time, is complete, there exists a limiting process \(M_t\) such that
 \[
 \lim_{n\to\infty}\mathbb P\left(\sup_{0\le t\le T}\|M_t^n-M_t\|>\varepsilon\right)=0.
 \]
+See Appendix A.17 for the precise argument.
+This is the final step needed for the construction of the \(Q\)-Wiener process. The next step in the lecture is then to define stochastic integrals with respect to such processes.
 
 \section*{Appendix}
 \subsection*{A.1. Complete Orthonormal Systems}
@@ -491,7 +583,7 @@ A real-valued stochastic process $(\beta(t))_{t\in[0,T]}$ is called a standard B
 \]
 it has continuous sample paths, independent increments, and for all $0\le s<t\le T$,
 \[
-\beta(t)-\beta(s)\sim N(0,t-s).
+\beta(t)-\beta(s)\sim \mathcal N(0,t-s).
 \]
 \end{definition}
 
@@ -503,7 +595,7 @@ W_0=0,
 \]
 its paths are almost surely continuous, it has independent increments, and
 \[
-W_t-W_s\sim N(0,(t-s)Q)
+W_t-W_s\sim \mathcal N(0,(t-s)Q)
 \qquad \text{for } 0\le s<t\le T.
 \]
 \end{definition}
@@ -518,5 +610,301 @@ Let $(M_t)_{t\in[0,T]}$ be a real-valued martingale and let $p>1$. Then
 \]
 Consequently, control of the terminal value \(M_T\) in \(L^p\) yields control of the supremum of the martingale over the whole interval.
 \end{theorem}
+
+\subsection*{A.10. The Inverse Dirichlet Laplacian}
+\begin{definition}[Inverse Dirichlet Laplacian]
+On the interval \([0,T]\), the Dirichlet Laplacian is the operator
+\[
+-\Delta_D u=-u'',
+\]
+acting on functions \(u\) satisfying the boundary conditions
+\[
+u(0)=u(T)=0.
+\]
+Its inverse takes a function \(g\) and returns the unique solution \(u\) of
+\[
+-u''=g,
+\qquad
+u(0)=u(T)=0.
+\]
+Thus one writes
+\[
+u=(-\Delta_D)^{-1}g.
+\]
+In the one-dimensional form used in these notes, this inverse operator is given by
+\[
+(-\Delta_D)^{-1}g(t):=-\int_0^T g(s)\left(s\wedge t-\frac{st}{T}\right)\,ds.
+\]
+The kernel
+\[
+G(s,t):= -\left(s\wedge t-\frac{st}{T}\right)
+\]
+is the Green's function, or fundamental solution, for the Dirichlet problem.
+\end{definition}
+
+\subsection*{A.11. Girsanov's Theorem}
+\begin{theorem}[Girsanov's theorem in the form used here]
+Let $(B_t)_{t\in[0,T]}$ be a standard Brownian motion and let $h$ be a deterministic path on $[0,T]$. Assume that
+\[
+h_t=\int_0^t \dot h_s\,ds
+\]
+with
+\[
+\int_0^T |\dot h_s|^2\,ds<\infty.
+\]
+Then the law of the shifted process $(B_t+h_t)_{t\in[0,T]}$ is absolutely continuous with respect to the Wiener measure. This is the form of Girsanov's theorem relevant for the present lecture and coincides with the Cameron-Martin condition for deterministic shifts.
+\end{theorem}
+
+\subsection*{A.12. The Cameron-Martin Space}
+\begin{definition}[Cameron-Martin space]
+The Cameron-Martin space associated with Wiener measure on $[0,T]$ is the set of all absolutely continuous paths $h$ such that
+\[
+h_t=\int_0^t \dot h_s\,ds
+\]
+for some $\dot h\in L^2([0,T])$.
+Equivalently,
+\[
+\mathcal H
+=
+\left\{
+h\in C([0,T]) : h \text{ is absolutely continuous and }
+\int_0^T |\dot h_s|^2\,ds<\infty
+\right\}.
+\]
+These are exactly the deterministic directions along which Brownian motion may be shifted while preserving absolute continuity with respect to Wiener measure.
+\end{definition}
+
+\subsection*{A.13. Finite-Dimensional Gaussian Density and the Diagonal Form of \(\langle Q_n^{-1}x,x\rangle\)}
+In the finite-dimensional part of the trace bound proof, the measure is
+\[
+\mu_n=\mathcal N(0,Q_n).
+\]
+So the mean is zero, and that is why no separate mean term appears in the density.
+
+In general, if
+\[
+X\stackrel{\hat{\ }}{=}\mathcal N(m,Q_n)
+\qquad \text{on } \mathbb R^n,
+\]
+then the density is
+\[
+\frac{d\mu_n}{dx}
+=
+\frac{1}{\sqrt{(2\pi)^n\det Q_n}}
+\exp\left(-\frac12\langle Q_n^{-1}(x-m),x-m\rangle\right).
+\]
+If the mean is \(m=0\), this becomes
+\[
+\frac{d\mu_n}{dx}
+=
+\frac{1}{\sqrt{(2\pi)^n\det Q_n}}
+\exp\left(-\frac12\langle Q_n^{-1}x,x\rangle\right).
+\]
+So the reason the formula in the proof has no mean is simply that one has explicitly assumed
+\[
+\mu=\mathcal N(0,Q),
+\]
+hence also
+\[
+\mu_n=\mathcal N(0,Q_n).
+\]
+The mean is there implicitly, but it is \(0\).
+
+To see why
+\[
+\langle Q_n^{-1}x,x\rangle
+=
+\sum_{i=1}^n \frac{x_i^2}{\sigma_i^2},
+\]
+choose an orthonormal basis of eigenvectors of \(Q_n\), so that
+\[
+Q_n e_i=\sigma_i^2 e_i,
+\qquad i=1,\dots,n,
+\]
+and write
+\[
+x=\sum_{i=1}^n x_i e_i.
+\]
+Then
+\[
+Q_n^{-1}e_i=\frac{1}{\sigma_i^2}e_i,
+\]
+so
+\[
+Q_n^{-1}x
+=
+\sum_{i=1}^n \frac{x_i}{\sigma_i^2}e_i.
+\]
+Therefore,
+\[
+\langle Q_n^{-1}x,x\rangle
+=
+\left\langle
+\sum_{i=1}^n \frac{x_i}{\sigma_i^2}e_i,
+\sum_{j=1}^n x_j e_j
+\right\rangle.
+\]
+Because the basis is orthonormal, \(\langle e_i,e_j\rangle=\delta_{ij}\), so all cross terms vanish and only the diagonal terms remain:
+\[
+\langle Q_n^{-1}x,x\rangle
+=
+\sum_{i=1}^n \frac{x_i^2}{\sigma_i^2}.
+\]
+
+\subsection*{A.14. Gaussian Integral Calculation}
+The finite-dimensional trace bound uses the standard Gaussian integral
+\[
+\int_{\mathbb R} e^{-a x^2}\,dx=\sqrt{\frac{\pi}{a}}
+\qquad \text{for } a>0.
+\]
+Applying this coordinate by coordinate gives
+\[
+\int_{\mathbb R^n}\exp\left(-\sum_{i=1}^n a_i x_i^2\right)\,dx
+=
+\prod_{i=1}^n \int_{\mathbb R} e^{-a_i x_i^2}\,dx_i
+=
+\prod_{i=1}^n \sqrt{\frac{\pi}{a_i}},
+\]
+whenever \(a_i>0\) for all \(i=1,\dots,n\).
+
+In the proof of the trace bound lemma, one has
+\[
+\frac{d\mu_n}{dx}
+=
+\frac{1}{\sqrt{(2\pi)^n\det Q_n}}
+\exp\left(-\frac12\sum_{i=1}^n \frac{x_i^2}{\sigma_i^2}\right),
+\]
+so
+\[
+\int_{\mathbb R^n} e^{-\frac12\|x\|^2}\,\mu_n(dx)
+=
+\frac{1}{\sqrt{(2\pi)^n\det Q_n}}
+\int_{\mathbb R^n}
+\exp\left(
+-\frac12\sum_{i=1}^n \frac{(1+\sigma_i^2)x_i^2}{\sigma_i^2}
+\right)\,dx.
+\]
+Evaluating the Gaussian integral in each coordinate yields
+\[
+\int_{\mathbb R^n} e^{-\frac12\|x\|^2}\,\mu_n(dx)
+=
+\prod_{i=1}^n (1+\sigma_i^2)^{-1/2}.
+\]
+Therefore,
+\[
+\left(\int_{\mathbb R^n} e^{-\frac12\|x\|^2}\,\mu_n(dx)\right)^{-2}
+=
+\prod_{i=1}^n (1+\sigma_i^2),
+\]
+which is the identity used in the proof.
+
+\subsection*{A.15. \(L^p(\Omega,\mathcal F,\mathbb P;C([0,T],U))\)-Convergence}
+If \(W^n\) denotes the \(n\)-th partial sum and \(W\) the limit, then
+\[
+W^n \to W
+\qquad \text{in } L^p(\Omega,\mathcal F,\mathbb P;C([0,T],U))
+\]
+means
+\[
+\mathbb E\bigl[\|W^n-W\|_{C([0,T],U)}^p\bigr]\to 0,
+\]
+where
+\[
+\|f\|_{C([0,T],U)}
+=
+\sup_{0\le t\le T}\|f(t)\|_U.
+\]
+\noindent
+Thus, the whole path converges with uniform error in time, and the \(p\)-th moment of that error tends to zero.
+
+This is stronger than pathwise convergence alone, which only means that for almost every \(\omega\),
+\[
+\|W^n(\omega)-W(\omega)\|_{C([0,T],U)}\to 0.
+\]
+\(L^p\)-convergence adds quantitative moment control of the uniform error in time.
+
+In particular, almost sure convergence does not in general imply \(L^p\)-convergence. A standard counterexample is
+\[
+X_n(\omega)=n\,\mathbf 1_{[0,1/n]}(\omega).
+\]
+Then \(X_n(\omega)\to 0\) for almost every \(\omega\), but
+\[
+\mathbb E[|X_n|]=1
+\]
+for all \(n\), so there is no \(L^1\)-convergence.
+
+\subsection*{A.16. Cauchy Sequences in Probability}
+Let \(E\) be a complete separable metric space. A sequence \((X_n)_n\) of \(E\)-valued random variables is called Cauchy in probability if for every \(\varepsilon>0\),
+\[
+\lim_{n,m\to\infty}\mathbb P\bigl(d(X_n,X_m)>\varepsilon\bigr)=0.
+\]
+In this case there exists an \(E\)-valued random variable \(X\) such that
+\[
+X_n\to X
+\qquad \text{in probability}.
+\]
+
+In the present lecture, the space \(E\) is
+\[
+C([0,T],U)
+\]
+equipped with the metric induced by the norm
+\[
+\|f\|_{C([0,T],U)}=\sup_{0\le t\le T}\|f(t)\|_U.
+\]
+Thus, once the martingale partial sums are shown to be Cauchy in probability with respect to the uniform norm in time, one obtains a limiting process with continuous paths.
+
+\subsection*{A.17. Proof of the Uniform-in-Time Convergence Statement}
+From the construction of the canonical series, the terminal values \((M_T^n)_n\) form a Cauchy sequence in
+\[
+L^p(\Omega,\mathcal F,\mathbb P;U),
+\]
+that is, for some \(p>1\),
+\[
+\lim_{n,m\to\infty}\mathbb E\bigl[\|M_T^n-M_T^m\|_U^p\bigr]=0.
+\]
+Since \(L^p(\Omega,\mathcal F,\mathbb P;U)\) is complete, there exists
+\[
+M_T\in L^p(\Omega,\mathcal F,\mathbb P;U)
+\]
+such that
+\[
+\lim_{n\to\infty}\mathbb E\bigl[\|M_T^n-M_T\|_U^p\bigr]=0.
+\]
+Thus \(M_T^n\to M_T\) in \(L^p(\Omega,\mathcal F,\mathbb P;U)\).
+Set
+\[
+N_t^n:=M_t^n-M_t.
+\]
+Then \((N_t^n)_{t\in[0,T]}\) is a martingale. To prove
+\[
+\lim_{n\to\infty}\mathbb P\left(\sup_{0\le t\le T}\|M_t^n-M_t\|_U>\varepsilon\right)=0,
+\]
+first apply Markov's inequality:
+\[
+\mathbb P\left(\sup_{0\le t\le T}\|M_t^n-M_t\|_U>\varepsilon\right)
+=
+\mathbb P\left(\sup_{0\le t\le T}\|N_t^n\|_U>\varepsilon\right)
+\le
+\frac{1}{\varepsilon^p}\,
+\mathbb E\left[\sup_{0\le t\le T}\|N_t^n\|_U^p\right].
+\]
+Next, apply Doob's inequality to the martingale \(N^n\):
+\[
+\mathbb E\left[\sup_{0\le t\le T}\|N_t^n\|_U^p\right]
+\le
+C_p\,\mathbb E\bigl[\|N_T^n\|_U^p\bigr].
+\]
+Therefore,
+\[
+\mathbb P\left(\sup_{0\le t\le T}\|M_t^n-M_t\|_U>\varepsilon\right)
+\le
+\frac{C_p}{\varepsilon^p}\,
+\mathbb E\bigl[\|M_T^n-M_T\|_U^p\bigr].
+\]
+Since the right-hand side tends to \(0\) as \(n\to\infty\), it follows that
+\[
+\lim_{n\to\infty}\mathbb P\left(\sup_{0\le t\le T}\|M_t^n-M_t\|_U>\varepsilon\right)=0.
+\]
 
 \end{document}

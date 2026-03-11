@@ -15,16 +15,14 @@
 \DeclareMathOperator{\tr}{tr}
 \newcommand{\dual}[2]{{}_{V'}\langle #1, #2 \rangle_{V}}
 
-\title{Lecture 1: Introduction to SPDEs and the Heat Equation}
+\title{Lecture 1: From Particle Systems to Gaussian Measures on Hilbert Spaces}
 \date{16.10.2025}
 \author{Tien Anh Vu}
 
 \begin{document}
 \maketitle
 
-Good morning. Let us begin our introduction to Stochastic Partial Differential Equations, or SPDEs.
-
-Today, we will build some intuition by looking at a classic example that motivates the Dean-Kawasaki equation, originally introduced in the works of Dean in 1996 and Kawasaki in 1998. These ideas also connect to modern statistical models, where time reversal of stochastic differential equations plays an important role. We will start from a microscopic particle system and observe how it leads us to a macroscopic partial differential equation.
+This lecture begins with empirical measures of independent Brownian particles, derives the macroscopic heat equation and the fluctuation heuristics leading to the Dean-Kawasaki picture, and then turns to Gaussian measures on Hilbert spaces, Wiener measure, covariance operators, and the inverse Laplacian.
 
 \section*{1. Microscopic Particle System}
 Let us consider a system of independent Brownian motions, which we will denote as $B^1, B^2, B^3, \ldots$. We also take a test function $f$ that is smooth. Specifically, we require $f\in C_b^2(\mathbb{R})$, which means that $f$ is twice continuously differentiable and has bounded derivatives.
@@ -257,7 +255,7 @@ The integrand $\eta_s^N((f')^2)$ corresponds to the quadratic variation, while $
 \section*{9. The Space-Time Fluctuation Limit}
 To make the fluctuation term spatially explicit, rewrite its variance structure in density form and then match it with a space-time stochastic integral:
 \[
-\text{where }\eta_t(x)\,dx=p(t,x)\,dx.
+\eta_t(dx)=p(t,x)\,dx.
 \]
 Thus, in the limit one has $\eta_t(x)=p(t,x)$, where $p(t,x)$ is the transition probability density, or heat kernel.
 
@@ -271,7 +269,7 @@ Substituting this into the quadratic variation gives
 \frac{1}{\sqrt{N}}\int_0^t \sqrt{\eta_s^N((f')^2)}\,dB_s
 \right\rangle_t
 =
-\int_0^t \frac{1}{N}\eta_s^N((f')^2)\,ds
+\frac{1}{N}\int_0^t \eta_s^N((f')^2)\,ds.
 \]
 The corresponding space-time stochastic integral has the same quadratic variation:
 \[
@@ -298,7 +296,7 @@ Scale the martingale term $M_t^N(f)$ by $\sqrt{N}$ and examine its fluctuation l
 \]
 The limit is a Gaussian martingale represented as an It\^o integral with respect to a standard Brownian motion. For each fixed time $t$, the Central Limit Theorem for martingales gives the Normal law
 \[
-\mathcal N\!\left(0,\int_0^t \eta_s\bigl((f')^2\bigr)\,ds\right).
+\sqrt{N}\,M_t^N(f)\to \mathcal N\!\left(0,\int_0^t \eta_s\bigl((f')^2\bigr)\,ds\right).
 \]
 Thus, the asymptotic fluctuations of the empirical measure tested against $f$ are characterized by a Gaussian variance determined by the macroscopic density $\eta_s$ and the squared gradient $(f')^2$.
 
@@ -329,19 +327,21 @@ so that the empirical measure is represented by a spatial density.
 
 We now show that the space-time white noise formulation matches the variance of the original particle system. First, we look at the scaled variance
 \[
-\frac{1}{N}\,\mathbb E\!\left(\int_0^t \eta_s^N((f')^2)\,ds\right)
-=
+V_t^N(f)
+:=
 \frac{1}{N}\,\mathbb E\!\left(\int_0^t \eta_s^N((f')^2)\,ds\right).
 \]
 Next, we expand the empirical measure into its explicit spatial integral:
 \[
-\frac{1}{N}\,\mathbb E\!\left(\int_0^t \eta_s^N((f')^2)\,ds\right)
+=
+V_t^N(f)
 =
 \frac{1}{N}\,\mathbb E\!\left(\int_0^t \int_{\mathbb R} (f'(x))^2\eta_s^N(x)\,dx\,ds\right).
 \]
 Finally, applying It\^o isometry in reverse with the space-time white noise, we can express this same expectation as the square of a stochastic integral:
 \[
-\frac{1}{N}\,\mathbb E\!\left(\int_0^t \eta_s^N((f')^2)\,ds\right)
+=
+V_t^N(f)
 =
 \frac{1}{N}\,\mathbb E\!\left[\left(\int_0^t \int_{\mathbb R} f'(x)\sqrt{\eta_s^N(x)}\,d\xi(s,x)\right)^2\right].
 \]
@@ -408,11 +408,7 @@ The fluctuation equations above naturally lead to noises and covariance structur
 We begin with the geometric and probabilistic setting needed for infinite-dimensional Gaussian measures.
 
 \subsection*{16.1. The Setting: Hilbert Spaces and Operators}
-The fundamental mathematical stage for this chapter is the Hilbert space
-\[
-(L^2(\mu),\langle\cdot,\cdot\rangle),
-\]
-which represents the classic $L^2$ space of square-integrable functions with respect to a measure $\mu$, equipped with an inner product. A Hilbert space is a complete normed vector space. The inner product induces the norm, and completeness means that every Cauchy sequence converges within the space.
+The fundamental mathematical stage for this chapter is the Hilbert space $(L^2(\mu),\langle\cdot,\cdot\rangle)$, which represents the classic $L^2$ space of square-integrable functions with respect to a measure $\mu$, equipped with an inner product. A Hilbert space is a complete normed vector space. The inner product induces the norm, and completeness means that every Cauchy sequence converges within the space.
 
 Next consider linear operators acting between spaces. Let
 \[
@@ -502,9 +498,9 @@ A probability measure $\mu$ on $(H,\mathcal B(H))$ is Gaussian if and only if
 \]
 \end{theorem}
 
-The left-hand side is the characteristic function of the real-valued projection $\langle g,h\rangle_H$, and the right-hand side is the infinite-dimensional analogue of the one-dimensional Gaussian Fourier transform
+The left-hand side is the characteristic function of the measure \(\mu\) in the direction \(h\), equivalently the characteristic function of the real-valued projection \(\langle g,h\rangle_H\), and the right-hand side is the infinite-dimensional analogue of the one-dimensional Gaussian Fourier transform
 \[
-e^{itm-\frac12 t^2\sigma^2},
+\varphi(t)=e^{itm-\frac12 t^2\sigma^2},
 \]
 where the mean is represented by the inner product $\langle m,h\rangle_H$ and the variance is replaced by the quadratic form $\langle Qh,h\rangle_H$.
 Thus, this is the concrete Hilbert-space version of the abstract projection formula introduced in Section 16.4, with $m(h)=\langle m,h\rangle_H$ and $\sigma^2(h)=\langle Qh,h\rangle_H$.
@@ -562,10 +558,7 @@ Another way to see this is through Gaussian mass of balls in high dimensions: fo
 Thus, if a standard normal distribution on an infinite-dimensional Hilbert space existed, it would assign zero mass to every finite-radius ball, which contradicts the fact that the whole space has mass one.
 
 More generally, there can be no Gaussian measure $\mu=\mathcal N(0,Q)$ on $H$ with bounded inverse $Q^{-1}$. To realize a Gaussian measure with covariance operator $\operatorname{Id}_H$, one must embed $H$ into a larger Hilbert space $H_1$ such that the embedding
-\[
-J:H\hookrightarrow H_1
-\]
-is Hilbert-Schmidt, that is,
+\(J:H\hookrightarrow H_1\) is Hilbert-Schmidt, that is,
 \[
 \sum_{k=1}^{\infty}\|Je_k\|_{H_1}^2<\infty
 \]
@@ -1429,11 +1422,7 @@ A continuous martingale $(M_t)_{t\ge 0}$ is called a Gaussian martingale if, for
 \[
 0\le t_1<\cdots < t_n,
 \]
-the random vector
-\[
-(M_{t_1},\dots,M_{t_n})
-\]
-has a multivariate Gaussian distribution.
+the random vector \((M_{t_1},\dots,M_{t_n})\) has a multivariate Gaussian distribution.
 \end{definition}
 
 \begin{remark}
@@ -1451,11 +1440,11 @@ If the bracket is not equal to $t$, then $M$ is usually not a Brownian motion, e
 \begin{remark}
 In the fluctuation argument of this lecture, the limit
 \[
-\int_0^t \sqrt{\eta_s((f')^2)}\,dB_s
+M_t(f):=\int_0^t \sqrt{\eta_s((f')^2)}\,dB_s
 \]
 is described as a Gaussian martingale. For each fixed time $t$, it is a centered normal random variable with variance
 \[
-\int_0^t \eta_s((f')^2)\,ds,
+\operatorname{Var}(M_t(f))=\int_0^t \eta_s((f')^2)\,ds,
 \]
 and as a process its covariance structure is determined by its quadratic variation.
 \end{remark}
