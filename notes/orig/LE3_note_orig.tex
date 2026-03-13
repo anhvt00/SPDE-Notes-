@@ -15,7 +15,7 @@
 \DeclareMathOperator{\tr}{tr}
 \newcommand{\dual}[2]{{}_{V'}\langle #1, #2 \rangle_{V}}
 
-\title{Lecture 3: Stochastic Integration in Hilbert Space}
+\title{Lecture 3: Bochner Integration and Stochastic Integration on Hilbert Spaces}
 \date{30.10.2025}
 \author{Tien Anh Vu}
 
@@ -25,7 +25,7 @@
 This lecture develops stochastic integration in Hilbert space by starting with the Bochner integral in Banach spaces, clarifying the role of strong measurability through Pettis' theorem, introducing Banach-space-valued martingales and the \(Q\)-Wiener process, and then constructing the stochastic integral through the Wiener-It\^o isometry.
 
 \section*{1. Stochastic Integration in Banach Space}
-We begin by fixing the Banach-space-valued setting in which the Bochner integral will be constructed. We work with a real Banach space \((E,\|\cdot\|)\) and a probability space \((\Omega,\mathcal A)\) equipped with a finite measure \(\mu\).
+We begin by fixing the Banach-space-valued setting in which the Bochner integral will be constructed. We work with a real Banach space \((E,\|\cdot\|)\), not necessarily separable, and a probability space \((\Omega,\mathcal A)\) equipped with a finite measure \(\mu\).
 
 Our core mathematical objective is to construct the Bochner integral, which is an \(E\)-valued integration. In standard calculus, integrating a function yields a real number. Here, for a given measurable function \(f:\Omega\to E\), we want the integral \(\int f\,d\mu\) to output a specific vector that lives inside our Banach space \(E\).
 
@@ -382,29 +382,33 @@ This inequality allows us to define a new function space, denoted as \(\mathcal 
 \[
 \mathcal M_T^p
 :=
-\left\{(M_t)_{t\in[0,T]}: \text{\(E\)-valued continuous \((\mathcal A_t)\)-martingale and } \sup_{0\le t\le T}\left(\mathbb E\|M_t\|_E^p\right)^{1/p}<\infty\right\}.
+\left\{
+M=(M_t)_{t\in[0,T]} :
+\begin{array}{l}
+\text{\(M\) is an \(E\)-valued continuous \((\mathcal A_t)\)-martingale and} \\
+\|M\|_{\mathcal M_T^p}:=\sup_{0\le t\le T}\left(\mathbb E\|M_t\|_E^p\right)^{1/p}<\infty
+\end{array}
+\right\}.
 \]
+In other words, this norm measures the \(L^p\)-size of the martingale uniformly over time.
 Because of Doob's inequality, this structure forms a complete Banach space for \(p>1\). Furthermore, if \(p=2\) and the target space \(E\) is a Hilbert space, then \(\mathcal M_T^2\) becomes a Hilbert space itself. This \(L^2\) Hilbert-space framework is precisely where we will build our stochastic integral.
 
 \subsection*{4.3. Section 1.3.2: Constructing the Stochastic Integral}
-The next objective is to define the stochastic integral with respect to the \(Q\)-Wiener process. Fix a \(U\)-valued \(Q\)-Wiener process \((W_t)\) with respect to a filtration \((\mathcal F_t)\). We want to define the stochastic integral of an operator-valued process \(\Phi(s)\) with respect to \(dW_s\), such that the resulting integral
-\[
-\int_0^T \Phi(s)\,dW_s
-\]
-takes values in a new Hilbert space \(H\).
+The next objective is to define the stochastic integral with respect to the \(Q\)-Wiener process. Fix a \(U\)-valued \(Q\)-Wiener process \((W_t)\) with respect to a filtration \((\mathcal F_t)\). We want to define the stochastic integral of an operator-valued process \(\Phi(s)\) with respect to \(dW_s\), such that the resulting integral \(\int_0^T \Phi(s)\,dW_s\) takes values in a new Hilbert space \(H\).
 
-Just as with the Bochner integral, we cannot integrate complex objects immediately. We proceed methodically.
+Just as with the Bochner integral, we cannot immediately integrate general operator-valued processes. We proceed step by step.
 
 \textbf{Step 1: Integration of elementary processes.}
 
-We define an elementary process, denoted as \((*)\), using a step function over a time partition. Let
+We use a step function over a time partition to define an elementary process \(\Phi:[0,T]\times\Omega\to L(U,H)\), denoted as \((*)\). Let
 \[
 0=t_0\le t_1\le \cdots \le t_k=T
 \]
-be a partition of \([0,T]\). We define our elementary process by
+be a partition of \([0,T]\). Then
 \[
 \Phi(t)=\sum_{m=0}^{k-1}\Phi_m 1_{]t_m,t_{m+1}]}(t). \tag{*}
 \]
+Thus \(\Phi(t)\) is the elementary process itself, while the \(\Phi_m\) are the coefficients or building blocks of that process: each \(\Phi_m\) is an \(L(U,H)\)-valued random variable, and the whole collection of them defines the elementary process \(\Phi(t)\).
 
 For this to be mathematically valid, the coefficients \(\Phi_m\) must satisfy two conditions:
 \begin{itemize}
@@ -431,6 +435,12 @@ The elementary stochastic integral can only be extended once its \(L^2\)-structu
 \subsection*{5.1. The Domain of the Integral Mapping}
 We first formalize the integral operator defined for elementary processes.
 
+We denote this mapping by
+\[
+I:\mathcal E\to \mathcal M_T^2,
+\]
+where \(\mathcal E\) denotes the space of elementary integrands \(\Phi\), and \(I(\Phi)\) is the martingale obtained from the stochastic integral of \(\Phi\).
+
 Recall that \(\mathcal M_T^2\) is the space of continuous, \(H\)-valued, \(\mathcal F_t\)-adapted martingales that are \(L^2\)-bounded. This notation succinctly summarizes the goal: taking simple step-function processes and mapping them to well-behaved continuous martingales.
 
 \subsection*{5.2. Step 2: The Need for Hilbert-Schmidt Operators}
@@ -452,6 +462,7 @@ The linear space of all such operators, denoted \(L_2(U,H)\), is itself a real H
 \[
 \langle A,B\rangle_{L_2(U,H)}:=\sum_{k=1}^{\infty}\langle Ae_k,Be_k\rangle_H.
 \]
+In the separable Hilbert-space setting of the lecture, this Hilbert-Schmidt space is again separable.
 
 \subsection*{5.3. The Wiener-It\^o Isometry}
 With the Hilbert-Schmidt framework in place, the isometry can now be stated.
@@ -464,15 +475,22 @@ With the Hilbert-Schmidt framework in place, the isometry can now be stated.
 \]
 \end{theorem}
 
-This equation states that the expected squared norm of the stochastic integral in the target space \(H\) is exactly equal to the time-integral of the expected Hilbert-Schmidt norm of the integrand composed with \(\sqrt{Q}\).
+This equation states that the expected squared norm of the stochastic integral in the target space \(H\) is exactly equal to the expected time-integral of the squared Hilbert-Schmidt norm of the integrand composed with \(\sqrt{Q}\).
+
+Equivalently,
+\[
+\left\|\int_0^t \Phi_s\,dW_s\right\|_{L^2(\Omega;H)}
+=
+\|\Phi\circ \sqrt Q\|_{L^2(\Omega\times[0,t];L_2(U,H))}.
+\]
+This shows the isometry directly: the stochastic integral preserves the \(L^2\)-norm.
 
 In particular, the notes emphasize that the squared norm of the integral inside the martingale space \(\mathcal M_T^2\) equals the right-hand side evaluated up to the terminal time \(T\). This isometry is the bridge allowing bounds to be transferred from ordinary Lebesgue time-integrals to stochastic integrals.
 
 \subsection*{5.4. Proof Sketch: Isometry for Elementary Processes}
-The proof begins with the elementary processes already used in the definition of the stochastic integral.
+The proof begins with the elementary processes already used in the definition of the stochastic integral. As in the script, we may assume without loss of generality that \(t=T\). We then start from the left-hand side of the isometry and expand it until the Hilbert-Schmidt norm appears.
 
-We want to evaluate the left-hand side of the isometry, namely \(\mathbb E\left(\left\|\int_0^t \Phi_s\,dW_s\right\|_H^2\right)\).
-By substituting the discrete definition of the elementary integral, this becomes
+By substituting the discrete definition of the elementary integral, we obtain
 \[
 \mathbb E\left(\left\|\int_0^t \Phi_s\,dW_s\right\|_H^2\right)
 =
@@ -483,16 +501,37 @@ where
 \Delta_m:=W_{t_{m+1}}-W_{t_m}.
 \]
 
-Expanding the squared norm of this sum yields a double summation of inner products:
+Now use the Hilbert-space identity
+\[
+\left\|\sum_{m=0}^{k-1} y_m\right\|_H^2
+=
+\left\langle \sum_{m=0}^{k-1} y_m,\sum_{n=0}^{k-1} y_n\right\rangle_H
+=
+\sum_{m,n}\langle y_m,y_n\rangle_H.
+\]
+Applying this with \(y_m=\Phi_m\Delta_m\) yields a double summation of inner products, and by linearity of expectation we may move this finite double sum outside the expectation:
 \[
 \mathbb E\left(\left\|\sum_{m=0}^{k-1}\Phi_m\Delta_m\right\|_H^2\right)
 =
 \sum_{m,n}\mathbb E\bigl(\langle \Phi_m\Delta_m,\Phi_n\Delta_n\rangle_H\bigr).
 \]
-
-To evaluate the expectation of these cross-terms, we break down the increments \(\Delta_m\) into their independent components by substituting the canonical representation of the Wiener process.
-
-By projecting the increments onto the basis \(e_k\) and pulling out the eigenvalues \(\lambda_k\), the equation expands into
+To evaluate these cross-terms, we now expand each Wiener increment through the canonical representation of the \(Q\)-Wiener process. Let \((e_k)\) be a complete orthonormal system of \(U\) consisting of eigenvectors of \(Q\) with eigenvalues \(\lambda_k\), and define
+\[
+\beta_k(t):=\langle W(t),e_k\rangle_U.
+\]
+Then \((\beta_k)\) are the corresponding independent one-dimensional Brownian motions. Moreover, from
+\[
+W_t=\sum_{k=1}^{\infty}\sqrt{\lambda_k}\,\beta_k(t)e_k,
+\]
+we obtain
+\[
+\Delta_m
+=
+W_{t_{m+1}}-W_{t_m}
+=
+\sum_{k=1}^{\infty}\sqrt{\lambda_k}\,(\beta_k(t_{m+1})-\beta_k(t_m))e_k.
+\]
+Substituting these expressions for \(\Delta_m\) and \(\Delta_n\) into the inner products \(\langle \Phi_m\Delta_m,\Phi_n\Delta_n\rangle_H\), and then expanding with respect to the basis \((e_k)\), gives
 \[
 \sum_{m,n}\mathbb E\bigl(\langle \Phi_m\Delta_m,\Phi_n\Delta_n\rangle_H\bigr)
 =
@@ -500,50 +539,81 @@ By projecting the increments onto the basis \(e_k\) and pulling out the eigenval
 \mathbb E\Bigl(\langle \Phi_m e_k,\Phi_n e_\ell\rangle_H
 (\beta_k(t_{m+1})-\beta_k(t_m))(\beta_\ell(t_{n+1})-\beta_\ell(t_n))\Bigr).
 \]
-
-At this point, the logical next step relies on the properties of standard Brownian motion \(\beta\). Because the increments of \(\beta\) are independent across different time intervals \(m\neq n\) and orthogonal across different basis directions \(k\neq \ell\), the vast majority of these cross-terms evaluate to zero, leaving only the diagonal terms that construct the right-hand side of the isometry.
+What remains is to collapse this expression by the independence properties of the one-dimensional Brownian motions \((\beta_k)\). This is done in the next subsection.
 
 \section*{6. Completing the Wiener-It\^o Isometry}
 What remains is to collapse the Brownian increment terms in the expansion and identify the Hilbert-Schmidt norm that appears on the right-hand side.
 
 \subsection*{6.1. Collapsing the Expectations: The Orthogonality Principle}
-We start by analyzing the cross-terms in the expansion of the expected squared norm. They involve expressions of the form
+We now analyze the cross-terms in the expansion obtained above. They involve expectations of products of Brownian increments of the form
 \[
-\mathbb E\bigl((\beta_k(t_{m+1})-\beta_k(t_m))(\beta_\ell(t_{n+1})-\beta_\ell(t_n))\mid \mathcal F_{t_n}\bigr).
+\mathbb E\bigl((\beta_k(t_{m+1})-\beta_k(t_m))(\beta_\ell(t_{n+1})-\beta_\ell(t_n))\mid \mathcal F_{t_{m\wedge n}}\bigr).
 \]
-
-Because standard Brownian increments are independent of the past and independent across different dimensions, the vast majority of these terms vanish. The notes explicitly demonstrate two cases where the expectation evaluates to \(0\):
-
-\textbf{Different Time Intervals \((m\neq n)\):} If \(m<n\), the later increment is completely independent of the earlier one.
-
-\textbf{Different Spatial Dimensions \((k\neq \ell)\):} Even within the same time interval \((m=n)\), if the dimensions are different, the orthogonality of the independent Brownian motions causes the expectation to collapse to zero.
-
-Therefore, the only terms that survive this summation are the diagonal terms, where the time intervals match \((m=n)\) and the dimensions match \((k=\ell)\). For these terms, the expectation of the squared Brownian increment,
- \(\mathbb E\bigl((\beta_k(t_{m+1})-\beta_k(t_m))^2\bigr)\), evaluates exactly to the length of the time step:
+To simplify the notation, write
 \[
+\Delta_m\beta_k:=\beta_k(t_{m+1})-\beta_k(t_m).
+\]
+Following the script, the vanishing terms are treated in two explicit cases.
+
+\textbf{Case 1: \(m\neq n\).} Assume without loss of generality that \(m<n\). Then the later increment is independent of \(\mathcal F_{t_n}\), and therefore
+\[
+\mathbb E(\Delta_m\beta_k\,\Delta_n\beta_\ell\mid \mathcal F_{t_{m\wedge n}})
+=
+\Delta_m\beta_k\,\mathbb E(\Delta_n\beta_\ell\mid \mathcal F_{t_n})
+=
+0.
+\]
+Hence every term with \(m\neq n\) vanishes.
+
+\textbf{Case 2: \(m=n\) but \(k\neq \ell\).} In this case the two increments belong to different one-dimensional Brownian motions. Since these Brownian motions are independent, we obtain
+\[
+\mathbb E(\Delta_m\beta_k\,\Delta_m\beta_\ell\mid \mathcal F_{t_{m\wedge n}})
+=
+\mathbb E(\Delta_m\beta_k\mid \mathcal F_{t_m})\,
+\mathbb E(\Delta_m\beta_\ell\mid \mathcal F_{t_m})
+=
+0.
+\]
+Thus every term with \(m=n\) and \(k\neq \ell\) also vanishes.
+
+Consequently, only the diagonal terms survive, namely those with \(m=n\) and \(k=\ell\). For these remaining terms, the expectation of the squared Brownian increment is
+\[
+\mathbb E\bigl((\beta_k(t_{m+1})-\beta_k(t_m))^2\bigr)
+=
 t_{m+1}-t_m.
 \]
+Hence, in the remaining diagonal case,
+\[
+\mathbb E\bigl(\langle \Phi_m(e_k),\Phi_n(e_\ell)\rangle_H\,\Delta_m\beta_k\,\Delta_n\beta_\ell\bigr)
+=
+\mathbb E\bigl(\|\Phi_m(e_k)\|_H^2\bigr)(t_{m+1}-t_m).
+\]
+After this reduction, the original quadruple sum collapses to the diagonal contribution that enters the next step.
 
 \subsection*{6.2. Reconstructing the Hilbert-Schmidt Norm}
-After the vanishing cross-terms are removed, the surviving diagonal terms can be reorganized into the Hilbert-Schmidt norm.
+After the off-diagonal terms have vanished, the surviving diagonal terms take the form
 \[
-\sum_k \lambda_k \,\mathbb E\bigl(\|\Phi_m e_k\|_H^2\bigr)(t_{m+1}-t_m).
+\sum_{k}\lambda_k\,\mathbb E\bigl(\|\Phi_m e_k\|_H^2\bigr)(t_{m+1}-t_m),
 \]
+for each fixed time interval \(m\). We now rewrite this expression so that the Hilbert-Schmidt norm appears explicitly.
 
-Next, we perform a vital algebraic manipulation and absorb the eigenvalue \(\lambda_k\) into the operator evaluation. Because
+Because
 \[
 \sqrt{\lambda_k}\,e_k=\sqrt{Q}\,e_k,
 \]
-we can rewrite the term as
+we may absorb the factor \(\lambda_k\) into the operator evaluation and rewrite the diagonal contribution as
 \[
+\sum_k \lambda_k\,\mathbb E\bigl(\|\Phi_m e_k\|_H^2\bigr)(t_{m+1}-t_m)
+=
 \sum_k \mathbb E\bigl(\|\Phi_m(\sqrt{Q}\,e_k)\|_H^2\bigr)(t_{m+1}-t_m).
 \]
-
-By linearity, this becomes
+Since \(\Phi_m(\sqrt{Q}\,e_k)=(\Phi_m\circ \sqrt{Q})e_k\), this is the same as
 \[
+\mathbb E\bigl(\|\Phi_m(\sqrt{Q}\,e_k)\|_H^2\bigr)
+=
 \mathbb E\bigl(\|\Phi_m\circ \sqrt{Q}\, e_k\|_H^2\bigr).
 \]
-This is the critical step. Summing the squared norm of an operator applied to a basis \(e_k\) is exactly the definition of the Hilbert-Schmidt norm:
+Now the defining property of the Hilbert-Schmidt norm applies: summing the squared norms over a complete orthonormal system gives
 \[
 \sum_k \|\Phi_m\circ \sqrt{Q}\,e_k\|_H^2
 =
@@ -552,14 +622,20 @@ This is the critical step. Summing the squared norm of an operator applied to a 
 
 \subsection*{6.3. Completing the Wiener-It\^o Isometry}
 Once the Hilbert-Schmidt norm has been identified, the remaining time sum becomes the expected time integral on the right-hand side of the isometry.
+Because \(\Phi\) is elementary, it is constant on each interval \(]t_m,t_{m+1}]\). Therefore
 \[
-\sum_{m=0}^{k-1}\mathbb E\bigl(\|\Phi_m\circ \sqrt{Q}\|_{L_2(U,H)}^2\bigr)(t_{m+1}-t_m).
+\int_0^t \|\Phi_s\circ \sqrt{Q}\|_{L_2(U,H)}^2\,ds
+=
+\sum_{m=0}^{k-1}\|\Phi_m\circ \sqrt{Q}\|_{L_2(U,H)}^2(t_{m+1}-t_m).
 \]
-
-This discrete formulation is exactly the Riemann-Lebesgue approximation of a time integral. Passing to the limit gives
+Taking expectation gives
 \[
+\sum_{m=0}^{k-1}\mathbb E\bigl(\|\Phi_m\circ \sqrt{Q}\|_{L_2(U,H)}^2\bigr)(t_{m+1}-t_m)
+=
 \mathbb E\left(\int_0^t \|\Phi_s\circ \sqrt{Q}\|_{L_2(U,H)}^2\,ds\right).
 \]
+
+This discrete formulation is exactly the Riemann-Lebesgue approximation of a time integral.
 
 This completes the proof. For elementary processes, the expected squared norm of the stochastic integral equals the time-integral of its Hilbert-Schmidt norm.
 
@@ -587,6 +663,7 @@ This sum is the definition of the Hilbert-Schmidt norm. Therefore,
 \]
 
 This shows that the trace of the composed operator \(A^*A\) is exactly the squared Hilbert-Schmidt norm of \(A\).
+Conversely, if a positive operator on \(U\) has finite trace, then its square root is Hilbert-Schmidt.
 
 \section*{Appendix}
 \subsection*{A.1. Banach Spaces}
@@ -736,5 +813,18 @@ for every \(n\), we may pass to the limit and obtain
 \qquad \mathbb P\text{-almost surely.}
 \]
 \end{proof}
+
+\subsection*{A.12. \(L^p\)-Bounded Processes}
+\begin{definition}[\(L^p\)-bounded process]
+Let \((M_t)_{t\in[0,T]}\) be an \(E\)-valued process and let \(1\le p<\infty\). We say that \((M_t)\) is \(L^p\)-bounded if
+\[
+\sup_{0\le t\le T}\mathbb E\|M_t\|_E^p<\infty,
+\]
+or equivalently,
+\[
+\sup_{0\le t\le T}\left(\mathbb E\|M_t\|_E^p\right)^{1/p}<\infty.
+\]
+In words, the \(p\)-th moments of the process are uniformly bounded over the whole time interval \([0,T]\).
+\end{definition}
 
 \end{document}

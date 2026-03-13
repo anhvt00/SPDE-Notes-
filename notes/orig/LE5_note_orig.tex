@@ -1,0 +1,986 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in]{geometry}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\DeclareMathOperator{\Id}{Id}
+
+\title{Lecture 5: Semilinear SPDEs and the Mild Approach}
+\date{13.11.2025}
+\author{Tien Anh Vu}
+
+\begin{document}
+\maketitle
+
+Welcome back to class. We now begin the fifth module on Stochastic Partial Differential Equations, denoted in the notes as SPDE 5. This lecture introduces the semilinear SPDE framework, explains why the mild approach is necessary, and connects the infinite-dimensional formulation with the classical theory of finite-dimensional ODEs.
+
+\section*{1. Semilinear SPDEs and the Mild Approach}
+We begin by setting up the semilinear SPDE and then explain why its mild formulation is the natural infinite-dimensional analogue of the variation of constants formula.
+
+\subsection*{1.1. The Semilinear SPDE Framework}
+We first establish the core equation, marked as \((*)\):
+\[
+dX_t=[AX_t+B(X_t)]\,dt+C(X_t)\,dW_t.
+\]
+This equation evolves in the Hilbert space \(H\) and is equipped with the initial condition
+\[
+X_0=\xi.
+\]
+
+The notes explicitly label this as a semilinear equation. Let us carefully break down the properties of the operators driving this system:
+\begin{itemize}
+\item \textbf{The unbounded operator.} The linear operator \(A\) is specifically noted as being unbounded. This is typical for differential operators such as the Laplacian in infinite-dimensional spaces.
+\item \textbf{The non-Lipschitz part.} The nonlinear drift component \(B(X_t)\) is identified as the non-Lipschitz part.
+\item \textbf{Global Lipschitz condition.} The annotations state that all other components are assumed to be globally Lipschitz.
+\item \textbf{Decomposition.} A crucial theoretical remark is made here: the decomposition of the drift into the linear part \(A\) and the nonlinear part \(B\) is not unique. We choose a decomposition that best facilitates the mathematical analysis.
+\end{itemize}
+
+\subsection*{1.2. The Mild Approach and the \(C_0\)-Semigroup}
+Because the operator \(A\) is unbounded, we cannot solve this equation directly in the standard analytical sense. We therefore pass from the differential form to the mild approach.
+
+To do this, we require a fundamental assumption: the pair \((A,D(A))\) generates a \(C_0\)-semigroup on \(H\), denoted by \((T_t)_{t\ge 0}\). This semigroup acts as the temporal propagator and allows us to solve \((*)\) in the mild sense.
+
+\subsection*{1.3. Constructing the Mild Solution}
+With the semigroup in place, the equation can now be written in its mild form:
+\[
+X_t
+=
+T_t\xi+\int_0^t T_{t-s}B(X_s)\,ds+\int_0^t T_{t-s}C(X_s)\,dW_s.
+\]
+
+We must analyze two vital properties noted beneath this equation.
+
+\textbf{Boundedness of the semigroup.} Under the initial condition term \(T_t\xi\), the notes remind us that the semigroup is bounded, which naturally implies that it preserves Lipschitz properties. See Appendix A.7 for the precise estimate behind this statement.
+
+\textbf{The martingale property.} Look carefully at the stochastic integral term
+\[
+\int_0^t T_{t-s}C(X_s)\,dW_s.
+\]
+The notes explicitly warn that this process is not a martingale. The reason is that the integrand contains \(T_{t-s}\), which depends on the current evaluation time \(t\). As time advances, the entire integrand changes, so the strict martingale structure is lost.
+
+However, there is no contradiction here. If we fix a future time horizon \(r\) inside the semigroup, then the process
+\[
+\int_0^t T_{r-s}C(X_s)\,dW_s
+\]
+for \(0\le t\le r\) is a local martingale. The martingale property fails only when the evaluation time and the semigroup parameter move together.
+
+\subsection*{1.4. Motivation: Homogeneous Finite-Dimensional ODEs}
+To see why the mild solution has exactly this structure, we briefly return to the classical finite-dimensional theory of ODEs.
+
+Consider the homogeneous ODE in \(\mathbb R^d\):
+\[
+\frac{d}{dt}\xi_t(x)=A\xi_t(x),
+\qquad
+\xi_0(x)=x.
+\]
+In the finite-dimensional setting, \(A\) is simply a matrix. The explicit solution is
+\[
+\xi_t(x)=e^{tA}x.
+\]
+The matrix exponential is defined by the Taylor series
+\[
+e^{tA}
+=
+\sum_{k=0}^{\infty}\frac{t^kA^k}{k!}.
+\]
+The notes identify this exponential operator as the fundamental solution of the system. In this finite-dimensional setting, the propagator may therefore be written as
+\[
+T_t=e^{tA}.
+\]
+Our infinite-dimensional \(C_0\)-semigroup \(T_t\) is the direct generalization of this matrix exponential.
+
+\subsection*{1.5. Inhomogeneous ODEs and Convolution}
+The next step is to add a forcing term and consider the inhomogeneous ODE
+\[
+\frac{d}{dt}\xi_t(x)=A\xi_t(x)+f(t),
+\qquad
+\xi_0(x)=x.
+\]
+Its solution is given by
+\[
+\xi_t(x)=e^{tA}x+\int_0^t e^{(t-s)A}f(s)\,ds.
+\]
+This is exactly the variation of constants formula, and it mirrors the structure of the mild solution for the SPDE.
+
+The notes then show the algebraic manipulation
+\[
+e^{(t-s)A}=e^{tA}e^{-sA},
+\]
+which would lead formally to
+\[
+\xi_t(x)
+=
+e^{tA}\left(x+\int_0^t e^{-sA}f(s)\,ds\right).
+\]
+However, a crucial warning is attached to this step: it is only defined for bounded operators. In the SPDE setting, the operator \(A\) is unbounded, so \(e^{-sA}\), which would correspond to evolving backward in time, is generally undefined. Therefore, in the infinite-dimensional mild solution, the convolution term \(T_{t-s}\) must remain inside the integral.
+
+\section*{2. Heuristic Derivation and Semigroup Theory}
+\subsection*{2.1. The Heuristic Derivation (Variation of Constants)}
+We now pass from the finite-dimensional ODE motivation to the heuristic variation of constants formula for the SPDE. To execute this heuristically, we treat the stochastic differential as a standard derivative with respect to time, formally substituting
+\[
+dW_t
+=
+\frac{dW_t}{dt}\cdot dt.
+\]
+This conceptual step allows us to express the state \(X_t\) as an integral convolution:
+\[
+X_t
+=
+e^{tA}\xi+\int_0^t e^{(t-s)A}\left(B(X_s)+C(X_s)\frac{dW_s}{ds}\right)\,ds.
+\]
+By algebraically distributing the exponential kernel and recombining the temporal differentials, we arrive directly at our familiar mild solution structure:
+\[
+X_t
+=
+e^{tA}\xi+\int_0^t e^{(t-s)A}B(X_s)\,ds+\int_0^t e^{(t-s)A}C(X_s)\,dW_s.
+\]
+Here the diffusion coefficient \(C(X_s)\) is implicitly carried over into the final stochastic integral.
+
+\subsection*{2.2. Abstracting the Matrix Exponential}
+To make the previous heuristic formula rigorous, we must now abstract the core properties of \(e^{tA}\) for \(t\ge 0\), as referenced from ``Appendix C''.
+
+We identify three fundamental traits of \(e^{tA}\):
+\begin{enumerate}
+\item \textbf{Identity:} At time zero, it does nothing:
+\[
+e^{0A}=I.
+\]
+\item \textbf{Semigroup Property:} It elegantly splits over time:
+\[
+e^{(t+s)A}=e^{tA}\cdot e^{sA}.
+\]
+A critical theoretical warning is noted in parentheses here: the spatial split
+\[
+e^{A+B}=e^A\cdot e^B
+\]
+is generally false unless the operators \(A\) and \(B\) perfectly commute.
+\item \textbf{Continuity:} The temporal mapping \(t\mapsto e^{tA}x\) is continuous on the interval \([0,\infty)\).
+\end{enumerate}
+
+\subsection*{2.3. Rigorous Definition: The \(C_0\)-Semigroup}
+These three traits are exactly the ones we keep in the abstract definition of a strongly continuous semigroup, or \(C_0\)-semigroup. Let \(E\) be a standard Banach space, and let \(L(E,E)\) represent the space of all bounded linear operators acting on \(E\). We formally define a family of linear operators \((T_t)_{t\ge 0}\subseteq L(E,E)\) as a \(C_0\)-semigroup if it strictly satisfies three axioms:
+\begin{enumerate}
+\item \(T_0=\Id_E\).
+\item \(T_t\circ T_s=T_{t+s}\) for all \(s,t\ge 0\).
+\item the mapping \(t\mapsto T_tu\) is continuous for every \(u\in E\).
+\end{enumerate}
+By replacing the invalid expression \(e^{tA}\) with the rigorously defined bounded operator \(T_t\), our mild solution equation becomes mathematically sound.
+
+\subsection*{2.4. The Infinitesimal Generator}
+Once the semigroup has been defined, the next question is how to recover the original unbounded operator \(A\) from this bounded family. We look back to classical calculus. Similar to evaluating the derivative
+\[
+\frac{d}{dt}e^{tA}x\bigg|_{t=0}=Ax.
+\]
+Analogously, we define our linear operator \(A\) by evaluating the strict right-sided derivative of the semigroup at time zero:
+\[
+Au
+:=
+\lim_{h\downarrow 0}\frac{1}{h}(T_hu-u),
+\]
+whenever this limit exists in \(E\). Because evaluating this limit involves an unbounded operator, it will not converge for every arbitrary vector. Therefore, we must strictly define its domain, denoted \(D(A)\), as the exact set of all elements \(u\in E\) for which this limit exists and results in a vector residing in \(E\):
+\[
+D(A)
+:=
+\left\{u\in E:\lim_{h\downarrow 0}\frac{1}{h}(T_hu-u)\ \text{exists in }E\right\}.
+\]
+The comprehensive pair \((A,D(A))\) is officially termed the infinitesimal generator of the semigroup \((T_t)_{t\ge 0}\).
+
+\subsection*{2.5. A Concluding Topological Remark}
+The final point in this abstract discussion is a basic topological property of the generator. The domain of our infinitesimal generator, \((A,D(A))\), is densely defined. Mathematically, this means that the set \(D(A)\) forms a dense subset within our total Banach space \(E\):
+\[
+\overline{D(A)}=E.
+\]
+Equivalently, for every \(x\in E\) and every \(\varepsilon>0\), there exists \(u\in D(A)\) such that
+\[
+\|x-u\|_E<\varepsilon.
+\]
+Thus, although the generator \(A\) is unbounded and not defined on all of \(E\), it is defined on a sufficiently rich subset to support the semigroup theory used in SPDEs.
+
+\medskip
+
+\noindent\textbf{A second remark.} We also record one further structural property of the generator. The pair \((A,D(A))\) is strictly defined as a closed linear operator. We define the graph of the operator by
+\[
+\Gamma(A):=\{(u,Au)\mid u\in D(A)\}.
+\]
+For the operator to be closed, this graph must form a closed subset within the product space \(E\times E\).
+
+In practical, operational terms, suppose we have a sequence \((u_n)\) entirely contained within our domain \(D(A)\). If this sequence converges to a limit \(u\in E\), and simultaneously the sequence of their mapped values \((Au_n)\) forms a Cauchy sequence in \(E\), then we are mathematically guaranteed two things: the limit \(u\) strictly belongs to the domain \(D(A)\), and the operator perfectly preserves the limit, meaning
+\[
+Au_n\to Au
+\qquad \text{in } E.
+\]
+This ensures that taking limits and applying the unbounded operator \(A\) safely commute within its domain.
+
+\section*{3. The Brownian Semigroup and the Laplace Operator}
+We now leave the abstract semigroup framework and apply it to one of the most fundamental examples in stochastic analysis: the Laplace operator generated through Brownian motion.
+
+\subsection*{3.1. The Core Example: The Laplace Operator and It\^o's Formula}
+With this abstract theory secured, we can now pass to a concrete example. We set our Banach space to be the space of square-integrable functions, \(E=L^2(\mathbb R^d)\), and construct the semigroup for the Laplace operator.
+
+To achieve this probabilistically, let \(W(t)\) for \(t\ge 0\) be a standard \(d\)-dimensional Brownian motion. We select a twice continuously differentiable test function, \(f\in C^2(\mathbb R^d)\), and evaluate it at a shifted starting position, \(f(W_t+x)\).
+
+We now apply the standard It\^o formula to expand this process over time:
+\[
+f(W_t+x)
+=
+f(x)+\int_0^t \nabla f(W_s+x)\,dW_s+\frac12\int_0^t \sum_{i=1}^d \partial_{x_i x_i}^2 f(W_s+x)\,ds.
+\]
+Look closely at the final term. The sum of the pure second-order partial derivatives is exactly the mathematical definition of the Laplacian, denoted as \(\Delta f(W_s+x)\). This cleanly links our stochastic path to the spatial differential operator.
+
+\subsection*{3.2. Defining the Semigroup Pointwise}
+The It\^o expansion now suggests a pointwise definition of the semigroup for each starting position \(x\). We define the operator \(T_t\) acting on our function as the expected value of the shifted Brownian motion:
+\[
+T_t f(x):=\mathbb E[f(W_t+x)].
+\]
+
+Since the function \(f\) is deterministic, the only randomness comes from the Brownian path \(W_t\). When we take the expectation of both sides of our It\^o formula, the stochastic integral term evaluates exactly to zero because it is a true martingale. We are left strictly with the deterministic time integral:
+\[
+\mathbb E[f(W_t+x)]
+=
+f(x)+\mathbb E\left[\int_0^t \frac12 \Delta f(W_s+x)\,ds\right].
+\]
+Switching the expectation and the time integral, we obtain
+\[
+T_t f(x)
+=
+f(x)+\int_0^t \mathbb E\!\left[\frac12 \Delta f(W_s+x)\right]ds.
+\]
+Because our semigroup operator \(T_s\) is defined precisely as taking this expectation, we can elegantly rewrite the integral as
+\[
+T_t f(x)
+=
+f(x)+\int_0^t T_s\!\left(\frac12 \Delta f\right)(x)\,ds.
+\]
+
+\subsection*{3.3. Extracting the Infinitesimal Generator}
+The next step is to verify that this semigroup truly generates the Laplacian. Following the formal definition of the generator, we subtract \(f(x)\), divide by \(t\), and evaluate the right-sided limit:
+\[
+\frac1t\bigl(T_t f(x)-f(x)\bigr)
+=
+\frac1t\int_0^t T_s\!\left(\frac12 \Delta f\right)(x)\,ds.
+\]
+By the Fundamental Theorem of Calculus, as \(t\downarrow 0\), this time-averaged integral converges precisely to the integrand evaluated at time zero:
+\[
+\lim_{t\downarrow 0}\frac1t\int_0^t T_s\!\left(\frac12 \Delta f\right)(x)\,ds
+=
+\frac12\Delta f(x).
+\]
+A critical analytical warning is noted here: this convergence does not just hold pointwise for each \(x\). It converges strongly in our function space \(L^2(\mathbb R^d)\) provided our initial function \(f\) has compact support, meaning \(f\in C_c^2(\mathbb R^d)\).
+
+\subsection*{3.4. The Formal Domain: Sobolev Spaces}
+This identifies the generator pointwise, and the remaining task is to describe its full domain in function-space terms. The family of operators \((T_t)_{t\ge 0}\) we just constructed acts as a bounded linear operator on \(L^2(\mathbb R^d)\) and defines a \(C_0\)-semigroup on this space.
+
+Let \(D\!\left(\frac12\Delta\right)\) denote the formal domain of its infinitesimal generator. We have mathematically shown that the space of smooth functions with compact support is securely contained within this domain:
+\[
+C_c^2(\mathbb R^d)\subseteq D\!\left(\frac12\Delta\right).
+\]
+
+To satisfy the closed operator property, the full domain must be complete under the \(L^2\) norm. Therefore, the notes establish that the full domain is the Sobolev space \(H^{2,2}(\mathbb R^d)\subset L^2(\mathbb R^d)\), consisting of functions whose weak derivatives up to order two remain in \(L^2(\mathbb R^d)\).
+
+
+\section*{4. Weak Derivatives and Dirichlet Boundary Conditions}
+Having identified the Sobolev domain of the Laplacian on \(\mathbb R^d\), we now make the weak-derivative structure explicit and then pass to bounded domains with Dirichlet boundary conditions.
+
+\subsection*{4.1. The Rigorous Definition of Weak Derivatives}
+We begin by formalizing the weak derivatives that underlie the Sobolev space description. The domain consists of all functions \(f\in L^2(\mathbb R^d)\) such that their partial derivatives, denoted as \(\partial^\alpha f\), exist in \(L^2(\mathbb R^d)\) in the weak sense for all derivative multi-indices up to the second order, that is, for all \(|\alpha|\le 2\).
+
+How do we define a derivative when a function might not be classically smooth? We use a test function \(g\), and the notes specify that \(g\) must have compact support, meaning \(g\in C_c^\infty(\mathbb R^d)\).
+
+We define the weak derivative by shifting the burden of differentiation onto this smooth test function via integration by parts. In the classical smooth case one has
+\[
+\int_{\mathbb R^d} \partial^\alpha f(x)g(x)\,dx
+=
+\int_{\mathbb R^d} f(x)(-1)^{|\alpha|}\partial^\alpha g(x)\,dx.
+\]
+Here the boundary terms at infinity vanish because \(g\) has compact support. Since
+\[
+\langle \partial^\alpha f,g\rangle_{L^2(\mathbb R^d)}
+=
+\int_{\mathbb R^d} \partial^\alpha f(x)g(x)\,dx,
+\]
+we obtain
+\[
+\langle \partial^\alpha f,g\rangle_{L^2(\mathbb R^d)}
+=
+\int_{\mathbb R^d} f(x)(-1)^{|\alpha|}\partial^\alpha g(x)\,dx.
+\]
+
+There is a profound functional analysis concept noted right below this integral: the Riesz Representation Theorem. If the linear mapping
+\[
+g\mapsto \int_{\mathbb R^d} f(x)(-1)^{|\alpha|}\partial^\alpha g(x)\,dx
+\]
+is continuous on \(L^2(\mathbb R^d)\), then the Riesz theorem guarantees that there exists a unique function in \(L^2(\mathbb R^d)\), which we officially call the weak derivative \(\partial^\alpha f\), that represents this functional.
+
+\subsection*{4.2. The Laplace Operator on a Bounded Domain}
+With the weak-derivative framework in place, we can now transition from the full space \(\mathbb R^d\) to an open, restricted domain \(D\subset \mathbb R^d\).
+
+When we restrict the space, we must mathematically stop our Brownian motion from wandering outside of it. We do this by defining a stopping time \(\tau_D\):
+\[
+\tau_D
+:=
+\inf\{t>0:W(t)+x\notin D\}.
+\]
+This is the first exit time, namely the exact moment the Brownian path hits the boundary of our domain \(D\). The instruction is clear: we stop the Brownian motion when it first exits.
+
+With this stopping time, we construct a new family of linear operators for our semigroup:
+\[
+T_t f(x):=\mathbb E[f(W_t+x);\tau_D>t],
+\qquad t\ge 0.
+\]
+Notice the critical condition inside the expectation: only those Brownian paths that remain inside \(D\) up to time \(t\), that is, those with \(\tau_D>t\), contribute to the value of \(T_t f(x)\). Equivalently, if \(t\ge \tau_D\), then the path has already exited the domain by time \(t\) and contributes zero. This structurally defines a \(C_0\)-semigroup on \(L^2(D)\).
+
+\subsection*{4.3. The Infinitesimal Generator and Dirichlet Conditions}
+Once the process is killed at the boundary, this probabilistic construction translates directly into a mathematical boundary condition. The infinitesimal generator of this new semigroup is still \(\frac12\Delta\), but its domain changes drastically.
+
+The new domain is defined as the intersection
+\[
+D\!\left(\frac12\Delta\right)=H_0^{1,2}(D)\cap H^{2,2}(D).
+\]
+Let us dissect this.
+
+\(H^{2,2}(D)\) ensures that the function has second-order weak derivatives in \(L^2\), as we have just defined.
+
+\(H_0^{1,2}(D)\subseteq L^2(D)\) is the space of \(L^2\)-functions whose first-order weak derivatives are also in \(L^2\), together with the additional condition indicated by the subscript \(0\).
+
+The notes explicitly define this zero-subscript by saying that the functions vanish on the boundary \(\partial D\). This is exactly the Dirichlet condition. By absorbing the Brownian motion at the boundary, our semigroup naturally generates the Laplacian with zero Dirichlet boundary conditions.
+
+\subsection*{4.4. The One-Dimensional Particular Case}
+To ground this abstract theory, we end with the specific one-dimensional case. For \(d=1\), a function \(f\in L^2(\mathbb R)\) is weakly differentiable if the mapping \(g\mapsto -\int_{\mathbb R} f(x)g'(x)\,dx\) is continuous on \(L^2(\mathbb R)\). If so, then by Riesz it is represented by a function \(f'\in L^2(\mathbb R)\), so that
+\[
+\int_{\mathbb R} f'(x)g(x)\,dx
+=
+-\int_{\mathbb R} f(x)g'(x)\,dx.
+\]
+
+The notes then provide a visual and mathematical proof using a specific piecewise-linear test function \(g_n\). The sketch shows a trapezoidal function with base points at \(a-\frac1n\), \(a\), \(b\), and \(b+\frac1n\).
+
+Applying this specific trapezoidal test function to the weak derivative identity, the integral of \(fg_n'\) splits over the sloped edges of the trapezoid, where \(g_n'\) is nonzero. On the middle segment \([a,b]\), the function \(g_n\) is constant, so \(g_n'(x)=0\) there and that part contributes nothing. Hence
+\[
+\int_{\mathbb R} f(x)g_n'(x)\,dx
+=
+-n\int_{a-1/n}^{a} f(x)\,dx+n\int_b^{b+1/n} f(x)\,dx.
+\]
+These are the left and right averages of \(f\) over shrinking intervals, and the final lines indicate that
+\[
+\lim_{n\to\infty}\left(-n\int_{a-1/n}^{a} f(x)\,dx+n\int_b^{b+1/n} f(x)\,dx\right)
+=
+f(b)-f(a)
+\]
+almost everywhere for all valid \(f\). This shows that in one dimension, weak differentiability recovers the Fundamental Theorem of Calculus in the sense that \(f\) admits an absolutely continuous representative \(\bar f\). In particular, if \(f\in H^{1,2}(\mathbb R)\), then there exists a continuous representative \(\bar f\) for this function. The notes immediately contrast this with higher dimensions: as the dimension increases, we lose this natural regularity and must impose boundary conditions to maintain analytical stability.
+
+\section*{5. Spectral Representation of Semigroups}
+We now turn from weak derivatives to the spectral representation of semigroups, focusing on the bounded one-dimensional case.
+
+\subsection*{5.1. The Special Case: A One-Dimensional Bounded Domain}
+To see how boundary conditions shape the operator, we restrict the domain to the open unit interval \(D=]0,1[\subset \mathbb R\). Because we require our functions to vanish at the endpoints \(x=0\) and \(x=1\), we are imposing Dirichlet boundary conditions.
+
+The hand-drawn sketch of the sine waves represents precisely the functions that naturally satisfy these endpoint conditions.
+
+The notes introduce the functions
+\[
+e_k(x):=\sqrt{2}\sin(\pi kx),
+\qquad k=1,2,3,\dots
+\]
+These sine waves are the eigenfunctions of the Laplace operator \(\Delta\), and the family \((e_k)_{k\ge 1}\) forms a complete orthonormal system (CONS) of \(L^2(]0,1[)\). For the generator \(\frac12\Delta\), the corresponding eigenvalue equation is
+\[
+\frac12\Delta e_k
+=
+-\frac12\pi^2 k^2 e_k.
+\]
+Thus the eigenvalue corresponding to \(e_k\) is \(-\frac12\pi^2 k^2\).
+
+\subsection*{5.2. Spectral Representation of the Semigroup}
+With this eigenbasis in hand, we can construct the semigroup explicitly. The finite-dimensional identity
+\[
+Ax=\lambda x
+\quad \Longrightarrow \quad
+e^{tA}x=e^{t\lambda}x
+\]
+has its exact analogue for semigroups in this setting. Applying the semigroup \(T_t\) to a single eigenfunction \(e_k\) gives
+\[
+T_t e_k(x)=e^{-\frac12\pi^2 k^2 t}e_k(x).
+\]
+
+Since \((e_k)\) is a complete orthonormal system, every function \(f\in L^2(]0,1[)\) has the Fourier expansion
+\[
+f=\sum_{k=1}^\infty \langle f,e_k\rangle e_k.
+\]
+By linearity, the semigroup acts term by term and yields the spectral representation
+\[
+T_t f(x)=\sum_{k=1}^\infty e^{-\frac12\pi^2 k^2 t}\langle f,e_k\rangle e_k(x).
+\]
+As \(t\uparrow \infty\), the negative exponential factor forces each mode to decay to zero, and therefore the entire sum converges to zero.
+
+\subsection*{5.3. The Generator and its Exact Domain}
+We now extract the generator from this spectral representation. Differentiating the semigroup formally at \(t=0\) gives
+\[
+\left.\frac{d}{dt}T_t(f)\right|_{t=0}
+=
+-\frac12\pi^2\sum_{k=1}^\infty k^2\langle f,e_k\rangle e_k.
+\]
+For this expression to define an element of \(L^2(]0,1[)\), the sum of the squared Fourier coefficients must be finite. Since the coefficient \(k^2\) is squared in the \(L^2\)-norm, the natural domain becomes
+\[
+D\!\left(\frac12\Delta\right)
+:=
+\left\{
+f\in L^2(]0,1[):
+\sum_{k=1}^\infty k^4 \langle f,e_k\rangle_{L^2}^2<\infty
+\right\}.
+\]
+In particular, the Fourier coefficients of \(f\) must decay sufficiently fast for the series to converge in \(L^2\).
+
+\section*{6. Abstract Spectral Theory and the Hille-Yosida Theorem}
+We now pass from the explicit spectral bounds of the heat semigroup to the abstract spectral theory of closed operators, culminating in the Hille-Yosida theorem.
+
+\subsection*{6.1. The Contraction Bound of the Semigroup}
+We begin by recalling the spectral representation of the semigroup,
+\[
+T_t f(x)
+=
+\sum_{k=1}^\infty e^{-\frac12\pi^2 k^2 t}\langle f,e_k\rangle e_k(x),
+\]
+and then estimate the squared \(L^2\)-norm \(\|T_t f\|_{L^2}^2\).
+
+Using the Fourier series representation, we obtain
+\[
+\|T_t f\|_{L^2}^2
+=
+\sum_{k=1}^\infty e^{-2(\frac12\pi^2 k^2 t)}\langle f,e_k\rangle^2.
+\]
+For every \(t>0\), the exponential factor satisfies
+\[
+e^{-\pi^2 k^2 t}\le 1.
+\]
+Therefore,
+\[
+\|T_t f\|_{L^2}^2
+\le
+\sum_{k=1}^\infty \langle f,e_k\rangle^2.
+\]
+By Parseval's identity, this becomes
+\[
+\|T_t f\|_{L^2}^2
+\le
+\|f\|_{L^2}^2.
+\]
+Thus
+\[
+\|T_t f\|_{L^2}\le \|f\|_{L^2},
+\]
+so the semigroup acts as a contraction.
+
+\subsection*{6.2. Abstract Spectral Theory: The Resolvent Set}
+To move beyond this explicit eigenfunction expansion, we now introduce the abstract resolvent framework for closed operators on Banach spaces.
+
+Let \((A,D(A))\) be a closed linear operator on a Banach space \(E\). We define its resolvent set by
+\[
+\rho(A):=
+\{\lambda\in\mathbb C:\lambda I-A:D(A)\to E \text{ is bijective}\}.
+\]
+Let us unpack the operational meaning of this set. If we want to solve the stationary operator equation
+\[
+\lambda u-Au=f,
+\]
+then we can algebraically isolate \(u\) and write
+\[
+u=(\lambda I-A)^{-1}f.
+\]
+For any complex scalar \(\lambda\) belonging to the resolvent set \(\rho(A)\), the operator \(\lambda I-A\) is strictly bijective. This means its inverse uniquely exists. We officially call this inverse mapping the resolvent operator:
+\[
+R_\lambda:=(\lambda I-A)^{-1}:E\to D(A).
+\]
+The notes emphasize a crucial functional analysis property here: because \(A\) is a closed operator, this resolvent operator \(R_\lambda\) is not just well defined, it is automatically continuous by the Closed Graph Theorem. This guarantees analytical stability when we solve these systems.
+
+\subsection*{6.3. The Spectrum and Lebesgue Decomposition}
+Once the resolvent set is defined, the spectrum is introduced as its complement:
+\[
+\sigma(A):=\mathbb C\setminus \rho(A).
+\]
+In infinite dimensions, the spectrum is more complicated than a discrete collection of eigenvalues. The notes distinguish the following parts.
+
+\textbf{Point spectrum.} This is the direct analogue of eigenvalues from linear algebra. It consists of those \(\lambda\) for which \(\lambda I-A\) fails to be injective.
+
+\textbf{Continuous spectrum.} This consists of those \(\lambda\) for which \(\lambda I-A\) is injective and has dense range, but its inverse is not bounded.
+
+\textbf{Singularly continuous spectrum.} In the Lebesgue decomposition below, this corresponds to the part of the spectral measure that is continuous, has no atoms, and is singular with respect to Lebesgue measure.
+
+To analyze this further, the notes introduce the Lebesgue decomposition of the spectral measure:
+\[
+\mu=\mu_{pp}+\mu_{ac}+\mu_{sc}.
+\]
+This separates the spectrum into pure point, absolutely continuous, and singularly continuous parts.
+
+\subsection*{6.4. The Hille-Yosida Theorem}
+We conclude with the Hille-Yosida theorem, which gives the precise bridge between the resolvent properties of an operator and the generation of a \(C_0\)-semigroup.
+
+Let \((A,D(A))\) be a closed linear operator on \(E\). The theorem states that the following two conditions are equivalent.
+
+\textbf{(i) The semigroup property.} The operator \(A\) is the infinitesimal generator of a \(C_0\)-semigroup \((T_t)_{t\ge 0}\) satisfying
+\[
+\|T_t\|_{L(E)}\le Me^{\omega t}
+\qquad \text{for all } t>0,
+\]
+for some constants \(M\ge 1\) and \(\omega\in\mathbb R\).
+This says that the semigroup grows at most exponentially in time, with rate controlled by \(\omega\) and prefactor \(M\).
+In the special case \(\omega=0\) and \(M=1\), this recovers the contraction semigroup situation discussed above.
+
+\textbf{(ii) The resolvent property.} The domain \(D(A)\) is dense in \(E\), and
+\[
+]\omega,+\infty[\ \subset \rho(A).
+\]
+Thus for every real \(\lambda>\omega\), the operator \(\lambda I-A:D(A)\to E\) is invertible, so \(\lambda u-Au=f\) has a unique solution \(u\in D(A)\) for each \(f\in E\), and the resolvent powers satisfy
+\[
+\|R_\lambda^k\|_{L(E)}
+\le
+\frac{M}{(\lambda-\omega)^k},
+\]
+for all integers \(k=1,2,3,\dots\). In the special case \(M=1\), it is enough in practice to verify the estimate for \(k=1\), since the higher powers then follow algebraically.
+
+This theorem gives the abstract criterion that allows one to verify the existence of a mild solution by checking resolvent bounds for the spatial operator \(A\).
+
+\section*{7. Resolvent Bounds and the Laplace Transform}
+We now resume from the abstract spectral theory of closed operators and turn to the precise relation between the resolvent and the semigroup.
+
+\subsection*{7.1. The Core Relation: The Laplace Transform}
+We now arrive at the central point of this page, namely the relation between the resolvent and the semigroup. The resolvent operator is given by the Laplace transform of the semigroup:
+\[
+R_\lambda
+:=
+\int_0^\infty e^{-\lambda t}T_t\,dt.
+\]
+This formula connects the time-dependent semigroup with the stationary operator \(\lambda I-A\). The exponential factor \(e^{-\lambda t}\) ensures decay in time and stabilizes the integral.
+
+\subsection*{7.2. Rigorous Derivation via the Infinitesimal Generator}
+We now justify this relation by applying the infinitesimal generator \(A\) to the Laplace integral. For \(f\in E\),
+\[
+A\left(\int_0^\infty e^{-\lambda t}T_t f\,dt\right).
+\]
+Passing \(A\) inside the integral and using \(AT_t f=\frac{d}{dt}(T_t f)\), we obtain
+\[
+A\left(\int_0^\infty e^{-\lambda t}T_t f\,dt\right)
+=
+\int_0^\infty e^{-\lambda t}AT_t f\,dt.
+\]
+\[
+\int_0^\infty e^{-\lambda t}AT_t f\,dt
+=
+\int_0^\infty e^{-\lambda t}\frac{d}{dt}(T_t f)\,dt.
+\]
+Integrating by parts gives the boundary term
+\[
+\left[e^{-\lambda t}T_t f\right]_{t=0}^{t=\infty}.
+\]
+At \(t=\infty\), the exponential decay forces this term to vanish, while at \(t=0\) we use \(T_0=\Id\), so
+\[
+\left[e^{-\lambda t}T_t f\right]_{t=0}^{t=\infty}
+=
+0-f
+=
+-f.
+\]
+The remaining integral contributes the factor \(\lambda\), and hence
+\[
+A\left(\int_0^\infty e^{-\lambda t}T_t f\,dt\right)
+=
+-f+\lambda\int_0^\infty e^{-\lambda t}T_t f\,dt.
+\]
+Since the Laplace integral is exactly \(R_\lambda f\), this is
+\[
+AR_\lambda f
+=
+\lambda R_\lambda f-f.
+\]
+Rearranging gives
+\[
+(\lambda I-A)R_\lambda f
+=
+f.
+\]
+This proves that the Laplace transform of the semigroup is the inverse of \(\lambda I-A\), and therefore
+\[
+R_\lambda=(\lambda I-A)^{-1}.
+\]
+
+\section*{Appendix}
+\subsection*{A.1. Semilinear Equations}
+\begin{remark}
+A stochastic equation is called semilinear because only part of the equation is linear. A typical form is
+\[
+dX_t=[AX_t+B(X_t)]\,dt+C(X_t)\,dW_t.
+\]
+In this equation, the term \(AX_t\) is linear in the unknown \(X_t\), since \(A\) is a linear operator. The remaining terms \(B(X_t)\) and \(C(X_t)\) may be nonlinear. So the equation is not fully linear, but it still contains a distinguished linear main part. That is why it is called semilinear: partly linear, partly nonlinear.
+
+A useful comparison is the following:
+\begin{itemize}
+\item linear: all terms depend linearly on \(X_t\);
+\item semilinear: the main operator part is linear, while the remaining terms may be nonlinear;
+\item quasilinear: the highest-order operator still appears linearly, but its coefficients may depend on the unknown itself;
+\item fully nonlinear: even the main operator part is nonlinear.
+\end{itemize}
+\end{remark}
+
+\subsection*{A.2. The Matrix Exponential}
+\begin{definition}[Matrix exponential]
+For a matrix \(A\in\mathbb R^{d\times d}\), the matrix exponential is defined by
+\[
+e^{tA}
+:=
+\sum_{k=0}^{\infty}\frac{t^kA^k}{k!}.
+\]
+\end{definition}
+
+\subsection*{A.3. The Fundamental Solution of a Linear ODE}
+\begin{remark}
+For the homogeneous ODE
+\[
+\frac{d}{dt}\xi_t=A\xi_t,
+\qquad
+\xi_0=x,
+\]
+the operator \(e^{tA}\) is called the fundamental solution because it propagates the initial state \(x\) forward in time:
+\[
+\xi_t=e^{tA}x.
+\]
+In other words, once the matrix exponential is known, the solution at time \(t\) is obtained by applying the operator \(e^{tA}\) to the initial condition. This is the finite-dimensional model for the semigroup \(T_t\) used in the mild formulation of SPDEs.
+\end{remark}
+
+\subsection*{A.4. The Variation of Constants Formula}
+\begin{remark}
+For the inhomogeneous ODE
+\[
+\frac{d}{dt}\xi_t=A\xi_t+f(t),
+\qquad
+\xi_0=x,
+\]
+the solution is
+\[
+\xi_t=e^{tA}x+\int_0^t e^{(t-s)A}f(s)\,ds.
+\]
+It is called the variation of constants formula because the constant initial vector \(x\) from the homogeneous solution is replaced by a time-dependent correction term generated by the forcing \(f(t)\).
+This is the finite-dimensional prototype of the mild solution formula for SPDEs.
+\end{remark}
+
+\subsection*{A.5. Why the Semigroup Stays Inside the Integral}
+\begin{remark}
+In the infinite-dimensional setting, the linear operator \(A\) is typically unbounded. Therefore the backward evolution \(e^{-sA}\) is generally not defined, and one cannot factor
+\[
+e^{(t-s)A}=e^{tA}e^{-sA}
+\]
+inside the mild formula. This is why the convolution term \(T_{t-s}\) must remain inside the integral.
+\end{remark}
+
+\subsection*{A.6. Remarks on the Semilinear Decomposition}
+\begin{remark}
+The statement that \(A\) is unbounded means that \(A\) is not defined on all of \(H\), but only on a domain \(D(A)\subset H\), and its operator norm is not finite on the whole space. This is typical for differential operators such as the Laplacian, because differentiation is much more singular than multiplication by a bounded matrix.
+\[
+A:D(A)\subset H\to H.
+\]
+
+The term \(B(X_t)\) is described in the notes as the non-Lipschitz part because it is the nonlinear component that may fail to satisfy a global Lipschitz bound. In many applications, the main analytical difficulty of the equation is concentrated in this drift term, while the linear part \(A\) is handled by semigroup methods.
+
+When the notes say that all other components are globally Lipschitz, the intended meaning is that once the difficult part of the drift has been isolated inside \(B\), the remaining terms are assumed to satisfy estimates of the form
+\[
+\|F(x)-F(y)\|\le L\|x-y\|
+\]
+with one constant \(L\) valid on the whole space. Such global Lipschitz bounds are exactly what make fixed point arguments and stability estimates possible.
+
+Finally, the decomposition of the drift into a linear part \(A\) and a nonlinear part \(B\) is not unique. The same equation may often be written in different ways by moving terms between \(A\) and \(B\). One chooses the decomposition that is analytically most useful, typically so that \(A\) generates a good \(C_0\)-semigroup and the remaining term \(B\) has properties that can be treated by perturbation or fixed point arguments.
+\[
+AX_t+B(X_t)=\widetilde A X_t+\widetilde B(X_t)
+\]
+is often possible for different choices of \(\widetilde A\) and \(\widetilde B\).
+\end{remark}
+
+\subsection*{A.7. Bounded Semigroups and Lipschitz Estimates}
+\begin{remark}
+On a fixed time interval \([0,T]\), boundedness of the semigroup means that there exists a constant \(M_T\) such that
+\[
+\|T_t x\|_H\le M_T\|x\|_H
+\qquad \text{for all } x\in H,\ t\in[0,T].
+\]
+Consequently,
+\[
+\|T_t x-T_t y\|_H
+=
+\|T_t(x-y)\|_H
+\le
+M_T\|x-y\|_H.
+\]
+Thus if a mapping \(F:H\to H\) is Lipschitz,
+\[
+\|F(x)-F(y)\|_H\le L\|x-y\|_H,
+\]
+then
+\[
+\|T_tF(x)-T_tF(y)\|_H
+=
+\|T_t(F(x)-F(y))\|_H
+\le
+M_T\|F(x)-F(y)\|_H,
+\]
+and therefore
+\[
+\|T_tF(x)-T_tF(y)\|_H
+\le
+M_TL\|x-y\|_H.
+\]
+This is the precise meaning of the statement that a bounded semigroup preserves Lipschitz properties: composition with \(T_t\) keeps a Lipschitz mapping Lipschitz, up to multiplication of the Lipschitz constant by the semigroup bound.
+\end{remark}
+
+\subsection*{A.8. Why the Stochastic Convolution Is Not a Martingale}
+\begin{remark}
+Consider the mild stochastic convolution
+\[
+M_t:=\int_0^t T_{t-s}C(X_s)\,dW_s.
+\]
+This process is generally not a martingale because the integrand itself depends on the current evaluation time \(t\). When \(t\) changes, the factor \(T_{t-s}\) changes for every past time \(s\), so one is not simply extending the upper integration limit of a fixed integrand.
+
+By contrast, if one fixes a terminal time \(r\in[0,T]\) and defines
+\[
+M_t^{(r)}:=\int_0^t T_{r-s}C(X_s)\,dW_s,
+\qquad 0\le t\le r,
+\]
+then the integrand \(T_{r-s}C(X_s)\) is fixed with respect to the running time \(t\). In that case, as \(t\) increases, only the upper integration limit changes, and the process \((M_t^{(r)})_{0\le t\le r}\) has the usual martingale structure.
+
+So the loss of the martingale property in the mild formulation comes precisely from the moving semigroup parameter \(t-s\), not from the stochastic integral itself.
+\end{remark}
+
+\subsection*{A.9. Dense Subsets}
+\begin{remark}
+A subset \(D\subset E\) is called dense in \(E\) if every point of \(E\) can be approximated arbitrarily well by elements of \(D\). Equivalently,
+\[
+\overline{D}=E.
+\]
+\end{remark}
+
+\subsection*{A.10. The Infinitesimal Generator}
+\begin{remark}
+The infinitesimal generator records the instantaneous behavior of the semigroup at time zero. It is the infinite-dimensional analogue of differentiating the matrix exponential \(e^{tA}\) at \(t=0\).
+\end{remark}
+
+\subsection*{A.11. Closed Linear Operators}
+\begin{remark}
+A linear operator \((A,D(A))\) on a Banach space \(E\) is called closed if its graph
+\[
+\Gamma(A):=\{(u,Au):u\in D(A)\}
+\]
+is a closed subset of \(E\times E\).
+
+Equivalently, whenever \(u_n\in D(A)\) satisfies
+\[
+u_n\to u \quad \text{in } E
+\qquad \text{and} \qquad
+Au_n\to v \quad \text{in } E,
+\]
+then one must have
+\[
+u\in D(A)
+\qquad \text{and} \qquad
+Au=v.
+\]
+This is the precise sense in which taking limits and applying the operator commute within the domain.
+\end{remark}
+
+\subsection*{A.12. Weak Derivatives}
+\begin{remark}
+For \(f\in L^2(\mathbb R^d)\) and a multi-index \(\alpha\), a function \(h\in L^2(\mathbb R^d)\) is called the weak derivative \(\partial^\alpha f\) if
+\[
+\int_{\mathbb R^d} h(x)g(x)\,dx
+=
+\int_{\mathbb R^d} f(x)(-1)^{|\alpha|}\partial^\alpha g(x)\,dx
+\]
+for every test function \(g\in C_c^\infty(\mathbb R^d)\).
+
+The point is that \(f\) itself need not be classically differentiable. Instead, differentiation is shifted onto the smooth compactly supported test function \(g\). If the resulting linear functional on \(L^2(\mathbb R^d)\) is continuous, the Riesz representation theorem produces the unique \(L^2\)-function representing that functional, and this function is the weak derivative.
+\end{remark}
+
+\subsection*{A.13. First Exit Times and Killed Brownian Motion}
+\begin{remark}
+If \(D\subset \mathbb R^d\) is an open domain and \(W(t)+x\) is Brownian motion started from \(x\), the first exit time is
+\[
+\tau_D:=\inf\{t>0:W(t)+x\notin D\}.
+\]
+This is the first moment at which the Brownian path reaches the boundary or leaves the domain.
+
+The killed semigroup is then defined by
+\[
+T_t f(x):=\mathbb E[f(W_t+x);\tau_D>t].
+\]
+The indicator condition \(\tau_D>t\) means that only those paths which remain inside \(D\) up to time \(t\) are counted. Paths that exit before time \(t\) are killed and contribute zero. This is exactly the probabilistic mechanism behind Dirichlet boundary conditions.
+\end{remark}
+
+\subsection*{A.14. Sobolev Spaces and Dirichlet Boundary Conditions}
+\begin{remark}
+The Sobolev space \(H^{2,2}(D)\) consists of \(L^2(D)\)-functions whose weak derivatives up to order two also belong to \(L^2(D)\). Likewise, \(H_0^{1,2}(D)\) consists of \(L^2(D)\)-functions whose first weak derivatives are in \(L^2(D)\) and whose trace vanishes on the boundary.
+
+The domain
+\[
+D\!\left(\frac12\Delta\right)=H_0^{1,2}(D)\cap H^{2,2}(D)
+\]
+therefore expresses two requirements at once:
+\begin{itemize}
+\item second-order weak derivatives must exist in \(L^2\), so that the Laplacian is well defined;
+\item the function must vanish on \(\partial D\), which is the Dirichlet boundary condition.
+\end{itemize}
+This is why killing Brownian motion at the boundary leads naturally to the Laplacian with zero Dirichlet boundary conditions.
+\end{remark}
+
+\subsection*{A.15. Absolute Continuity in One Dimension}
+\begin{remark}
+A function \(f:[a,b]\to\mathbb R\) is called absolutely continuous if for every \(\varepsilon>0\) there exists \(\delta>0\) such that for every finite collection of pairwise disjoint intervals \((a_i,b_i)\subset [a,b]\),
+\[
+\sum_i (b_i-a_i)<\delta
+\qquad \Longrightarrow \qquad
+\sum_i |f(b_i)-f(a_i)|<\varepsilon.
+\]
+
+In one dimension, weak differentiability is closely tied to absolute continuity. The key point used in the notes is that a weakly differentiable function \(f\) admits an absolutely continuous representative \(\bar f\), and for that representative the Fundamental Theorem of Calculus holds:
+\[
+\bar f(b)-\bar f(a)=\int_a^b f'(x)\,dx.
+\]
+This is the precise sense in which weak differentiability recovers the classical one-dimensional calculus picture.
+\end{remark}
+
+\subsection*{A.16. Continuous Representatives}
+\begin{remark}
+Saying that a function \(f\in L^2(\mathbb R)\) admits a continuous representative means that there exists a continuous function \(\bar f:\mathbb R\to\mathbb R\) such that
+\[
+f(x)=\bar f(x)
+\]
+for almost every \(x\in\mathbb R\).
+\end{remark}
+
+\subsection*{A.17. Modes in a Spectral Expansion}
+\begin{remark}
+In a spectral representation such as
+\[
+f=\sum_{k=1}^{\infty}\langle f,e_k\rangle e_k,
+\]
+the term \(\langle f,e_k\rangle e_k\) is called the \(k\)-th mode of \(f\). In the one-dimensional Dirichlet case, the semigroup acts on each mode separately:
+\[
+T_t f(x)=\sum_{k=1}^{\infty} e^{-\frac12\pi^2 k^2 t}\langle f,e_k\rangle e_k(x).
+\]
+Thus higher modes decay faster because the factor \(e^{-\frac12\pi^2 k^2 t}\) decreases more rapidly for larger \(k\).
+\end{remark}
+
+\subsection*{A.18. Fourier Coefficients}
+\begin{remark}
+Let \((e_k)_{k\ge 1}\) be a complete orthonormal system of \(L^2(]0,1[)\). The Fourier coefficient of a function \(f\in L^2(]0,1[)\) with respect to the basis vector \(e_k\) is
+\[
+\langle f,e_k\rangle_{L^2(]0,1[)}
+=
+\int_0^1 f(x)e_k(x)\,dx.
+\]
+This coefficient measures the size of the component of \(f\) in the direction \(e_k\). The Fourier expansion
+\[
+f=\sum_{k=1}^{\infty}\langle f,e_k\rangle e_k
+\]
+reconstructs \(f\) from all of these coefficients.
+
+In the one-dimensional Dirichlet case, where
+\[
+e_k(x)=\sqrt{2}\sin(\pi kx),
+\]
+the coefficients are
+\[
+\langle f,e_k\rangle_{L^2(]0,1[)}
+=
+\int_0^1 f(x)\sqrt{2}\sin(\pi kx)\,dx.
+\]
+These are exactly the coefficients that appear in the spectral representation of the semigroup and in the characterization of the generator domain.
+\end{remark}
+
+\subsection*{A.19. The Resolvent Operator}
+\begin{remark}
+Let \((A,D(A))\) be a closed linear operator on a Banach space \(E\). For \(\lambda\in\mathbb C\), the operator
+\[
+\lambda I-A:D(A)\to E
+\]
+is used to solve the stationary equation
+\[
+\lambda u-Au=f.
+\]
+If \(\lambda I-A\) is bijective, then its inverse
+\[
+R_\lambda:=(\lambda I-A)^{-1}:E\to D(A)
+\]
+is called the resolvent operator. Thus \(R_\lambda f\) is precisely the unique solution \(u\) of
+\[
+\lambda u-Au=f.
+\]
+It is defined on all of \(E\) because, by definition of the resolvent set, \(\lambda I-A\) is bijective onto \(E\). In other words, for every \(f\in E\), there exists a unique \(u\in D(A)\) such that
+\[
+(\lambda I-A)u=f.
+\]
+\end{remark}
+
+\subsection*{A.20. Spectrum and Resolvent Set}
+\begin{remark}
+The resolvent set of \(A\) is
+\[
+\rho(A):=\{\lambda\in\mathbb C:\lambda I-A \text{ is bijective}\},
+\]
+and the spectrum is its complement
+\[
+\sigma(A):=\mathbb C\setminus \rho(A).
+\]
+So the resolvent set consists of those complex numbers for which the stationary equation
+\[
+\lambda u-Au=f
+\]
+can be solved uniquely and stably, while the spectrum records the singular values where this fails.
+\end{remark}
+
+\subsection*{A.21. The Closed Graph Theorem}
+\begin{remark}
+The Closed Graph Theorem says that if \(E\) and \(F\) are Banach spaces and a linear operator
+\[
+L:E\to F
+\]
+has a closed graph, then \(L\) is automatically bounded, hence continuous. This is why, once \(A\) is closed and
+\[
+R_\lambda=(\lambda I-A)^{-1}
+\]
+is well defined on all of \(E\), the resolvent operator \(R_\lambda:E\to D(A)\subset E\) is automatically continuous.
+\end{remark}
+
+\subsection*{A.22. The Hille-Yosida Principle}
+\begin{remark}
+The Hille-Yosida theorem gives the abstract criterion for when a closed linear operator generates a \(C_0\)-semigroup. In practice, it says that semigroup generation can be checked through resolvent bounds. This is the functional-analytic reason why mild solutions of evolution equations are often constructed by studying the operator \(A\) through its resolvent rather than by differentiating directly.
+\end{remark}
+
+\subsection*{A.23. The Different Parts of the Spectrum}
+\begin{remark}
+There are two related but different ways to decompose the spectrum.
+
+\textbf{Operator-theoretic decomposition.} For a closed linear operator \((A,D(A))\), one distinguishes:
+\begin{itemize}
+\item the \emph{point spectrum}, where \(\lambda I-A\) is not injective, so \(\lambda\) is an eigenvalue;
+\item the \emph{continuous spectrum}, where \(\lambda I-A\) is injective and has dense range, but is not onto;
+\item the \emph{residual spectrum}, where \(\lambda I-A\) is injective, but its range is not dense.
+\end{itemize}
+
+\textbf{Spectral-measure decomposition.} For self-adjoint operators, the associated spectral measure \(\mu\) can be decomposed as
+\[
+\mu=\mu_{pp}+\mu_{ac}+\mu_{sc}.
+\]
+Here:
+\begin{itemize}
+\item \(\mu_{pp}\) is the \emph{pure point part}, corresponding to atoms and eigenvalues;
+\item \(\mu_{ac}\) is the \emph{absolutely continuous part}, which is absolutely continuous with respect to Lebesgue measure;
+\item \(\mu_{sc}\) is the \emph{singularly continuous part}, which has no atoms but is still singular with respect to Lebesgue measure.
+\end{itemize}
+
+The first decomposition is formulated in terms of the operator \(\lambda I-A\), while the second is formulated in terms of the spectral measure. They are related, but they are not the same classification.
+\end{remark}
+
+\end{document}
