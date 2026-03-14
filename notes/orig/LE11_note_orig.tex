@@ -1,0 +1,579 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in]{geometry}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\title{Lecture 11: Compactness Methods for Non-Monotone SPDEs}
+\date{08.01.2026}
+\author{Tien Anh Vu}
+
+\begin{document}
+\maketitle
+
+This lecture begins a new stage in the study of stochastic partial differential equations. After the monotonicity-based framework developed earlier, the focus now shifts to compactness methods. The main themes are compact embeddings, concrete Sobolev examples, Fourier representations, and the revised structural assumptions needed to treat non-monotone SPDEs.
+
+\section*{1. Compactness in the Non-Monotone Setting}
+
+\subsection*{1.1. The Main Additional Assumption: Compact Embedding}
+We begin with the standard SPDE
+\[
+du_t=A(u_t)\,dt+B(u_t)\,dW_t
+\]
+evolving on the Hilbert space \(H\), together with the familiar Gelfand triple
+\[
+V\hookrightarrow H\cong V'.
+\]
+
+To bypass monotonicity, we introduce the main additional assumption: the space \(V\) must be compactly embedded into \(H\).
+
+This means that every bounded set in \(V\) is precompact in \(H\). If we consider a ball of radius \(K\) in \(V\),
+\[
+\{v\in V:\|v\|_V\le K\},
+\]
+then its closure in \(H\) is compact. Equivalently, a ball centered at the origin,
+\[
+B_R^V(0),
+\]
+is relatively compact in \(H\).
+
+\subsection*{1.2. Concrete Examples and the Translation Counterexample}
+A standard example is the compact embedding
+\[
+H_0^{1,2}(\Omega)\hookrightarrow L^2(\Omega),
+\]
+provided that the spatial domain \(\Omega\subset \mathbb R^d\) is bounded.
+
+The boundedness of the domain is essential. On an unbounded domain such as the whole real line, compactness fails because mass can drift off to infinity. If \(e\) is a fixed bump function, then the translated sequence
+\[
+e(x-n), \qquad n\ge 1,
+\]
+has uniformly bounded \(H^1\)-norm, yet it does not converge in \(L^2\). The profile simply slides farther and farther to the right, so no strongly convergent subsequence exists in \(L^2\).
+
+This translation example explains why compactness fails on unbounded domains and why bounded spatial domains are required in the standard Sobolev embedding theorem.
+
+\subsection*{1.3. Fourier Representation and Bolzano-Weierstrass}
+To make compactness more concrete, consider the one-dimensional bounded domain with Dirichlet boundary conditions.
+
+In this setting, the negative Laplacian \(-\Delta_D\) provides a complete orthonormal system of eigenfunctions,
+\[
+e_k=\sin(k\pi x), \qquad k=1,2,\dots.
+\]
+Any function \(u\in H^{1,2}\) can be represented by its Fourier coefficients \(u_k\), where
+\[
+u_k=\int u e_k\,dx.
+\]
+Membership in the regular space requires the weighted series
+\[
+\sum_{k=1}^\infty k^2 u_k^2<\infty.
+\]
+
+Now consider a bounded set of functions satisfying
+\[
+\sum_{k=1}^\infty k^2 u_k^2\le M.
+\]
+Because this total sum is bounded, the high-frequency modes must decay. By controlling those high modes and applying a Bolzano-Weierstrass argument to the low modes, one can extract a convergent subsequence. This is the mechanism behind the compact embedding from the regular space into the weaker one.
+
+\subsection*{1.4. Adjusting the SPDE Assumptions}
+With compact embedding available, the assumptions on the SPDE can be revised substantially.
+
+First, we retain the coercivity condition:
+\[
+2\langle A(u),u\rangle+\|B(u)\circ Q^{1/2}\|_{L_2(U,H)}^2
+\le
+-\alpha\|u\|_V^2+\lambda\|u\|_H^2+\nu.
+\]
+This remains the source of the a priori estimates and ensures tight control of the Galerkin approximations. In particular, it yields uniform bounds of the form
+\[
+\sup_n \mathbb E(\cdots)<\infty
+\]
+for the expected supremum of the \(H\)-norm and the expected integral of the \(V\)-norm of the approximate solutions.
+
+The crucial change is that the monotonicity assumption is dropped. This is the main gain of the compactness method, since it opens the theory to physically relevant systems governed by non-monotone operators.
+
+To compensate for the loss of monotonicity, we retain the boundedness condition
+\[
+\|A(u)\|_{V'}\le M(1+\|u\|_V),
+\]
+which requires at most linear growth of the drift operator.
+
+Finally, the notes introduce the beginning of a new assumption, labeled \((V.5)\), of the form
+\[
+\exists M,\delta>0 \text{ such that }\cdots
+\]
+This condition will be used to control the stochastic noise within the compactness framework developed in the next lecture.
+
+\subsection*{1.5. The Shift in Strategy}
+The main strategic change is now clear. Instead of relying on monotonicity and the Browder-Minty argument, the analysis moves toward compactness and strong convergence.
+
+The compact embedding \(V\hookrightarrow H\) replaces monotonicity as the key mechanism. Together with coercive a priori estimates and suitable growth bounds on the operators, it prepares the way for an Aubin-Lions type argument in the stochastic setting.
+
+\section*{2. Compactness, Skorokhod Representation, and Martingale Solutions}
+With the compactness assumptions now in place, the next step is to understand how convergence in law can be strengthened and what notion of solution survives this probabilistic reformulation.
+
+\subsection*{2.1. Formalizing the Compactness Assumptions}
+We now complete the list of assumptions required for the compactness framework.
+
+Assumption \((V.5)\) bounds the Hilbert-Schmidt norm of the noise operator by
+\[
+\|B(u)\circ Q^{1/2}\|_{L_2(U,H)}
+\le
+M(1+\|u\|^{1-\delta})
+\]
+for some \(\delta>0\). This is a sublinear growth condition, since the exponent \(1-\delta\) is strictly smaller than \(1\).
+
+Next comes assumption \((V.6)\):
+\[
+V\hookrightarrow H \quad \text{is compact}.
+\]
+This is the structural assumption that allows strong convergence in space.
+
+Because the Galerkin sequence will generally converge only weakly in the regular space \(V\), assumption \((V.7)\) imposes continuity requirements on the operators:
+\begin{enumerate}
+\item The map \(u\mapsto A(u)\) is continuous from the weak topology of \(V\cap H\) to the weak topology of \(V'\).
+\item The map \(u\mapsto B(u)\) is continuous from the weak topology of \(V\cap H\) to the strong Hilbert-Schmidt norm topology of \(L_2(U,H)\).
+\end{enumerate}
+
+These conditions replace the role previously played by monotonicity and ensure that the operators behave correctly under weak convergence of the approximations.
+
+\subsection*{2.2. The Skorokhod Representation Theorem}
+Compactness in space is not enough on its own, because the approximate solutions initially converge only weakly in law:
+\[
+X_n \rightharpoonup X.
+\]
+Passing such probabilistic limits through nonlinear operators is difficult.
+
+The Skorokhod representation theorem resolves this by replacing weak convergence in distribution with almost sure convergence on a new probability space.
+
+In the one-dimensional case, if the cumulative distribution functions satisfy
+\[
+F_{X_n}(x)\to F_X(x),
+\]
+then one can construct new random variables on the probability space \((0,1)\) with Lebesgue measure \(\lambda\), using the inverse distribution functions
+\[
+\widetilde X_n(t)=F_{X_n}^{-1}(t).
+\]
+These new random variables have the same laws as the original ones, but now converge pointwise almost surely. This strong convergence is what allows the limit to pass through the nonlinear drift operator.
+
+\subsection*{2.3. Redefining the Solution: Martingale Solutions}
+The price of using Skorokhod representation is that the original Wiener process is no longer fixed. As a result, one cannot work with a strong probabilistic solution in the previous sense.
+
+Instead, the correct notion becomes that of a martingale solution.
+
+A probability measure \(\mathbb P\) on \((\Omega,\mathcal F)\) is called a martingale solution to the SPDE if:
+\begin{enumerate}
+\item the initial condition holds almost surely,
+\[
+\mathbb P(u(0)=u_0)=1,
+\]
+\item the process
+\[
+M_t:=u(t)-u(0)-\int_0^t A(u)\,ds
+\]
+is a continuous \(H\)-valued \(\mathbb P\)-martingale.
+\end{enumerate}
+
+Subtracting the deterministic drift from the process leaves a pure martingale term. Its quadratic variation is given by
+\[
+\langle M\rangle_t
+=
+\int_0^t B(u(s))\circ Q\circ B(u(s))^*\,ds,
+\]
+which encodes the covariance structure of the noise.
+
+\subsection*{2.4. The Equivalent Finite-Dimensional Test}
+The final part of the page gives an equivalent finite-dimensional formulation of the martingale property.
+
+Choose a complete orthonormal system \(e_k\in V\), a test function \(\varphi\in C_b^2(\mathbb R)\), and a bounded continuous measurable function \(\Phi_s\) depending on the history of the process up to time \(s\). Then the martingale property is equivalent to
+\[
+\mathbb E_{\mathbb P}\bigl[(M_{t}^{k,\varphi}-M_{s}^{k,\varphi})\Phi_s\bigr]=0.
+\]
+
+Here \(M_t^{k,\varphi}\) is obtained by applying It\^o's formula to the scalar projection \(\varphi(\langle u(t),e_k\rangle_H)\), subtracting the drift contribution
+\[
+\int_0^t \varphi'(\langle u(s),e_k\rangle)\langle A(u(s)),e_k\rangle\,ds
+\]
+and the corresponding It\^o correction terms.
+
+This finite-dimensional test is the practical criterion for verifying that a probability measure defines a martingale solution.
+
+\section*{3. Existence of Martingale Solutions}
+After reformulating the problem in terms of martingale solutions, we can now turn the compactness framework into a genuine existence proof.
+
+\subsection*{3.1. Completing the Martingale Test}
+We first complete the finite-dimensional martingale test from the previous section. The missing term in It\^o's formula is the second-order correction:
+\[
+\frac12 \int_0^t
+\varphi''(\langle u(s),e_k\rangle)
+\langle (B\circ Q\circ B^*)e_k,e_k\rangle\,ds.
+\]
+This is the standard It\^o correction term. It accounts for the quadratic variation of the noise, acting through the covariance operator \(B\circ Q\circ B^*\) projected onto the basis vector \(e_k\).
+
+Once the drift term and this It\^o correction are subtracted, the remaining process is a martingale. Therefore, for \(s\le t\),
+\[
+\mathbb E_n\bigl[(M_t^{k,\varphi}-M_s^{k,\varphi})\Phi_s\bigr]=0.
+\]
+
+\subsection*{3.2. Theorem 3.13: Existence of the Martingale Solution}
+We can now state the main existence result. Under assumptions \((V.1)\), \((V.3)\), and \((V.5)\)--\((V.7)\), there exists a solution \(\mathbb P\) to the martingale problem associated with the SPDE.
+
+This theorem is the compactness-based analogue of the existence theorem obtained earlier under monotonicity assumptions.
+
+\subsection*{3.3. The Proof Strategy: Galerkin Approximations as Measures}
+The proof again begins with Galerkin approximation. Define
+\[
+V_n=\operatorname{span}\{e_1,\dots,e_n\}.
+\]
+Instead of tracking only the random variables \(u_n\), we now consider their laws, denoted by \(\mathbb P_n\), on the measurable path space.
+
+These approximate measures satisfy three key properties:
+\begin{enumerate}
+\item The support of \(\mathbb P_n\) is contained in
+\[
+C([0,T];V_n).
+\]
+
+\item The initial condition holds almost surely:
+\[
+\mathbb P_n(u(0)=\Pi_n u_0)=1,
+\]
+where \(\Pi_n\) is the projection onto \(V_n\).
+
+\item Under \(\mathbb P_n\), the finite-dimensional martingale relation holds for all admissible test functions \(\varphi\in C_b^2(\mathbb R)\) and history functionals \(\Phi_s\).
+\end{enumerate}
+
+Thus \(\mathbb P_n\) is exactly the law of the finite-dimensional SDE solution.
+
+\subsection*{3.4. Lemma 3.14: Tightness and Topologies}
+To pass to the limit \(n\to\infty\), we must prove tightness of the sequence of measures \((\mathbb P_n)\). Lemma 3.14 states that this sequence is tight on the space
+\[
+\Omega
+=
+C([0,T];V'_{\mathrm{weak}})
+\cap
+L^2([0,T];V)
+\cap
+L^2([0,T];H).
+\]
+
+The proof uses three topologies:
+\begin{enumerate}
+\item \(\tau_1\): the weak topology on \(L^2([0,T];V)\),
+\item \(\tau_2\): the uniform topology on \(C([0,T];V'_{\mathrm{weak}})\),
+\item \(\tau_3\): the strong topology on \(L^2([0,T];H)\).
+\end{enumerate}
+
+Because the embedding \(V\hookrightarrow H\) is compact, the Aubin-Lions lemma implies that control in the first two topologies yields precompactness in the third. This is the key step behind tightness.
+
+\subsection*{3.5. Extracting the Limit and Concluding the Proof}
+Once tightness is established, Prokhorov's theorem yields a weakly convergent subsequence of measures:
+\[
+\mathbb P_n \Rightarrow \mathbb P.
+\]
+This provides the candidate martingale solution.
+
+To conclude the proof, one studies the mapping
+\[
+\omega\mapsto (M_t^{k,\varphi}(\omega)-M_s^{k,\varphi}(\omega))\Phi_s(\omega).
+\]
+This mapping is continuous with respect to the chosen topology on \(\Omega\). Therefore its expectation passes to the limit under weak convergence of measures.
+
+Since the expectation is zero under every approximate measure \(\mathbb P_n\), it remains zero under the limit measure \(\mathbb P\). Hence \(\mathbb P\) satisfies the martingale problem and defines a martingale solution of the SPDE.
+
+\section*{4. Uniform Integrability and Passage to the Limit}
+At this stage a candidate limit measure has been extracted, so the remaining issue is to justify passage to the limit inside the martingale identities.
+
+\subsection*{4.1. The Goal: Uniform Integrability via a \(p\)-th Moment Bound}
+To justify passing the limit inside the expectation, weak convergence of measures is not enough on its own. One must also establish uniform integrability of the martingale increments.
+
+The goal is therefore to prove a bound of the form
+\[
+\sup_n \mathbb E_n\bigl(|M_t^{k,\varphi}-M_s^{k,\varphi}|^p\bigr)<\infty
+\]
+for some \(p>1\).
+
+This is motivated by the a priori estimate
+\[
+\sup_n
+\mathbb E\left(
+\sup_{t\le T}\|u_n(t)\|_H^2
++
+\int_0^T \|u_n(s)\|_V^2\,ds
+\right)
+<\infty,
+\]
+which provides the basic energy control needed for the argument.
+
+\subsection*{4.2. Bounding the Martingale Increment Term-by-Term}
+To obtain such a \(p\)-moment bound, we expand the martingale increment and estimate each term separately.
+
+The bounded test function terms
+\[
+\varphi(\langle u(t),e_k\rangle)-\varphi(\langle u(s),e_k\rangle)
+\]
+are controlled by a constant because \(\varphi\in C_b^2(\mathbb R)\).
+
+For the drift term,
+\[
+\int_s^t \varphi'(\langle u(r),e_k\rangle)\langle A(u(r)),e_k\rangle\,dr,
+\]
+the derivative \(\varphi'\) is bounded, and assumption \((V.3)\) gives
+\[
+\|A(u(r))\|_{V'}\le M(1+\|u(r)\|_V).
+\]
+Hence this term is controlled by the integral of the \(V\)-norm over \([s,t]\).
+
+For the It\^o correction term,
+\[
+\frac12 \int_s^t
+\varphi''(\langle u(r),e_k\rangle)
+\langle (B\circ Q\circ B^*(u(r)))e_k,e_k\rangle\,dr,
+\]
+the second derivative \(\varphi''\) is bounded. Assumption \((V.5)\) gives
+\[
+\|B(u)\circ Q^{1/2}\|_{L_2(U,H)}
+\le
+M(1+\|u\|_V^{1-\delta}),
+\]
+so the quadratic variation term is controlled by
+\[
+M\bigl(1+\|u\|_V^{2(1-\delta)}\bigr).
+\]
+
+\subsection*{4.3. The Role of the Sub-Linear Exponent}
+The noise term is the crucial one. Collecting the estimates, the increment satisfies a bound of the form
+\[
+|M_t^{k,\varphi}-M_s^{k,\varphi}|
+\le
+M\left(1+\int_s^t \|u(r)\|_V^2\,dr\right)^{1-\delta}.
+\]
+
+This is where the exponent \(1-\delta<1\) becomes decisive. To obtain a \(p\)-th moment with \(p>1\), choose
+\[
+p=\frac{1}{1-\delta}.
+\]
+Since \(\delta>0\), this indeed satisfies \(p>1\).
+
+\subsection*{4.4. Passing the Limit in Expectation}
+Taking the \(p\)-th moment of the previous bound, the exponents cancel:
+\[
+(1-\delta)\cdot \frac{1}{1-\delta}=1.
+\]
+Thus we are left with the estimate
+\[
+\mathbb E_n\bigl(|M_t^{k,\varphi}-M_s^{k,\varphi}|^p\bigr)
+\le
+M\left(
+1+\mathbb E_n\int_s^t \|u(r)\|_V^2\,dr
+\right),
+\]
+and the right-hand side is uniformly bounded by the a priori estimate.
+
+This proves uniform integrability. Since the relevant random variables are uniformly integrable and converge weakly, one can pass to the limit inside the expectation:
+\[
+\lim_{n\to\infty}
+\mathbb E_n\bigl[(M_t^{k,\varphi}-M_s^{k,\varphi})\Phi_s\bigr]
+=
+\mathbb E\bigl[(M_t^{k,\varphi}-M_s^{k,\varphi})\Phi_s\bigr].
+\]
+Because the left-hand side is zero for every \(n\), the limit is also zero. Hence the limit measure \(\mathbb P\) indeed satisfies the martingale property and is a martingale solution of the SPDE.
+
+\section*{5. The Truncation Argument for the Martingale Property}
+The final step is to make the previous limit passage fully rigorous by replacing unbounded martingale increments with bounded truncations.
+
+\subsection*{5.1. The Goal: Proving Condition (ii)}
+The final step is to verify condition (ii) in the definition of a martingale solution, namely that the projected process has zero conditional increments under the limit measure \(\mathbb P\).
+
+The issue is that weak convergence of measures only passes expectations of bounded continuous functions to the limit. The martingale increment
+\[
+M_t^{k,\varphi}-M_s^{k,\varphi}
+\]
+is continuous, but it is not automatically bounded. A truncation argument is therefore needed.
+
+\subsection*{5.2. The Truncation Strategy}
+Fix \(K>0\) and define the truncated increment
+\[
+\Psi_K:=(-K)\vee (M_t^{k,\varphi}-M_s^{k,\varphi})\wedge K.
+\]
+This clips the increment between \(-K\) and \(K\), making it both bounded and continuous.
+
+Because \(\Psi_K\) and the history functional \(\Phi_s\) are bounded and continuous, weak convergence of the measures implies
+\[
+\mathbb E_n(\Psi_K\Phi_s)\to \mathbb E(\Psi_K\Phi_s)
+\qquad
+\text{for every } K.
+\]
+
+\subsection*{5.3. Bounding the Truncation Error}
+The remaining task is to show that replacing the true increment by its truncation introduces only a negligible error. We estimate
+\[
+\left|
+\mathbb E_n\bigl[(\Psi_K-(M_t^{k,\varphi}-M_s^{k,\varphi}))\Phi_s\bigr]
+\right|.
+\]
+
+Since \(\Psi_K\) differs from the original increment only when the increment exceeds the threshold \(K\), this is bounded by
+\[
+\|\Phi_s\|_\infty
+\,
+\mathbb E_n\Bigl(
+|M_t^{k,\varphi}-M_s^{k,\varphi}|
+\mathbf 1_{\{|M_t^{k,\varphi}-M_s^{k,\varphi}|\ge K\}}
+\Bigr).
+\]
+Thus the error is concentrated entirely in the tails of the distribution.
+
+\subsection*{5.4. The \(p\)-th Moment Bound and Markov's Inequality}
+To control the tails, we use the \(p\)-th moment bound established in the previous section. By Markov's inequality, or an equivalent Hölder-type tail estimate, the error is bounded by
+\[
+\frac{1}{K^{p-1}}
+\mathbb E_n\bigl(|M_t^{k,\varphi}-M_s^{k,\varphi}|^p\bigr).
+\]
+
+Because
+\[
+\sup_n \mathbb E_n\bigl(|M_t^{k,\varphi}-M_s^{k,\varphi}|^p\bigr)<\infty
+\]
+for some \(p>1\), this tail bound tends to zero as \(K\to\infty\), uniformly in \(n\).
+
+\subsection*{5.5. Passing the Limit and Closing the Proof}
+The truncation error is therefore uniformly negligible. We may first pass to the limit in the bounded quantity \(\Psi_K\Phi_s\), and then let \(K\to\infty\).
+
+This yields
+\[
+\lim_{n\to\infty}
+\mathbb E_n\bigl[(M_t^{k,\varphi}-M_s^{k,\varphi})\Phi_s\bigr]
+=
+\mathbb E\bigl[(M_t^{k,\varphi}-M_s^{k,\varphi})\Phi_s\bigr].
+\]
+Since the expectation on the left is zero for every \(n\), the expectation under the limit measure is also zero. Hence the limit measure \(\mathbb P\) satisfies the martingale property.
+
+This closes the compactness proof of existence for martingale solutions of non-monotone stochastic partial differential equations.
+
+\section*{Appendix}
+
+\subsection*{A.1. Compact Embedding}
+\begin{definition}
+An embedding \(V\hookrightarrow H\) is compact if every bounded subset of \(V\) is relatively compact in \(H\).
+\end{definition}
+
+\subsection*{A.2. Translation Counterexample}
+\begin{remark}
+On an unbounded domain, translated bump functions may remain uniformly bounded in a Sobolev norm while failing to converge in \(L^2\). This shows that compact embedding can fail on unbounded domains.
+\end{remark}
+
+\subsection*{A.3. Dirichlet Laplacian}
+\begin{definition}
+The Dirichlet Laplacian is the Laplace operator equipped with zero boundary conditions. On bounded domains, it admits a discrete orthonormal basis of eigenfunctions.
+\end{definition}
+
+\subsection*{A.4. Fourier Coefficients}
+\begin{definition}
+If \((e_k)\) is an orthonormal basis, the Fourier coefficients of \(u\) are
+\[
+u_k=\langle u,e_k\rangle.
+\]
+They describe the components of \(u\) along the basis directions.
+\end{definition}
+
+\subsection*{A.5. Bolzano-Weierstrass Principle}
+\begin{remark}
+In finite-dimensional settings, every bounded sequence admits a convergent subsequence. Compactness arguments in infinite-dimensional analysis often reduce part of the problem to a finite-dimensional version of this principle.
+\end{remark}
+
+\subsection*{A.6. Coercivity}
+\begin{definition}
+Coercivity is an inequality that controls the dissipative part of the system and yields a priori bounds for approximate solutions.
+\end{definition}
+
+\subsection*{A.7. Non-Monotone Operator}
+\begin{definition}
+An operator is non-monotone if it does not satisfy the standard monotonicity inequality used in Browder-Minty type arguments.
+\end{definition}
+
+\subsection*{A.8. Compactness Method}
+\begin{remark}
+The compactness method replaces operator monotonicity by strong convergence obtained from compact embeddings and a priori estimates.
+\end{remark}
+
+\subsection*{A.9. Skorokhod Representation Theorem}
+\begin{theorem}
+If a sequence of probability laws converges weakly, one can realize random variables with those laws on a new probability space so that they converge almost surely.
+\end{theorem}
+
+\subsection*{A.10. Martingale Solution}
+\begin{definition}
+A martingale solution is a probability measure under which the drift-corrected process is a martingale and the prescribed initial condition is satisfied almost surely.
+\end{definition}
+
+\subsection*{A.11. Weak Topology}
+\begin{definition}
+The weak topology on a Banach or Hilbert space is the coarsest topology for which all continuous linear functionals remain continuous.
+\end{definition}
+
+\subsection*{A.12. Quadratic Variation}
+\begin{definition}
+The quadratic variation of a continuous martingale is the increasing process that records the accumulated variance of its fluctuations.
+\end{definition}
+
+\subsection*{A.13. It\^o Correction}
+\begin{remark}
+When It\^o's formula is applied to a nonlinear test function, a second-order correction term appears, reflecting the quadratic variation of the driving martingale.
+\end{remark}
+
+\subsection*{A.14. Tightness}
+\begin{definition}
+A family of probability measures is tight if, for every \(\varepsilon>0\), there exists a compact set whose measure is at least \(1-\varepsilon\) for every measure in the family.
+\end{definition}
+
+\subsection*{A.15. Prokhorov's Theorem}
+\begin{theorem}
+On a suitable topological space, every tight family of probability measures is relatively compact for weak convergence.
+\end{theorem}
+
+\subsection*{A.16. Weak Convergence of Measures}
+\begin{definition}
+A sequence of probability measures \(\mathbb P_n\) converges weakly to \(\mathbb P\) if expectations of bounded continuous functions converge:
+\[
+\int f\,d\mathbb P_n \to \int f\,d\mathbb P.
+\]
+\end{definition}
+
+\subsection*{A.17. Path Space}
+\begin{definition}
+The path space is the function space in which the random trajectories of the process are viewed as points, often equipped with a topology encoding continuity and integrability properties.
+\end{definition}
+
+\subsection*{A.18. Uniform Integrability}
+\begin{definition}
+A family of integrable random variables is uniformly integrable if large values contribute arbitrarily little to their expectations, uniformly across the family.
+\end{definition}
+
+\subsection*{A.19. Moment Bound Criterion}
+\begin{remark}
+If a family of random variables has uniformly bounded \(p\)-th moments for some \(p>1\), then the family is uniformly integrable.
+\end{remark}
+
+\subsection*{A.20. Truncation}
+\begin{definition}
+Truncation replaces an unbounded random variable by a clipped version bounded between \(-K\) and \(K\), allowing weak convergence arguments to be applied to bounded continuous functions.
+\end{definition}
+
+\subsection*{A.21. Markov's Inequality}
+\begin{theorem}
+For a nonnegative random variable \(X\) and \(a>0\),
+\[
+\mathbb P(X\ge a)\le \frac{\mathbb E[X]}{a}.
+\]
+More generally, \(p\)-th moment bounds control tail probabilities and tail expectations.
+\end{theorem}
+
+\end{document}

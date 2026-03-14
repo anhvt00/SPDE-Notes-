@@ -1,0 +1,616 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in]{geometry}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\title{Lecture 14: Rough SPDE Estimates and Pathwise Picard Iteration}
+\date{29.01.2026}
+\author{Tien Anh Vu}
+
+\begin{document}
+\maketitle
+
+This lecture completes the rough-path treatment of the nonlinear stochastic partial differential equation by turning the modified mild formulation into a convergent Picard scheme. The main themes are the full decomposition of the solution, the classical and rough estimates needed for Picard iteration, and the contrast between probabilistic It\^o integration and pathwise rough integration.
+
+\section*{1. Closing the Rough SPDE Argument}
+We begin by gathering the decomposition and estimates from the previous lecture into the final Picard framework.
+
+\subsection*{1.1. The Complete Decomposition and the Two Operators}
+We begin with the final decomposition ansatz
+\[
+u(t,x)=v(t,x)+X_t(x)+e^{-t}P_t\bigl(u_0-X_0\bigr)(x).
+\]
+Here, \(u\) is the true solution, \(v\) is the smooth remainder, and \(X_t\) is the rough stochastic part. The additional semigroup term
+\[
+e^{-t}P_t\bigl(u_0-X_0\bigr)(x)
+\]
+absorbs the initial condition and ensures that the remainder starts from
+\[
+v(0)=0.
+\]
+
+The Picard equation for \(v(t,x)\) is then split into two operators. The first is the smooth deterministic part,
+\[
+M^{(1)}_{T,x}v(t,x)
+=
+\int_0^t e^{-(t-s)}P_{t-s}
+\bigl(g(u(s,\cdot))\partial_x v(s,\cdot)+\widetilde f(u(s,\cdot))\bigr)(x)\,ds,
+\]
+while the second isolates the rough spatial interaction,
+\[
+M^{(2)}_{T,x}v(t,x)
+=
+\int_0^t\int_0^{2\pi}
+e^{-(t-s)}P_{t-s}(x-y)\,g(u(s,y))\,dX_s(y)\,ds.
+\]
+The first term is classical because the derivative lands on the smooth remainder \(v\). The second term is the singular part, since the integration is performed against the rough path \(X_s(y)\).
+
+\subsection*{1.2. Step 1: The Classical ODE Estimate}
+The first operator is estimated using the classical theory of evolution equations. Its \(C^1\)-norm satisfies
+\[
+\|M^{(1)}_{T,x}v\|_{1,T}
+=
+\sup_{t\le T}\|M^{(1)}_{T,x}v(t)\|_{C^1}
+\le
+C_K(1+\|X\|^2).
+\]
+Thus the smooth operator grows at most linearly in the relevant rough-path norm. It is controlled once the initial condition and the rough input remain bounded.
+
+The norm of the enhanced rough path is written as
+\[
+\|X\|
+=
+\sup_{t\le 1}
+\bigl(
+\|X_t\|_{C^\alpha}+\|X_t\|_{C^{2\alpha}}
+\bigr),
+\qquad
+\alpha\in\left(\frac13,\frac12\right).
+\]
+The theory requires that the \(C^\beta\)-norm of the initial condition, the \(C^\beta\)-norm of the rough path, and the \(C^{2\beta}\)-norm of its iterated integral are all bounded by a constant \(K\).
+
+\subsection*{1.3. Step 2: The Rough Spatial Estimate}
+The main ingredient is the estimate for the rough operator \(M^{(2)}\). Using the rough-path continuity bounds established earlier, the inner spatial integral can be bounded by
+\[
+\left|
+\int_0^{2\pi}
+e^{-(t-s)}P_{t-s}(x-y)\,g(u(s,y))\,dX_s(y)
+\right|
+\le
+C\,t^{2\alpha-1}\|X\|_\alpha.
+\]
+This estimate is uniform in the spatial variable \(x\), but it introduces a singularity in time of the form
+\[
+t^{2\alpha-1}.
+\]
+This singularity is still integrable because \(\alpha>1/3\), so
+\[
+2\alpha-1>-1.
+\]
+Therefore the outer time integral
+\[
+\int_0^t \cdots ds
+\]
+remains finite. The rough operator is controlled, and the Picard iteration survives.
+
+\subsection*{1.4. The Contrast: Probabilistic and Pathwise Integration}
+To understand the significance of this estimate, we compare it with classical stochastic integration. In It\^o calculus one uses the isometry
+\[
+\mathbb E\left(\left(\int_0^t dW_s\right)^2\right)
+=
+\mathbb E\left(\int_0^t ds\right).
+\]
+This is fundamentally probabilistic: convergence is understood after averaging with respect to the probability measure.
+
+By contrast, the rough spatial integral is defined pathwise through the limit
+\[
+\int_0^{2\pi} Z_y\,dX(y)
+=
+\lim_{|\mathcal P|\to 0}
+\sum
+\bigl(
+Z_x(X_y-X_x)+Z_x'X(x,y)
+\bigr).
+\]
+This is the rough-path translation of time integration into the spatial variable. The enhanced pair \((X,X)\) provides enough structure to define the integral without relying on martingale arguments, and the pathwise limit remains stable even when the integrand is not classically differentiable in the usual stochastic sense.
+
+\subsection*{1.5. The Final Conclusion}
+Since both operators \(M^{(1)}\) and \(M^{(2)}\) admit the required bounds, the Picard iteration converges. This yields a rigorous existence theory for the rough, nonlinear, non-monotone SPDE under consideration.
+
+The significance of this result is that the entire construction is pathwise. By combining the decomposition ansatz, heat-kernel smoothing, and rough-path enhancement, one can solve equations that lie completely outside the classical variational framework. This closes the rough-SPDE chapter.
+
+\section*{2. The Gubinelli Derivative and the Final Rough Estimate}
+To close the rough-SPDE argument, we now make the spatial rough integral itself explicit through the language of controlled rough paths.
+
+\subsection*{2.1. The Algebraic Derivative: The Gubinelli Derivative}
+We now look more closely at the rough spatial integral appearing in \(M^{(2)}\). Since the spatial path \(X_x\) has Hölder regularity below \(1/2\), classical derivatives do not exist. The correct replacement is the algebraic expansion
+\[
+R_{x,y}=Z_y-Z_x-Z_x'(X_y-X_x).
+\]
+Here, \(Z\) is the integrand, \(X\) is the rough reference path, and \(R_{x,y}\) is the remainder. The object \(Z_x'\) is the Gubinelli derivative. It is not defined by a limit, and it is not unique in the classical sense. Its meaning comes entirely from the quality of the remainder \(R_{x,y}\).
+
+The key requirement is that \(R\) must be \(2\alpha\)-Hölder continuous. This is what allows the rough integration scheme to work. When the remainder is combined with the \(\alpha\)-regularity of the rough path, the total error is pushed to order \(3\alpha\), which vanishes in the partition limit because \(\alpha>1/3\).
+
+\subsection*{2.2. Bounding the Rough Integral}
+With the Gubinelli derivative in hand, the rough integral satisfies the estimate
+\[
+\left\|
+\int (Z_y-Z_0)\,dX_y
+\right\|_\alpha
+\le
+C\bigl(
+\|X\|_\alpha\|R\|_{2\alpha}
++
+\|X\|_{2\alpha}\|Z'\|_\alpha
+\bigr).
+\]
+This is the master continuity estimate of the rough integration step. The size of the integral is controlled by the roughness of the path \(X\), the \(2\alpha\)-Hölder size of the remainder \(R\), and the \(\alpha\)-Hölder size of the Gubinelli derivative \(Z'\).
+
+\subsection*{2.3. Applying the Bound to the Heat Kernel}
+We now apply this bound to the SPDE operator involving the heat kernel:
+\[
+\partial_x \int_0^{2\pi} P_{t-s}(x-y)Y_y\,dX(y).
+\]
+Differentiating the heat kernel introduces a singular factor. At the level of the Gaussian kernel, one sees
+\[
+\partial_x\left(
+\frac{1}{\sqrt{t-s}}
+e^{-\frac{|x-y|^2}{2(t-s)}}
+\right)
+\sim
+-
+\frac{x-y}{t-s}
+\frac{1}{\sqrt{t-s}}
+e^{-\frac{|x-y|^2}{2(t-s)}}.
+\]
+This worsens the small-time behavior as \(s\uparrow t\). Combining the kernel derivative with the rough integral estimate gives
+\[
+\|M^{(2)}_{T,x}v\|_{1,T}
+\le
+C_K(1+\|X\|)^3
+\sup_{t<T}\int_0^T (t-s)^{2\alpha-1}\,ds.
+\]
+The singularity is now completely explicit.
+
+\subsection*{2.4. The Integrable Singularity}
+The crucial point is that
+\[
+\int_0^T (t-s)^{2\alpha-1}\,ds
+\]
+is finite whenever
+\[
+2\alpha-1>-1.
+\]
+Since \(\alpha>1/3\), this condition is satisfied. Therefore the singularity does not blow up, and the smoothing effect of the heat semigroup is strong enough to control the rough spatial term. This is the final analytic input required to close the Picard argument.
+
+\subsection*{2.5. Smooth Approximations in Practice}
+The last step is to explain how the rough solution is obtained in practice. One introduces a family of smooth approximating equations
+\[
+du_\varepsilon
+=
+\partial_{xx}u_\varepsilon\,dt
++
+f(u_\varepsilon)\,dt
++
+g(u_\varepsilon)\partial_xu_\varepsilon\,dt
++
+\sigma Q_\varepsilon\,dW_t.
+\]
+Here \(Q_\varepsilon\) is a spatial smoothing operator, defined through a mollifier \(\Phi_\varepsilon\):
+\[
+Q_\varepsilon u(x)
+=
+\int_0^{2\pi}\Phi_\varepsilon(x-y)u(y)\,dy
+\to u(x).
+\]
+Because \(\Phi_\varepsilon\) is smooth, the approximate noise is differentiable in space, so the approximate equation is classical. One solves these regularized problems and then passes to the limit as \(\varepsilon\to 0\), recovering the true rough solution. This completes the rigorous existence proof for the non-monotone rough SPDE.
+
+\section*{3. Numerical and Biological Motivation}
+With the abstract existence proof in hand, the notes step back and explain why these equations matter numerically and biologically.
+
+\subsection*{3.1. Simulating Space-Time White Noise}
+We now shift away from the abstract proof and ask how such equations are treated numerically. Before the full rough-path theory was available, scientists already simulated these systems by discretizing space and time. In a computer model the spatial line is replaced by a finite grid, so any approximation of space-time white noise necessarily depends on the chosen discretization.
+
+This is the first practical manifestation of the roughness we have been studying. The fluctuations of space-time white noise are not merely conceptual; they appear numerically as strong grid-scale sensitivity.
+
+\subsection*{3.2. The Biological Motivation: The Nerve Cell}
+The notes then move to a concrete biological example: the propagation of electrical impulses in a nerve cell. The relevant reaction-diffusion system is the FitzHugh--Nagumo or Nagumo equation,
+\[
+u_t(t,x)=D\partial_{xx}u(t,x)+f(u(t,x))-v(t,x)+\xi(t,x).
+\]
+Each term has a natural interpretation:
+\begin{itemize}
+\item \(D\partial_{xx}u\) models the spatial spread of voltage along the nerve,
+\item \(f(u)\) is a nonlinear reaction term describing rapid channel activation,
+\item \(-v\) is a recovery term,
+\item \(\xi(t,x)\) is stochastic forcing representing microscopic fluctuations such as channel noise.
+\end{itemize}
+
+\subsection*{3.3. The Bistable Cubic Nonlinearity}
+The reaction term is chosen to be the cubic polynomial
+\[
+f(u)=u(1-u)(u-a),
+\qquad a\in(0,1).
+\]
+This produces three equilibria:
+\[
+u=0,\qquad u=a,\qquad u=1.
+\]
+The states \(0\) and \(1\) are stable, while \(a\) is unstable and acts as a threshold. If the voltage crosses above \(a\), the dynamics drive it toward the excited state \(1\). If it remains below \(a\), it is pulled back toward the resting state \(0\). This is the bistable mechanism underlying excitation.
+
+\subsection*{3.4. The Traveling Wave Solution}
+If one end of a long nerve fiber is excited so that \(u=1\) there while the rest remains at \(u=0\), diffusion transports the excitation into the neighboring region. When
+\[
+a<\frac12,
+\]
+the excited state is energetically dominant, so the active phase invades the resting phase. This creates a deterministic traveling wave, moving at a constant speed along the axon.
+
+Such a wave is the simplest deterministic model of signal propagation. However, if only the variable \(u\) is present, the wave leaves the entire nerve behind it in the excited state.
+
+\subsection*{3.5. The Recovery Variable and the Bump Solution}
+To model a realistic nerve impulse, a second recovery variable is introduced:
+\[
+\partial_t v(t,x)=\varepsilon\bigl(u(t,x)-\gamma v(t,x)\bigr).
+\]
+Because \(\varepsilon\) is small, the variable \(v\) reacts more slowly than \(u\). After the rapid excitation of \(u\), the recovery variable grows and feeds back negatively through the term \(-v\) in the main equation. This forces the voltage back down and resets the medium behind the traveling front.
+
+The result is not a permanent step profile but a localized traveling pulse, often called a bump solution. This pulse is the mathematical model of an action potential. The SPDE framework therefore captures the interaction of diffusion, nonlinear reaction, slow recovery, and stochastic fluctuations in a biologically meaningful way.
+
+\section*{4. Reconstructing Hidden Biological States}
+Once the forward biological model is fixed, the next challenge is the inverse problem of recovering the hidden state from imperfect observations.
+
+\subsection*{4.1. The Measurement Problem and the Markov Property}
+We now turn from the forward nerve model to the inverse problem of state reconstruction. In experiments, one may measure the fast voltage variable \(u\), for example through microscopy or electrical recordings. The slow recovery variable \(v\), however, is much harder to access directly.
+
+The true state is therefore the full vector
+\[
+X=[u,v].
+\]
+The problem is to estimate \(X\) from the observations \(Y\). This is essential because the system is not Markovian if \(v\) is ignored. The recovery variable carries memory, so one cannot write down a closed PDE or SPDE for the observed voltage alone. The full joint state must be reconstructed.
+
+\subsection*{4.2. The Frequentist Approach}
+The measurement model is written abstractly as
+\[
+Y=G(X,e),
+\]
+where \(Y\) is the observation, \(e\) is the measurement noise, and \(G\) encodes the forward dynamics through the underlying (S)PDE or (S)ODE.
+
+If \(G\) were invertible, one could solve directly for \(X\). In very simple noisy settings, repeated measurements
+\[
+Y_n=X+e_n,
+\qquad n=1,\dots,N,
+\]
+could be averaged to obtain the estimate
+\[
+\widehat Y=\frac1N\sum_{n=1}^N Y_n.
+\]
+For nonlinear stochastic systems this is no longer sufficient, which motivates a probabilistic framework.
+
+\subsection*{4.3. The Bayesian Approach}
+The Bayesian method proceeds in two stages. First, the physical model provides a prior distribution for the hidden state,
+\[
+P_X.
+\]
+This prior summarizes the uncertainty generated by the SPDE model before the new data are taken into account.
+
+Second, one specifies the likelihood of the measurement:
+\[
+P(Y\in dy\,|\,X=x)=e^{-\ell(x,y)}\,dy.
+\]
+The function \(\ell(x,y)\) is the log-likelihood. It measures how compatible a given state \(x\) is with the observed data \(y\).
+
+\subsection*{4.4. Bayes' Theorem and the Posterior}
+Combining prior and likelihood yields the posterior distribution
+\[
+P(X|Y=y)(dx)
+=
+\frac{e^{-\ell(x,y)}P_X(dx)}
+{\int e^{-\ell(x,y)}P_X(dx)}.
+\]
+The numerator is the product of prior information and measurement density. The denominator is the normalization constant, ensuring that the posterior is again a probability measure.
+
+This posterior is the mathematically updated belief about the hidden state after observing the data.
+
+\subsection*{4.5. Visualizing the Bayesian Update}
+The geometric interpretation is immediate. A prior distribution may assign high probability to several candidate regions of the state space. The measurement density selects those regions that are most compatible with the data. Multiplying the two suppresses incompatible peaks and amplifies regions where prior prediction and measurement agree.
+
+This is exactly the mechanism of filtering. By repeatedly combining model-based evolution with noisy observations, one reconstructs hidden variables in real time. For systems such as the FitzHugh--Nagumo nerve model, this provides a way to infer both the visible voltage and the hidden recovery state from partial measurements.
+
+\section*{5. The Continuous-Time Filtering Formula}
+This inverse point of view leads naturally to the continuous-time filtering framework and its exact probabilistic representation.
+
+\subsection*{5.1. The Signal and Measurement Equations}
+We now formalize the filtering problem in continuous time through two coupled stochastic differential equations.
+
+The hidden signal satisfies
+\[
+dX_t=B(X_t)\,dt+C(X_t)\,dW_t\in\mathbb R^d,
+\]
+while the observation process is given by
+\[
+dY_t=H(X_t)\,dt+R\,dV_t,
+\qquad
+Y_0=0\in\mathbb R^p.
+\]
+The coefficients are assumed to satisfy global Lipschitz conditions so that the system is well-posed.
+
+Two structural features are important. First, the observation space is typically much lower dimensional than the state space, so
+\[
+p\ll d.
+\]
+Second, the initial condition is specified only for the observed process \(Y_t\). The hidden state is not observed directly, so it must be inferred rather than initialized from data.
+
+\subsection*{5.2. The Filtration and the Core Problem}
+The information carried by the observations up to time \(t\) is encoded in the sigma-algebra
+\[
+Y_{0:t}
+=
+\sigma(\{Y_s:s\le t\}).
+\]
+This is the full observation history available at time \(t\).
+
+The filtering problem is then to compute or approximate the conditional measure
+\[
+\eta_t(A)=\mathbb P(X_t\in A\,|\,Y_{0:t}),
+\qquad
+A\in\mathcal B(\mathbb R^d).
+\]
+In words: given all the noisy observations up to time \(t\), what is the probability that the true hidden state lies in the set \(A\)?
+
+\subsection*{5.3. The Kallianpur--Striebel Formula}
+The central result is the Kallianpur--Striebel formula, the continuous-time version of Bayes' rule. To state it, we introduce an independent copy \(\bar X\) of the signal process \(X_t\). This copy evolves under the same state dynamics but is independent of the actual pair \((X_t,V_t)\).
+
+The filter is then represented as
+\[
+\eta_t(A)
+:=
+\mathbb E\bigl(1_A(X_t)\mid Y_{0:t}\bigr)
+=
+\frac{\bar{\mathbb E}_{\bar X}\bigl(1_A(\bar X_t)Z_t(\bar X,Y)\bigr)}
+{\bar{\mathbb E}_{\bar X}\bigl(Z_t(\bar X,Y)\bigr)}.
+\]
+Here \(\bar{\mathbb E}_{\bar X}\) means expectation with respect to the auxiliary copy \(\bar X\) only. The denominator is the normalizing constant, and the numerator is the unnormalized conditional mass of the set \(A\).
+
+\subsection*{5.4. The Likelihood Weight \(Z_t\)}
+The weight \(Z_t(\bar X,Y)\) is the continuous-time likelihood functional. It is given by
+\[
+Z_t(\bar X,Y)
+=
+\exp\left(
+\int_0^t \langle R^{-1}H(\bar X_s),dY_s\rangle
+-\frac12
+\int_0^t \langle R^{-1}H(\bar X_s),H(\bar X_s)\rangle\,ds
+\right).
+\]
+This quantity measures how well a simulated path \(\bar X\) explains the actual observed data \(Y\). Paths that align strongly with the observed signal receive large weights, while inconsistent paths are heavily suppressed.
+
+This is exactly the continuous-time analogue of Bayesian updating: the prior ensemble of possible trajectories is reweighted by the likelihood generated from the data stream.
+
+\subsection*{5.5. Setting up the Proof}
+To prove the formula, one analyzes the conditional law of the observations given the hidden state. The first step is to fix a realization of \(X(\omega)\). Once the hidden path is frozen, the observation process becomes a Gaussian process with known drift, and likelihood ratios can be computed explicitly through Girsanov's theorem.
+
+This is the bridge between the abstract conditional measure and the explicit filtering formula. It allows the posterior law of the hidden state to be written as a weighted version of the prior, exactly as in Bayes' theorem but now in continuous stochastic time.
+
+\section*{6. From the Kallianpur--Striebel Formula to the Zakai Equation}
+The final step in this chapter is to convert the probabilistic filter formula into a stochastic partial differential equation.
+
+\subsection*{6.1. The Likelihood Ratio and Girsanov's Theorem}
+To complete the proof of the Kallianpur--Striebel formula, we fix a realization of the hidden state \(X\). Once the trajectory is frozen, the observation equation
+\[
+dY_t=H(X_t)\,dt+R\,dV_t
+\]
+becomes a Brownian motion with known drift. We then compare the law of this drifted observation process with the law of pure observation noise.
+
+The resulting Radon--Nikodym density is given by the Girsanov exponential
+\[
+\frac{dP_V}{dP_{Y|X}}
+=
+\exp\left(
+\int_0^t \langle R^{-1}H(\bar X_s),dV_s\rangle
+-\frac12
+\int_0^t \langle R^{-1}H(\bar X_s),\cdots\rangle\,ds
+\right).
+\]
+This is the continuous-time likelihood ratio. It plays exactly the same role as the Bayesian density \(e^{-\ell(x,y)}\) from the static setting, but now on the infinite-dimensional path space of the observation process. The reference measure here is not Lebesgue measure but the law of the noise process.
+
+\subsection*{6.2. Independence and the Joint Measure}
+The proof then uses the independence of the signal process \(X\) and the observation noise \(V\). Their joint law factors as
+\[
+P_{(X,V)}=P_X\otimes P_V.
+\]
+Combining this tensor-product structure with the Girsanov likelihood weight yields the numerator and denominator in the Kallianpur--Striebel formula. This is the exact continuous-time probabilistic analogue of multiplying prior and likelihood in Bayes' theorem.
+
+\subsection*{6.3. The Relevance to SPDEs: The Unnormalized Measure}
+To connect filtering back to SPDEs, we focus on the numerator of the Kallianpur--Striebel formula and define the unnormalized filtering measure
+\[
+\widetilde\eta_t(f)
+:=
+\int f\,d\widetilde\eta_t
+=
+\bar{\mathbb E}_{\bar X}\bigl[f(\bar X_t)Z_t(\bar X,Y)\bigr].
+\]
+This quantity removes the normalization denominator and therefore behaves much more linearly than the normalized filter itself.
+
+Instead of directly evolving the normalized conditional measure, we evolve this unnormalized quantity and normalize only afterwards.
+
+\subsection*{6.4. The Zakai Equation}
+The process \(f(X_t)\) is a semimartingale, and the likelihood weight \(Z_t\) is also a semimartingale. Therefore, the product
+\[
+f(\bar X_t)Z_t(\bar X,Y)
+\]
+can be differentiated using It\^o's product rule:
+\[
+d(AB)=A\,dB+B\,dA+d\langle A,B\rangle.
+\]
+Applying this product rule inside the expectation leads to a stochastic partial differential equation for the unnormalized measure \(\widetilde\eta_t\). This SPDE is the Zakai equation.
+
+The decisive feature is that the Zakai equation is linear. In contrast to the nonlinear Kushner--Stratonovich equation for the normalized filter, the unnormalized formulation eliminates the troublesome normalization fraction.
+
+\subsection*{6.5. The Final Synthesis}
+This completes the conceptual bridge from Bayesian inference to stochastic partial differential equations. The hidden-state reconstruction problem, originally stated as a conditional probability problem, becomes a linear SPDE for the unnormalized filtering measure. After solving the Zakai equation, one recovers the normalized filter by division.
+
+Thus the filtering problem is not merely probabilistic in spirit; it is governed by an SPDE. This is the point at which the theory of stochastic evolution equations meets real-time data assimilation in its most applied form.
+
+\section*{Appendix}
+
+\subsection*{A.1. Decomposition Ansatz}
+\begin{definition}
+The decomposition ansatz rewrites the solution as the sum of a smooth remainder, a rough stochastic convolution, and a semigroup term absorbing the initial condition.
+\end{definition}
+
+\subsection*{A.2. Picard Operator}
+\begin{definition}
+The Picard operator is the map sending a candidate function \(v\) to the right-hand side of the modified mild equation. Fixed points of this operator are solutions.
+\end{definition}
+
+\subsection*{A.3. Rough Spatial Integral}
+\begin{definition}
+A rough spatial integral is an integral against a rough path in the spatial variable, defined through enhanced Riemann sums involving first-order increments and second-order iterated integrals.
+\end{definition}
+
+\subsection*{A.4. Heat Kernel Estimate}
+\begin{remark}
+Heat kernel estimates allow derivatives of the semigroup to be controlled by Hölder norms of the initial function at the cost of an integrable time singularity.
+\end{remark}
+
+\subsection*{A.5. Pathwise Convergence}
+\begin{definition}
+Pathwise convergence means that the limiting procedure is carried out for each individual realization of the rough signal, rather than only in expectation or in law.
+\end{definition}
+
+\subsection*{A.6. Gubinelli Derivative}
+\begin{definition}
+The Gubinelli derivative \(Z'\) is the algebraic derivative appearing in the controlled-path expansion
+\[
+Z_y-Z_x=Z_x'(X_y-X_x)+R_{x,y}.
+\]
+\end{definition}
+
+\subsection*{A.7. Controlled Rough Path}
+\begin{definition}
+A path \(Z\) is controlled by a rough path \(X\) if its increments admit an expansion against the increments of \(X\) with a sufficiently regular remainder.
+\end{definition}
+
+\subsection*{A.8. Mollifier}
+\begin{definition}
+A mollifier is a smooth approximation kernel used to regularize distributions or rough functions by convolution.
+\end{definition}
+
+\subsection*{A.9. Regularized Noise}
+\begin{definition}
+Regularized noise is noise that has been spatially smoothed by an operator such as \(Q_\varepsilon\), making the approximate equation classically well-defined.
+\end{definition}
+
+\subsection*{A.10. Space-Time White Noise Approximation}
+\begin{remark}
+Numerical approximations of space-time white noise depend on the chosen spatial and temporal discretization. This is one source of sensitivity in SPDE simulations.
+\end{remark}
+
+\subsection*{A.11. FitzHugh--Nagumo Equation}
+\begin{definition}
+The FitzHugh--Nagumo equation is a reaction-diffusion system used to model nerve impulses through the interaction of a fast excitation variable and a slow recovery variable.
+\end{definition}
+
+\subsection*{A.12. Bistable Nonlinearity}
+\begin{definition}
+A bistable nonlinearity has two stable equilibria separated by an unstable threshold state. It is the mechanism behind switching and wave propagation in many reaction-diffusion systems.
+\end{definition}
+
+\subsection*{A.13. Traveling Wave}
+\begin{definition}
+A traveling wave is a solution whose profile moves at constant speed without changing shape.
+\end{definition}
+
+\subsection*{A.14. Recovery Variable}
+\begin{definition}
+The recovery variable is the slower component of the FitzHugh--Nagumo system. It suppresses excitation after a spike and allows repeated pulse propagation.
+\end{definition}
+
+\subsection*{A.15. Hidden State}
+\begin{definition}
+A hidden state is a component of the system that influences the dynamics but is not directly observable from the available measurements.
+\end{definition}
+
+\subsection*{A.16. Measurement Model}
+\begin{definition}
+A measurement model specifies how observations \(Y\) are generated from the true state \(X\) and measurement noise \(e\), typically through a mapping \(Y=G(X,e)\).
+\end{definition}
+
+\subsection*{A.17. Prior Distribution}
+\begin{definition}
+The prior distribution is the probability distribution of the hidden state before the current observation is incorporated.
+\end{definition}
+
+\subsection*{A.18. Likelihood}
+\begin{definition}
+The likelihood quantifies how probable an observed datum is under a given hidden state.
+\end{definition}
+
+\subsection*{A.19. Posterior Distribution}
+\begin{definition}
+The posterior distribution is the updated probability distribution of the hidden state after combining the prior with the measurement through Bayes' theorem.
+\end{definition}
+
+\subsection*{A.20. Signal Process}
+\begin{definition}
+The signal process is the hidden stochastic system whose state is to be inferred from observations.
+\end{definition}
+
+\subsection*{A.21. Observation Process}
+\begin{definition}
+The observation process is the noisy data stream generated from the hidden state through the measurement equation.
+\end{definition}
+
+\subsection*{A.22. Observation Filtration}
+\begin{definition}
+The observation filtration is the sigma-algebra generated by all observations up to time \(t\). It represents the information available from the data.
+\end{definition}
+
+\subsection*{A.23. Kallianpur--Striebel Formula}
+\begin{definition}
+The Kallianpur--Striebel formula expresses the filter as a normalized weighted expectation over an independent copy of the signal process.
+\end{definition}
+
+\subsection*{A.24. Likelihood Functional}
+\begin{definition}
+The likelihood functional \(Z_t\) is the exponential weight that compares a candidate signal trajectory with the observed data stream.
+\end{definition}
+
+\subsection*{A.25. Girsanov's Theorem}
+\begin{theorem}
+Girsanov's theorem describes how probability measures change when the drift of a stochastic process is altered, and it provides the likelihood ratio underlying continuous-time filtering formulas.
+\end{theorem}
+
+\subsection*{A.26. Radon--Nikodym Density}
+\begin{definition}
+The Radon--Nikodym density is the derivative of one probability measure with respect to another, when such a derivative exists.
+\end{definition}
+
+\subsection*{A.27. Unnormalized Filter}
+\begin{definition}
+The unnormalized filter is the weighted conditional measure obtained before dividing by the normalizing constant in Bayes' rule.
+\end{definition}
+
+\subsection*{A.28. Zakai Equation}
+\begin{definition}
+The Zakai equation is the linear stochastic partial differential equation governing the unnormalized filtering measure.
+\end{definition}
+
+\subsection*{A.29. It\^o Product Rule}
+\begin{theorem}
+If \(A_t\) and \(B_t\) are semimartingales, then
+\[
+d(A_tB_t)=A_t\,dB_t+B_t\,dA_t+d\langle A,B\rangle_t.
+\]
+\end{theorem}
+
+\end{document}

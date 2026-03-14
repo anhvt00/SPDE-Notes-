@@ -560,26 +560,16 @@ R_\lambda
 This formula connects the time-dependent semigroup with the stationary operator \(\lambda I-A\). The exponential factor \(e^{-\lambda t}\) ensures decay in time and stabilizes the integral.
 
 \subsection*{7.2. Rigorous Derivation via the Infinitesimal Generator}
-We now justify this relation by applying the infinitesimal generator \(A\) to the Laplace integral. For \(f\in E\),
-\[
-A\left(\int_0^\infty e^{-\lambda t}T_t f\,dt\right).
-\]
+We now justify this relation by applying the infinitesimal generator \(A\) to the Laplace integral.
 Passing \(A\) inside the integral and using \(AT_t f=\frac{d}{dt}(T_t f)\), we obtain
 \[
 A\left(\int_0^\infty e^{-\lambda t}T_t f\,dt\right)
 =
-\int_0^\infty e^{-\lambda t}AT_t f\,dt.
-\]
-\[
 \int_0^\infty e^{-\lambda t}AT_t f\,dt
 =
 \int_0^\infty e^{-\lambda t}\frac{d}{dt}(T_t f)\,dt.
 \]
-Integrating by parts gives the boundary term
-\[
-\left[e^{-\lambda t}T_t f\right]_{t=0}^{t=\infty}.
-\]
-At \(t=\infty\), the exponential decay forces this term to vanish, while at \(t=0\) we use \(T_0=\Id\), so
+Integrating by parts and using the exponential decay at \(t=\infty\) together with \(T_0=\Id\), we obtain
 \[
 \left[e^{-\lambda t}T_t f\right]_{t=0}^{t=\infty}
 =

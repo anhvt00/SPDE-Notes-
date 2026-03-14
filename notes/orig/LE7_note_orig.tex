@@ -1,0 +1,871 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in]{geometry}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\DeclareMathOperator{\argmin}{argmin}
+
+\title{Lecture 7: Variational Methods for SPDEs, Sobolev Spaces, and Time Regularity}
+\date{27.11.2025}
+\author{Tien Anh Vu}
+
+\begin{document}
+\maketitle
+
+This lecture develops the variational framework for stochastic partial differential equations. Starting from the Dirichlet energy and its Euler-Lagrange equation, it builds the Gelfand triple \(V\subset H\cong H'\subset V'\), introduces weak derivatives and Sobolev spaces, defines the Laplacian in weak form, and concludes with the energy identity and the proof that variational solutions belong to \(C([0,T];H)\cap L^2([0,T];V)\).
+
+\section*{1. Variational Calculus and the Functional Analytic Setup}
+
+\subsection*{1.1. Variational Calculus and the Minimization Problem}
+We begin with a functional
+\[
+J:X\to \mathbb R,
+\]
+where \(X\) is an abstract space. In variational calculus, the objective is often to minimize \(J\) over a suitable subset \(U\subset X\).
+
+To make this concrete, consider the Dirichlet energy functional
+\[
+J(f):=\int_\Omega |\nabla f|^2\,dx,
+\]
+where \(\Omega\subset \mathbb R^d\) is a domain. We assume that the infimum is attained at a minimizer \(f^*\), so that
+\[
+f^*=\argmin_f J(f).
+\]
+Our goal is to determine what equation this minimizer must satisfy.
+
+\subsection*{1.2. First Variation of the Energy Functional}
+If \(f^*\) is truly a minimizer, then perturbing it in any admissible direction \(g\) by a small parameter \(\varepsilon\ge 0\) cannot lower the value of the functional. Hence
+\[
+J(f^*)\le J(f^*+\varepsilon g).
+\]
+To study the response of the energy under this perturbation, we consider the difference quotient
+\[
+\frac{1}{\varepsilon}\bigl(J(f^*+\varepsilon g)-J(f^*)\bigr).
+\]
+Substituting the functional \(J\), we obtain
+\[
+\frac{1}{\varepsilon}\int_\Omega \left(|\nabla(f^*+\varepsilon g)|^2-|\nabla f^*|^2\right)\,dx.
+\]
+Using
+\[
+\nabla(f^*+\varepsilon g)=\nabla f^*+\varepsilon \nabla g,
+\]
+we expand the square:
+\[
+|\nabla(f^*+\varepsilon g)|^2
+=
+|\nabla f^*|^2+2\varepsilon\langle \nabla f^*,\nabla g\rangle+\varepsilon^2|\nabla g|^2.
+\]
+Therefore
+\[
+\frac{1}{\varepsilon}\bigl(J(f^*+\varepsilon g)-J(f^*)\bigr)
+=
+\frac{1}{\varepsilon}\int_\Omega \left(2\varepsilon\langle \nabla f^*,\nabla g\rangle+\varepsilon^2|\nabla g|^2\right)\,dx.
+\]
+After dividing by \(\varepsilon\), this becomes
+\[
+\int_\Omega \left(2\langle \nabla f^*,\nabla g\rangle+\varepsilon |\nabla g|^2\right)\,dx.
+\]
+Taking the limit as \(\varepsilon\to 0\), the final term disappears, and we are left with the first variation
+\[
+\int_\Omega 2\langle \nabla f^*,\nabla g\rangle\,dx.
+\]
+Since \(f^*\) is a minimizer, this first variation must vanish for every admissible test direction \(g\). Dropping the constant factor \(2\), we obtain
+\[
+\int_\Omega \langle \nabla f^*,\nabla g\rangle\,dx=0.
+\]
+
+\subsection*{1.3. Integration by Parts and Harmonic Functions}
+We now apply integration by parts to shift the derivative from the test function \(g\) back onto \(f^*\). This yields
+\[
+-\int_\Omega (\Delta f^*)g\,dx=0.
+\]
+Because this identity holds for all admissible test functions \(g\), we conclude that
+\[
+\Delta f^*=0
+\]
+in the weak sense.
+
+A function whose Laplacian vanishes is called harmonic. Thus minimizing the Dirichlet energy naturally leads to harmonic functions inside the domain \(\Omega\). This is the basic variational principle that later reappears in much more abstract form in the theory of SPDEs.
+
+\subsection*{1.4. Transition to the Functional Analytic Framework}
+To apply variational ideas to stochastic partial differential equations, we must now move from concrete functions on a domain to abstract spaces. The correct setting is built from a Hilbert space together with a more regular subspace, organized in what is known as a Gelfand triple.
+
+We begin by introducing a separable real Hilbert space \(H\). We then choose a space \(V\) such that
+\[
+V\subset H,
+\]
+and assume that the embedding
+\[
+V\hookrightarrow H
+\]
+is dense and continuous.
+
+\subsection*{1.5. Meaning of Continuous Embedding}
+A continuous embedding means that convergence in \(V\) implies convergence in \(H\). Equivalently, there exists a constant \(C>0\) such that
+\[
+\|u\|_H\le C\|u\|_V
+\qquad
+\text{for all } u\in V.
+\]
+This estimate expresses that the norm in \(H\) is controlled by the stronger norm in \(V\).
+
+In particular, if
+\[
+\|u\|_V\to 0,
+\]
+then necessarily
+\[
+\|u\|_H\to 0.
+\]
+As noted in the lecture, without loss of generality one may normalize the norms so that
+\[
+C=1.
+\]
+
+\subsection*{1.6. Dual Spaces and the Riesz Identification}
+The next step is to identify the Hilbert space \(H\) with its dual space \(H'\). By definition,
+\[
+H'=L(H,\mathbb R),
+\]
+the space of all continuous linear functionals from \(H\) into \(\mathbb R\).
+
+Because \(H\) is a Hilbert space, the Riesz representation theorem tells us that every continuous linear functional on \(H\) can be represented by an inner product with a unique element of \(H\). Concretely, each \(h\in H\) defines a functional by
+\[
+g\mapsto \langle h,g\rangle_H.
+\]
+Thus we identify
+\[
+H\cong H'.
+\]
+This identification is one of the structural reasons why Hilbert spaces are so well suited for variational methods.
+
+\subsection*{1.7. The Gelfand Triple}
+Combining the dense continuous embedding \(V\hookrightarrow H\) with the identification \(H\cong H'\), we obtain the standard variational chain of spaces
+\[
+V\subset H\cong H'\subset V'.
+\]
+This is the basic variational framework used throughout the chapter: \(V\) carries the stronger norm, \(H\) is the pivot Hilbert space, and \(V'\) is the natural home for weak formulations.
+
+\section*{2. Completing the Functional Analytic Framework}
+
+\subsection*{2.1. Isometry in the Dual Space}
+We now sharpen the identification \(H\cong H'\) by showing that it is actually an isometry. For a functional \(l_h\in H'\), we define its dual norm by
+\[
+\|l_h\|_{H'}
+:=
+\max_{\|g\|_H\le 1} l_h(g).
+\]
+If we choose the specific test element
+\[
+g=\frac{h}{\|h\|_H},
+\]
+then the functional attains the value \(\|h\|_H\). Hence the norm of the functional agrees exactly with the norm of the representing vector:
+\[
+\|l_h\|_{H'}=\|h\|_H.
+\]
+Therefore the identification \(H\cong H'\) is not merely a bijection, but an isometry.
+
+\subsection*{2.2. Constructing the Gelfand Triple}
+With the isometric identification \(H\cong H'\) in hand, we can write the full Gelfand triple
+\[
+V\hookrightarrow H
+\]
+\[
+H\cong H'.
+\]
+The remaining step is to show that
+\[
+H'\hookrightarrow V'.
+\]
+Thus
+\[
+V\hookrightarrow H\cong H'\hookrightarrow V'.
+\]
+
+To construct the embedding into \(V'\), take \(h\in H\) and define the functional
+\[
+l_h(g)=\langle h,g\rangle_H,
+\qquad g\in V.
+\]
+Here it is important to note that this is not the same as a functional defined via the \(V\)-inner product. The embedding into \(V'\) is obtained by restricting the \(H\)-inner product to arguments lying in \(V\).
+
+\subsection*{2.3. Why \(H\) Embeds into \(V'\)}
+This embedding works because every functional \(l_h\in H'\) can be restricted from \(H\) to the smaller space \(V\), and the continuity of the embedding \(V\hookrightarrow H\) transfers continuity to the restricted functional.
+
+Take a sequence \((u_n)\subset V\) such that
+\[
+u_n\to u
+\qquad \text{in } V.
+\]
+Because the embedding \(V\hookrightarrow H\) is continuous, this implies
+\[
+u_n\to u
+\qquad \text{in } H.
+\]
+Now \(l_h\) is continuous on \(H\), so it follows that
+\[
+l_h(u_n)\to l_h(u).
+\]
+Thus the restricted functional is continuous on \(V\), which means precisely that
+\[
+l_h\in V'.
+\]
+This proves the embedding
+\[
+H\hookrightarrow V'.
+\]
+
+\subsection*{2.4. Continuity of the Embedding \(H\hookrightarrow V'\)}
+To show that this embedding is continuous, we estimate the norm in \(V'\). For \(v\in H\), we consider
+\[
+\|l_v\|_{V'}
+:=
+\max_{\|g\|_V\le 1} l_v(g).
+\]
+Using the \(H\)-inner product and the Cauchy-Schwarz inequality, we obtain
+\[
+l_v(g)=\langle v,g\rangle_H\le \|v\|_H\|g\|_H.
+\]
+Since \(V\hookrightarrow H\), we have
+\[
+\|g\|_H\le \|g\|_V.
+\]
+Therefore
+\[
+l_v(g)\le \|v\|_H\|g\|_V.
+\]
+Maximizing over all \(g\) with \(\|g\|_V\le 1\), we conclude that
+\[
+\|l_v\|_{V'}\le \|v\|_H.
+\]
+In particular, the embedding \(H\hookrightarrow V'\) is continuous. If one uses the stronger bound from the notes that also compares \(v\) with the \(V\)-norm whenever \(v\in V\), one further obtains
+\[
+\|l_v\|_{V'}\le \|v\|_V.
+\]
+
+\subsection*{2.5. Operators and Dual Pairing}
+At the bottom of the page, we prepare for the formulation of stochastic evolution equations by introducing an operator
+\[
+A\in L(V,V').
+\]
+This means that \(A\) is a bounded linear operator from \(V\) into its dual space \(V'\):
+\[
+A:V\to V'.
+\]
+For the variational theory of SPDEs, this operator is typically required to satisfy a coercivity condition involving a constant \(\alpha>0\).
+
+Finally, the notes introduce the dual pairing notation. For a functional \(f\in V'\) and an element \(u\in V\), we write
+\[
+\langle f,u\rangle_{V',V}:=f(u).
+\]
+In particular, for the operator \(A\), expressions such as
+\[
+\langle Au,u\rangle_{V',V}
+\]
+describe the action of the dual element \(Au\) on the test element \(u\). This pairing is one of the central notational tools in the variational formulation of SPDEs.
+
+\section*{3. Coercivity and Sobolev Space Examples}
+
+\subsection*{3.1. Coercivity and Global Minima}
+We now return to the operator \(A\) and the associated dual pairing. The expression
+\[
+\langle h,u\rangle_H,
+\]
+plays the role of the scalar product in the pivot space \(H\).
+
+Building on the operator \(A\), we now introduce the crucial coercivity condition
+\[
+\langle Au,u\rangle_{V',V}\ge \alpha\|u\|_V^2-\lambda\|u\|_H^2
+\qquad
+\text{for all } u\in V,
+\]
+where \(\alpha>0\) and \(\lambda\in\mathbb R\).
+
+To understand the geometric meaning of this inequality, the notes consider the simplified case \(\lambda=0\). In that case we may define the functional
+\[
+J(u)=-\langle Au,u\rangle_{V',V}.
+\]
+The coercivity condition then shows that as
+\[
+\|u\|_V\to \infty,
+\]
+the functional grows without bound. Geometrically, the notes illustrate this by a U-shaped parabola, expressing strong convexity. The key conclusion is that the functional grows outside every bounded ball, and this growth behavior guarantees the existence of a global minimum.
+
+\subsection*{3.2. A Concrete Example with Sobolev Spaces}
+After the abstract discussion of the spaces \(V\) and \(H\), the notes move to a concrete example. Let \(D\subset \mathbb R^d\) be an open set.
+
+We choose the Hilbert space
+\[
+H=L^2(D),
+\]
+the space of square-integrable functions on \(D\). As the more regular subspace \(V\), we take the Sobolev space
+\[
+V=H^1(D)=H^{1,2}(D).
+\]
+This space consists of all functions \(u\in L^2(D)\) such that each weak partial derivative
+\[
+\partial_{x_i}u,\qquad i=1,\dots,d,
+\]
+also belongs to \(L^2(D)\).
+
+Thus \(H^1(D)\) is the space of functions that are weakly differentiable once, with both the function itself and all first derivatives belonging to \(L^2(D)\). This is one of the standard examples of a variational setting used throughout PDE and SPDE theory.
+
+\subsection*{3.3. The Weak Derivative}
+This leads to the weak derivative, defined through an integration-by-parts identity rather than pointwise limits.
+
+A function \(v_i\in L^2(D)\) is called the weak partial derivative \(\partial_{x_i}u\) of \(u\) if
+\[
+\int_D u\,\partial_{x_i}\varphi\,dx
+=
+-\int_D v_i\,\varphi\,dx
+\]
+for every smooth test function \(\varphi\) with compact support in \(D\).
+
+In other words, a weak derivative is defined by transferring the derivative from the potentially rough function \(u\) onto the smooth test function \(\varphi\). This is exactly the idea behind integration by parts, and it is what makes Sobolev spaces flexible enough for variational analysis.
+
+\subsection*{3.4. Why Weak Differentiability Matters}
+The advantage of weak differentiability is that it extends the notion of derivative to functions that are not classically differentiable everywhere.
+
+The standard example in the notes is the absolute value function
+\[
+u(x)=|x|.
+\]
+Classically, this function is not differentiable at \(x=0\) because of the corner. However, in the weak sense it is differentiable, and its weak derivative is the sign function
+\[
+u'(x)=\operatorname{sgn}(x).
+\]
+
+This generalization is essential for stochastic partial differential equations. Because randomness tends to reduce regularity, solutions often fail to possess classical derivatives, while weak derivatives remain available and provide the correct framework for analysis.
+
+\section*{4. One-Dimensional Sobolev Structure}
+
+\subsection*{4.1. Proving the Weak Derivative of \(|x|\)}
+We now return to the example
+\[
+u(x)=|x|
+\]
+and prove explicitly that its weak derivative is the sign function
+\[
+\operatorname{sgn}(x).
+\]
+
+At the top of the notes, there is an important observation: we do not need to specify the value of the derivative exactly at \(x=0\). A single point is a set of measure zero, so its value does not affect any \(L^2\)-integral.
+
+To verify the weak derivative formula, let \(\varphi\) be a smooth test function with compact support in the interval \((-1,1)\). We begin with
+\[
+\int_{-1}^1 |x|\varphi'(x)\,dx.
+\]
+Because of the absolute value, we split the integral at the origin:
+\[
+\int_{-1}^0 (-x)\varphi'(x)\,dx+\int_0^1 x\varphi'(x)\,dx.
+\]
+We now apply integration by parts on both intervals. Since \(\varphi\) has compact support, the boundary terms at \(-1\) and \(1\) vanish. The boundary contributions at \(x=0\) cancel as well. Therefore the remaining terms reduce to
+\[
+-\int_{-1}^0 (-1)\varphi(x)\,dx-\int_0^1 (1)\varphi(x)\,dx
+=
+\int_{-1}^0 \varphi(x)\,dx-\int_0^1 \varphi(x)\,dx.
+\]
+Recognizing the sign function, we can rewrite this as
+\[
+-\int_{-1}^1 \operatorname{sgn}(x)\varphi(x)\,dx.
+\]
+This is exactly the defining identity for the weak derivative, so
+\[
+\frac{d}{dx}|x|=\operatorname{sgn}(x)
+\]
+in the weak sense.
+
+\subsection*{4.2. One-Dimensional Sobolev Spaces}
+We now specialize to the one-dimensional case \(d=1\), with domain
+\[
+D=(0,1).
+\]
+In this setting, a basic property of Sobolev spaces is that if
+\[
+u\in H^1(D),
+\]
+then \(u\) is absolutely continuous with respect to Lebesgue measure.
+
+This means that the function can be recovered from its derivative through the fundamental theorem of calculus:
+\[
+u(x)-u(y)=\int_y^x u'(s)\,ds.
+\]
+Here \(u'\) is the weak derivative, which in this setting coincides with the Radon-Nikodym derivative and belongs to \(L^2(D)\).
+
+\subsection*{4.3. The Continuous Representative}
+An important subtlety is that functions in Lebesgue spaces are equivalence classes: two functions are regarded as the same if they differ only on a set of measure zero. Because of this, pointwise values are not always intrinsically meaningful.
+
+For functions in \(H^1(0,1)\), absolute continuity resolves this issue. One can always choose a unique continuous representative \(\widetilde u\) of the Sobolev class. This representative is given, up to the choice of a reference point \(y\), by
+\[
+\widetilde u(x)=\widetilde u(y)+\int_y^x u'(s)\,ds.
+\]
+In this way, the continuous version removes ambiguity at individual points and allows us to speak meaningfully about boundary values.
+
+\subsection*{4.4. Dirichlet Boundary Conditions and \(H_0^1(D)\)}
+Using the continuous representative, we can define boundary conditions rigorously through the Sobolev space
+\[
+H_0^1(D).
+\]
+A function \(u\) belongs to \(H_0^1(D)\) if and only if
+\[
+u\in H^1(D)
+\]
+and its continuous representative vanishes at the boundary:
+\[
+\widetilde u(0)=0,
+\qquad
+\widetilde u(1)=0.
+\]
+This is the correct variational formulation of homogeneous Dirichlet boundary conditions in one dimension.
+
+\subsection*{4.5. The Geometry of the Sobolev Space}
+Finally, the notes formalize the geometry of the Sobolev space. The space \(H^{1,2}(D)\), also written simply as \(H^1(D)\), is a Hilbert space. Its inner product is defined by
+\[
+\langle u,v\rangle_{H^1(D)}
+=
+\int_D uv\,dx+\sum_{i=1}^d \int_D \partial_{x_i}u\,\partial_{x_i}v\,dx.
+\]
+The first term is the standard \(L^2\)-inner product of the functions themselves, while the second term adds the \(L^2\)-inner products of their weak derivatives.
+
+This inner product captures exactly what Sobolev regularity means: the distance between two functions depends not only on their values, but also on the behavior of their gradients.
+
+\section*{5. The Weak Laplacian and Abstract Evolution Equations}
+
+\subsection*{5.1. The Inner Product and the Concrete Gelfand Triple}
+Using the Sobolev inner product from the previous section, we rewrite it compactly in terms of the gradient:
+\[
+\langle u,v\rangle_{H^1(D)}
+:=
+\int_D uv\,dx+\int_D \langle \nabla u,\nabla v\rangle_{\mathbb R^d}\,dx.
+\]
+Since the gradient term is always nonnegative when \(u=v\), we obtain the basic inequality
+\[
+\|u\|_{H^1(D)}\ge \|u\|_{L^2(D)}.
+\]
+This estimate yields the continuous embedding
+\[
+H^1(D)\hookrightarrow L^2(D).
+\]
+
+As a result, we arrive at the concrete Gelfand triple
+\[
+H^1(D)\hookrightarrow L^2(D)\cong L^2(D)'\hookrightarrow H^1(D)'.
+\]
+Here \(H^1(D)\) plays the role of \(V\), \(L^2(D)\) is the pivot Hilbert space \(H\), and \(H^1(D)'\) is the dual space \(V'\).
+
+\subsection*{5.2. Defining the Laplace Operator Weakly}
+With this triple in place, we can define the Laplace operator in the variational sense. Classically, the Laplacian is given by
+\[
+\Delta=\sum_{i=1}^d \frac{\partial^2}{\partial x_i^2},
+\]
+that is, the sum of the unmixed second partial derivatives.
+
+In the present framework, however, we define \(\Delta\) as a continuous linear operator from \(H^1(D)\) into its dual space \(H^1(D)'\). Given \(u\in H^1(D)\), we define \(\Delta u\in H^1(D)'\) through its action on \(v\in H^1(D)\) by
+\[
+\langle \Delta u,v\rangle_{H^1(D)',H^1(D)}
+:=
+-\sum_{i=1}^d \int_D \partial_{x_i}u\,\partial_{x_i}v\,dx.
+\]
+
+This is the natural weak extension of the classical Laplacian. Indeed, if \(u\) is smooth enough, for example \(u\in C_c^2(D)\), then integration by parts gives
+\[
+-\sum_{i=1}^d \int_D \partial_{x_i}u\,\partial_{x_i}v\,dx
+=
+\int_D (\Delta u)v\,dx.
+\]
+Thus the weak definition agrees with the classical one whenever both make sense, but it only requires first weak derivatives and therefore applies to much rougher functions.
+
+This weak formulation is also well suited to finite element methods, since it relies only on first derivatives and fits naturally with Hilbert space geometry.
+
+\subsection*{5.3. The Initial Value Problem}
+We now apply this machinery to an abstract evolution equation. Consider the initial value problem
+\[
+\frac{d}{dt}u(t)=Au(t)+f(t),
+\qquad t>0,
+\]
+with initial condition
+\[
+u(0)=u_0.
+\]
+If we take \(A=\Delta\), this becomes the inhomogeneous heat equation in weak form.
+
+\subsection*{5.4. Theorem 3.2 and Well-Posedness}
+At the bottom of the page, the notes state a central existence and uniqueness result.
+
+\begin{theorem}
+Let \(A\in L(V,V')\) be a coercive operator. Let \(u_0\in H\), and let the forcing term satisfy
+\[
+f\in L^2([0,T];V').
+\]
+Then the initial value problem
+\[
+\frac{d}{dt}u(t)=Au(t)+f(t),
+\qquad
+u(0)=u_0,
+\]
+has a unique solution
+\[
+u\in C([0,T];H)\cap L^2([0,T];V).
+\]
+\end{theorem}
+
+This regularity statement has two complementary meanings. First, the solution is continuous in time with values in the Hilbert space \(H\). Second, it is square-integrable in time with values in the more regular space \(V\).
+
+\section*{6. Energy Evolution and the Generalized Chain Rule}
+
+\subsection*{6.1. The Setup and Statement of the Lemma}
+We next analyze how the \(H\)-energy of a variational solution evolves in time. The key lemma is the infinite-dimensional analogue of the classical chain rule for \(\frac12|x(t)|^2\).
+
+The lemma begins with the assumptions
+\[
+u\in L^2([0,T];V).
+\]
+and requires that \(t\mapsto u(t)\) be absolutely continuous with time derivative \(\frac{du}{dt}\in V'\), satisfying
+\[
+\frac{du}{dt}\in L^2([0,T];V').
+\]
+
+If a function satisfies these rigorous functional analytic conditions, the Lemma guarantees two powerful conclusions. First, \(u\) is automatically continuous in our pivot Hilbert space \(H\), meaning
+\[
+u\in C([0,T];H).
+\]
+Second, and most importantly for solving partial differential equations, it gives us an exact formula for the rate of change of its squared \(H\)-norm over time:
+\[
+\frac12\frac{d}{dt}\|u(t)\|_H^2
+=
+\langle \tfrac{du}{dt}(t),u(t)\rangle_{V',V}
+\qquad \text{a.e.}
+\]
+
+Because \(\frac{du}{dt}\) lies in \(V'\) while \(u(t)\) lies in \(V\), the correct interaction is expressed through the dual pairing \(\langle\cdot,\cdot\rangle_{V',V}\) rather than an \(H\)-inner product.
+
+\subsection*{6.2. Step 1 of the Proof: Smooth Approximation}
+To prove this generalized chain rule, the notes begin Step 1 by employing a classic strategy in functional analysis: approximation by smooth functions.
+
+Because our function \(u\) might be rough, only possessing weak derivatives, we introduce a sequence of functions \(u_m\) which are continuously differentiable in time:
+\[
+u_m\in C^1([0,T];V).
+\]
+We choose this sequence such that as \(m\to\infty\), \(u_m\) converges to our target function \(u\), and the derivative of \(u_m\) converges to the derivative of \(u\). Mathematically, this is written as
+\[
+\lim_{m\to\infty}
+\left(
+\|u_m-u\|_{L^2([0,T];V)}
++
+\left\|
+\frac{du_m}{dt}-\frac{du}{dt}
+\right\|_{L^2([0,T];V')}
+\right)
+=0.
+\]
+
+\subsection*{6.3. Applying the Chain Rule and Relaxation}
+Because our approximation \(u_m\) is beautifully smooth, namely \(C^1\), we can safely apply the classical calculus chain rule to its \(H\)-norm without any mathematical ambiguity:
+\[
+\frac{d}{dt}\|u_m(t)\|_H^2
+=
+2\left\langle \frac{du_m}{dt}(t),u_m(t)\right\rangle_H.
+\]
+
+Now comes a crucial transition, which relies entirely on the Gelfand triple framework
+\[
+V\hookrightarrow H\cong H'\hookrightarrow V'.
+\]
+Because of how these spaces embed into one another, we can rewrite this standard \(H\)-inner product as a dual pairing between \(V'\) and \(V\). The notes label this transition as relaxation:
+\[
+\frac{d}{dt}\|u_m(t)\|_H^2
+=
+2\left\langle \frac{du_m}{dt}(t),u_m(t)\right\rangle_{V',V}.
+\]
+
+\subsection*{6.4. Passing to the Limit}
+Finally, we pass to the limit as \(m\to\infty\). Because we established that our smooth sequence converges to \(u\), the relaxed dual pairing of the approximation converges to the dual pairing of the true function:
+\[
+2\left\langle \frac{du_m}{dt}(t),u_m(t)\right\rangle_{V',V}
+\to
+2\left\langle \frac{du}{dt}(t),u(t)\right\rangle_{V',V}.
+\]
+The notes specify that this convergence takes place in \(L^1([0,T])\), citing Lebesgue's convergence theorem as the justification for passing the limit through the relevant integral structures.
+
+Similarly, the squared norms of the smooth sequence converge to the squared norm of the true function:
+\[
+\|u_m(t)\|_H^2\to \|u(t)\|_H^2
+\qquad \text{in } L^1([0,T]).
+\]
+Tying all of this together, the mapping
+\[
+t\mapsto \|u(t)\|_H^2
+\]
+inherits absolute continuity, and its derivative is exactly the limit evaluated above:
+\[
+\frac{d}{dt}\|u(t)\|_H^2
+=
+2\left\langle \frac{du}{dt}(t),u(t)\right\rangle_{V',V}.
+\]
+Dividing by \(2\), we recover the formula proposed in the Lemma.
+
+This finishes Step 1: the Gelfand triple and smooth approximations justify differentiating the energy in weak form.
+
+\section*{7. Step 2: Continuity in Time}
+
+\subsection*{7.1. Adding and Subtracting the Mean}
+We now turn to Step 2 of the proof, whose purpose is to upgrade square-integrability to genuine continuity in time with respect to the \(H\)-norm.
+
+For a function \(v\in L^2([0,T];H)\), define its time average by
+\[
+\langle v\rangle:=\frac{1}{T}\int_0^T v(t)\,dt.
+\]
+To build the proof, we assume \(v\) is smooth, specifically
+\[
+v\in C^1([0,T];V).
+\]
+We want to bound its squared \(H\)-norm \(\|v(t)\|_H^2\). We begin by adding and subtracting the mean inside the norm:
+\[
+\|v(t)\|_H^2=\|v(t)-\langle v\rangle+\langle v\rangle\|_H^2.
+\]
+Using the inequality \((a+b)^2\le 2a^2+2b^2\), we obtain
+\[
+\|v(t)\|_H^2
+\le
+2\|v(t)-\langle v\rangle\|_H^2+2\|\langle v\rangle\|_H^2.
+\]
+
+\subsection*{7.2. Bochner and Jensen Inequalities}
+Next, we expand the first term by inserting the integral definition of the mean:
+\[
+v(t)-\langle v\rangle
+=
+\frac{1}{T}\int_0^T (v(t)-v(\lambda))\,d\lambda.
+\]
+To control the norm of this integral, the notes apply two standard tools from analysis.
+
+First, Bochner's inequality allows us to estimate the norm of the integral by the integral of the norm:
+\[
+\|v(t)-\langle v\rangle\|_H^2
+\le
+\left(\frac{1}{T}\int_0^T \|v(t)-v(\lambda)\|_H\,d\lambda\right)^2.
+\]
+Then Jensen's inequality, applied to the convex function \(x\mapsto x^2\), lets us move the square inside the integral. This yields a bound of the form
+\[
+\|v(t)\|_H^2
+\le
+\frac{2}{T}\int_0^T \|v(t)-v(\lambda)\|_H^2\,d\lambda
++
+\frac{2}{T}\int_0^T \|v(\lambda)\|_H^2\,d\lambda.
+\]
+The second term is now independent of \(t\), so it acts as a constant in the remainder of the estimate.
+
+\subsection*{7.3. The Fundamental Theorem and Dual Pairing}
+We now analyze the difference term \(\|v(t)-v(\lambda)\|_H^2\), assuming \(t\ge \lambda\). By the fundamental theorem of calculus,
+\[
+\|v(t)-v(\lambda)\|_H^2
+=
+\int_\lambda^t \frac{d}{ds}\|v(s)-v(\lambda)\|_H^2\,ds.
+\]
+At this point, we use exactly the relaxation argument established in Step 1. Since our spaces form a Gelfand triple, we may rewrite the time derivative in terms of the dual pairing:
+\[
+\|v(t)-v(\lambda)\|_H^2
+=
+2\int_\lambda^t \left\langle \frac{dv}{ds}(s),v(s)-v(\lambda)\right\rangle_{V',V}\,ds.
+\]
+
+\subsection*{7.4. Bounding the Dual Pairing}
+To remove the abstract dual pairing, we estimate it by standard inequalities. First, by Cauchy-Schwarz,
+\[
+2\left\langle \frac{dv}{ds}(s),v(s)-v(\lambda)\right\rangle_{V',V}
+\le
+2\left\|\frac{dv}{ds}(s)\right\|_{V'}\|v(s)-v(\lambda)\|_V.
+\]
+Then Young's inequality, \(2ab\le a^2+b^2\), gives
+\[
+2\left\|\frac{dv}{ds}(s)\right\|_{V'}\|v(s)-v(\lambda)\|_V
+\le
+\left\|\frac{dv}{ds}(s)\right\|_{V'}^2+\|v(s)-v(\lambda)\|_V^2.
+\]
+Hence
+\[
+\|v(t)-v(\lambda)\|_H^2
+\le
+\int_\lambda^t
+\left(
+\left\|\frac{dv}{ds}(s)\right\|_{V'}^2+\|v(s)-v(\lambda)\|_V^2
+\right)\,ds.
+\]
+Since \(t\le T\), we may enlarge the integration interval and obtain the global bound
+\[
+\|v(t)-v(\lambda)\|_H^2
+\le
+\int_0^T
+\left(
+\left\|\frac{dv}{ds}(s)\right\|_{V'}^2+\|v(s)-v(\lambda)\|_V^2
+\right)\,ds.
+\]
+
+\subsection*{7.5. Final Substitution and Consequence}
+Substituting this estimate back into the previous inequality, we arrive at the large three-term bound near the bottom of the page. The squared \(H\)-norm of \(v(t)\) is controlled by expressions involving
+\[
+\int_0^T\int_0^T \left\|\frac{dv}{ds}(s)\right\|_{V'}^2\,ds\,d\lambda,
+\qquad
+\int_0^T\int_0^T \|v(s)-v(\lambda)\|_V^2\,ds\,d\lambda,
+\]
+and the constant term
+\[
+\int_0^T \|v(\lambda)\|_H^2\,d\lambda.
+\]
+
+The final instruction in the notes is to substitute
+\[
+v=u_n-u_m.
+\]
+This reveals the purpose of the entire estimate: it tests whether the approximating sequence is Cauchy in the space of continuous \(H\)-valued functions.
+
+Because Step 1 showed that \(u_n\to u\) in \(L^2([0,T];V)\) and that their derivatives converge in \(L^2([0,T];V')\), all the terms on the right-hand side go to zero as \(n,m\to\infty\). Consequently,
+\[
+\|u_n(t)-u_m(t)\|_H^2\to 0
+\]
+uniformly in time. Therefore the smooth approximation sequence is Cauchy in \(C([0,T];H)\), and its limit satisfies
+\[
+u\in C([0,T];H).
+\]
+
+This concludes Step 2 of the proof and establishes the desired continuity in time with respect to the \(H\)-norm.
+
+\section*{8. Conclusion}
+
+\subsection*{8.1. The Grand Conclusion of the Proof}
+The final step is to substitute the difference of two smooth approximations,
+\[
+v=u_n-u_m.
+\]
+
+The resulting estimate shows that the sequence \(u_n\) from Step 1 is Cauchy in
+\[
+C([0,T];H).
+\]
+Indeed, after substituting \(v=u_n-u_m\) into the inequality from Step 2, every term on the right-hand side tends to zero because Step 1 already gives convergence in \(L^2([0,T];V)\) and convergence of the derivatives in \(L^2([0,T];V')\).
+
+This forces
+\[
+\|u_n(t)-u_m(t)\|_H\to 0
+\]
+uniformly in time, which is exactly the Cauchy property in \(C([0,T];H)\). Since \(C([0,T];H)\) is complete, every Cauchy sequence converges to a limit in the same space. Therefore the limiting solution \(u\) belongs to
+\[
+C([0,T];H).
+\]
+Therefore the limit belongs to \(C([0,T];H)\), completing the proof of time continuity.
+
+\subsection*{8.2. Final Remark on One-Dimensional Sobolev Spaces}
+The chapter closes with a final remark on the special structure of one-dimensional Sobolev spaces. Let
+\[
+u\in H^1([0,T]).
+\]
+Recall that \(H^1\) consists of square-integrable functions whose first weak derivative is also square-integrable.
+
+In higher dimensions, Sobolev functions can still be fairly rough. But in one dimension, the geometry is much more restrictive, and Sobolev regularity implies a strong form of regularity: absolute continuity.
+
+\subsection*{8.3. Absolute Continuity and the Fundamental Theorem}
+This special property is summarized by the final equation on the page:
+\[
+u(y)-u(x)=\int_x^y u'(s)\,ds.
+\]
+This is the fundamental theorem of calculus in Sobolev form. The important point is that \(u'\) is not necessarily a classical derivative; it is the weak derivative. Nevertheless, in one dimension, the function can be reconstructed from this derivative through integration.
+
+Thus every \(H^1\)-function on an interval admits a continuous representative, and its increments are recovered by integrating its weak derivative. This absolute continuity is one of the key structural facts behind the variational treatment of evolution equations.
+
+\section*{Appendix}
+
+\subsection*{A.1. Functional}
+\begin{definition}
+A functional is a map
+\[
+J:X\to \mathbb R
+\]
+from a vector space or function space \(X\) into the real numbers.
+\end{definition}
+
+\subsection*{A.2. Minimizer}
+\begin{definition}
+An element \(f^*\) is called a minimizer of a functional \(J\) if
+\[
+J(f^*)\le J(f)
+\qquad
+\text{for all admissible } f.
+\]
+One often writes
+\[
+f^*=\argmin_f J(f).
+\]
+\end{definition}
+
+\subsection*{A.3. First Variation}
+\begin{definition}
+The first variation of a functional at \(f^*\) in the direction \(g\) is the derivative of the map \(\varepsilon\mapsto J(f^*+\varepsilon g)\) at \(\varepsilon=0\), provided this derivative exists.
+\end{definition}
+
+\subsection*{A.4. Dirichlet Energy}
+\begin{definition}
+The Dirichlet energy of a function \(f\) on a domain \(\Omega\) is given by
+\[
+\int_\Omega |\nabla f|^2\,dx.
+\]
+Minimizing this energy leads to harmonic functions.
+\end{definition}
+
+\subsection*{A.5. Harmonic Function}
+\begin{definition}
+A function \(f\) is called harmonic on \(\Omega\) if
+\[
+\Delta f=0
+\]
+in \(\Omega\).
+\end{definition}
+
+\subsection*{A.6. Separable Hilbert Space}
+\begin{definition}
+A Hilbert space \(H\) is called separable if it contains a countable dense subset.
+\end{definition}
+
+\subsection*{A.7. Continuous Embedding}
+\begin{definition}
+If \(V\) and \(H\) are normed spaces with \(V\subset H\), then the embedding \(V\hookrightarrow H\) is called continuous if there exists a constant \(C>0\) such that
+\[
+\|u\|_H\le C\|u\|_V
+\qquad
+\text{for all } u\in V.
+\]
+\end{definition}
+
+\subsection*{A.8. Dual Space}
+\begin{definition}
+For a normed space \(E\), its dual space \(E'\) is the space of all continuous linear functionals from \(E\) to \(\mathbb R\).
+\end{definition}
+
+\subsection*{A.9. Riesz Representation Theorem}
+\begin{theorem}
+If \(H\) is a Hilbert space, then every continuous linear functional \(l\in H'\) is of the form
+\[
+l(g)=\langle h,g\rangle_H
+\]
+for a unique element \(h\in H\).
+\end{theorem}
+
+\subsection*{A.10. Gelfand Triple}
+\begin{definition}
+A Gelfand triple is a chain of spaces
+\[
+V\subset H\cong H'\subset V',
+\]
+where \(V\) is densely and continuously embedded in the Hilbert space \(H\), and \(V'\) is the dual of \(V\).
+\end{definition}
+
+\end{document}

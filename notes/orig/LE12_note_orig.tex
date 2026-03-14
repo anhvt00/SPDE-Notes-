@@ -1,0 +1,666 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in]{geometry}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\title{Lecture 12: Tightness for Martingale Solutions}
+\date{15.01.2026}
+\author{Tien Anh Vu}
+
+\begin{document}
+\maketitle
+
+This lecture returns to the compactness approach for non-monotone stochastic partial differential equations and takes up the tightness statement that was left open at the end of the martingale-solution construction. The main themes are the path-space formulation of Lemma 3.14, the topology needed for compactness, and the first step of the tightness proof via weak compactness and Markov's inequality.
+
+\section*{1. The Tightness Proof for Lemma 3.14}
+We begin by returning to the compactness argument exactly where the martingale-solution proof paused: the verification of tightness for the Galerkin laws.
+
+\subsection*{1.1. Re-establishing the Foundation}
+We begin by restating the governing stochastic partial differential equation
+\[
+du(t)=A(u(t))\,dt+B(u(t))\,dW(t).
+\]
+
+To solve it, we use the finite-dimensional Galerkin approximation \(u_N\) or \(u_n\), living in
+\[
+V_n=\operatorname{span}\{e_1,\dots,e_n\}.
+\]
+Because this is a finite-dimensional projection, the approximations naturally belong to
+\[
+C([0,T];V_n)\subset C([0,T];H)\subset L^2([0,T];V).
+\]
+
+The entire construction relies on the compact embedding
+\[
+V\hookrightarrow H,
+\]
+together with the a priori estimate
+\[
+\sup_{N\ge 1}
+\mathbb E\left(
+\sup_{t\in T}\|u_N(t)\|_H^2
++
+\int_0^T \|u_N(t)\|_V^2\,dt
+\right)
+<\infty.
+\]
+Equivalently, with the expectation written as \(\mathbb E_N\), the same bound holds uniformly in \(N\).
+
+\subsection*{1.2. Formulating Lemma 3.14}
+With these bounds in hand, we restate Lemma 3.14:
+the sequence of probability measures \((P_n)\) is tight on the intersection space
+\[
+\Omega
+=
+C([0,T];V'_{\mathrm{weak}})
+\cap
+L^2([0,T];V)
+\cap
+L^2([0,T];H).
+\]
+
+To prove tightness on this space, we work with three topologies:
+\begin{enumerate}
+\item \(\tau_1\): the weak topology on \(L^2([0,T];V)\),
+\item \(\tau_2\): the uniform topology on \(C([0,T];V'_{\mathrm{weak}})\),
+\item \(\tau_3\): the strong topology on \(L^2([0,T];H)\).
+\end{enumerate}
+
+\subsection*{1.3. The Definition of Tightness}
+Before starting the proof, we recall the definition of tightness.
+
+A sequence of measures \((\mu_n)\) on a space \(E\) is tight if and only if for every \(\varepsilon>0\) there exists a compact set \(K_\varepsilon\subset E\) such that
+\[
+\mu_n(K_\varepsilon^c)\le \varepsilon
+\]
+for every \(n\).
+
+This is the key condition needed to apply Prokhorov's theorem. Tightness allows one to extract a weakly convergent subsequence of probability measures and therefore obtain a genuine limit functional on bounded continuous test functions.
+
+\subsection*{1.4. Executing the Proof: \(\tau_1\)-Tightness}
+We now prove the first step of Lemma 3.14, namely \(\tau_1\)-tightness.
+
+Define the set
+\[
+K_1
+=
+\left\{
+u\in L^2([0,T];V)
+\;\middle|\;
+\int_0^T \|u(t)\|_V^2\,dt\le k
+\right\}.
+\]
+
+Because \(L^2([0,T];V)\) is a reflexive Hilbert space, closed bounded sets are weakly compact. Therefore \(K_1\) is compact with respect to the weak topology \(\tau_1\).
+
+We then estimate the probability of its complement:
+\[
+P_n(K_1^c).
+\]
+By Markov's inequality,
+\[
+P_n(K_1^c)
+\le
+\frac{1}{k}
+\mathbb E_n\left(
+\int_0^T \|u(t)\|_V^2\,dt
+\right).
+\]
+The a priori estimate provides a uniform bound by a constant \(c\), so
+\[
+P_n(K_1^c)\le \frac{c}{k}.
+\]
+As \(k\to\infty\), this bound tends to zero uniformly in \(n\). Hence the sequence \((P_n)\) is tight with respect to \(\tau_1\).
+
+\subsection*{1.5. The Next Step}
+The first topology has now been handled. The next task is to prove tightness with respect to the topology \(\tau_2\), the uniform topology on the weak dual path space
+\[
+C([0,T];V'_{\mathrm{weak}}).
+\]
+This is the step that will connect the compactness of the trajectories in time with the Aubin-Lions argument in the full space \(\Omega\).
+
+\section*{2. Tightness in the Weak-Dual Path Space}
+With \(\tau_1\)-tightness established in the space-time topology, we next add time-regularity information in the weak dual space.
+
+\subsection*{2.1. Defining the Compact Set \(K_2\)}
+We now turn to \(\tau_2\)-tightness, that is, tightness in the space
+\[
+C([0,T];V'_{\mathrm{weak}}).
+\]
+To prove it, we define a compact set \(K_2\) by imposing two conditions on the trajectories:
+\begin{enumerate}
+\item Pointwise boundedness:
+\[
+\sup_{t\in[0,T]}\|u(t)\|_H\le k.
+\]
+
+\item Hölder-type equicontinuity in the dual space:
+\[
+\sup_{0\le s<t\le T}
+\frac{\|u(t)-u(s)\|_{V'}}{|t-s|^\beta}
+\le k
+\]
+for some exponent \(\beta>0\).
+\end{enumerate}
+
+These are exactly the hypotheses used in the Arzelà-Ascoli theorem. Combined with Banach-Alaoglu in the weak dual space, they imply that \(K_2\) is relatively compact in the topology \(\tau_2\).
+
+\subsection*{2.2. Decomposing the Time Increment}
+To verify that the approximations remain in \(K_2\) with high probability, we examine their time increments. Take a test function \(h\in V\) with \(\|h\|_V\le 1\). Then
+\[
+|\langle u(t)-u(s),h\rangle|
+\]
+is decomposed using the SPDE into drift and stochastic parts:
+\[
+\left|
+\int_s^t \langle A(u(r)),h\rangle\,dr
+\right|
++
+\left|
+\int_s^t \langle h,B_n(u(r))\,dW^n(r)\rangle
+\right|.
+\]
+
+\subsection*{2.3. Bounding the Drift Operator}
+We first estimate the drift term. By the linear growth assumption,
+\[
+\|A(u(r))\|_{V'}\le M(1+\|u(r)\|_V).
+\]
+Therefore,
+\[
+\left|
+\int_s^t \langle A(u(r)),h\rangle\,dr
+\right|
+\le
+M\int_s^t (1+\|u(r)\|_V)\,dr.
+\]
+
+Applying Cauchy-Schwarz to the \(V\)-term yields
+\[
+\left|
+\int_s^t \langle A(u(r)),h\rangle\,dr
+\right|
+\le
+M\left(
+|t-s|+|t-s|^{1/2}
+\left(\int_s^t \|u(r)\|_V^2\,dr\right)^{1/2}
+\right).
+\]
+This already gives a Hölder-type bound in time.
+
+\subsection*{2.4. Bounding the Stochastic Operator via BDG}
+The stochastic integral is treated with the Burkholder-Davis-Gundy inequality. For suitable \(p\ge 1\),
+\[
+\mathbb E_n\left[
+\sup_{s\le r\le t}
+\left|
+\int_s^r \langle h,B_n(u(\ell))\,dW^n(\ell)\rangle
+\right|^p
+\right]
+\le
+C_p\,
+\mathbb E_n\left[
+\left(
+\int_s^t \|B(u(r))\circ Q^{1/2}\|_{L_2(U,H)}^2\,dr
+\right)^{p/2}
+\right].
+\]
+
+Using assumption \((V.5)\),
+\[
+\|B(u(r))\circ Q^{1/2}\|_{L_2(U,H)}
+\le
+M(1+\|u(r)\|_V^{1-\delta}),
+\]
+the right-hand side is bounded by terms involving powers of \(|t-s|\) and the time integral of \(\|u(r)\|_V^2\). Thus the stochastic term also satisfies a Hölder-type estimate in time.
+
+\subsection*{2.5. The Conclusion for \(\tau_2\)-Tightness}
+Combining the drift and stochastic bounds gives control of the Hölder seminorm in \(V'\). Together with the uniform bound on
+\[
+\sup_{0\le t\le T}\|u(t)\|_H^2,
+\]
+this places the trajectories in the compact set \(K_2\) with high probability.
+
+Applying Markov's inequality and using the a priori estimate, we obtain
+\[
+\sup_n P_n(K_2^c)
+\le
+\frac{C}{k}
+\mathbb E_n\left(
+\sup_{0\le t\le T}\|u(t)\|_H^2
++
+\int_0^T \|u(t)\|_V^2\,dt
+\right).
+\]
+The expectation on the right is uniformly bounded, so the entire expression tends to zero as \(k\to\infty\).
+
+This proves \(\tau_2\)-tightness. The next step is to combine \(\tau_1\)- and \(\tau_2\)-tightness through the Aubin-Lions lemma in order to obtain tightness in the strong topology \(\tau_3\).
+
+\section*{3. Tightness in the Strong Topology}
+Once boundedness in the weak and weak-dual topologies is available, the Aubin--Lions mechanism can be brought in to recover strong compactness in \(L^2([0,T];H)\).
+
+\subsection*{3.1. The Engine of Strong Convergence: Lemma 3.15}
+The final step is \(\tau_3\)-tightness, namely tightness in the strong topology of
+\[
+L^2([0,T];H).
+\]
+This follows from Lemma 3.15, a version of the Aubin-Lions lemma.
+
+The lemma states that if a sequence \((u_n)\) is bounded in
+\[
+L^2([0,T];V)\cap L^\infty([0,T];H),
+\]
+and is equicontinuous as a \(V'\)-valued function, with initial condition \(u_n(0)\to u_0\) in \(H\), then one can extract a subsequence converging strongly in
+\[
+L^2([0,T];H).
+\]
+
+This matches exactly the bounds already established through \(\tau_1\)- and \(\tau_2\)-tightness.
+
+\subsection*{3.2. Constructing the Core Inequality}
+Let \(u_n\to u\) in
+\[
+C([0,T];V'_{\mathrm{weak}})
+\]
+for some limit \(u\in L^2([0,T];V)\).
+
+To prove strong convergence in \(L^2([0,T];H)\), we use the key inequality that for every \(\varepsilon>0\) there exists \(C_\varepsilon>0\) such that
+\[
+\int_0^T \|u_n(t)-u(t)\|_H^2\,dt
+\le
+\varepsilon \int_0^T \|u_n-u\|_V^2\,dt
++
+C_\varepsilon \int_0^T \|u_n-u\|_{V'}^2\,dt.
+\]
+
+This inequality separates the \(H\)-norm into a small multiple of the strong \(V\)-norm and a controlled multiple of the weaker \(V'\)-norm.
+
+\subsection*{3.3. Bounding the Two Terms}
+The first term on the right-hand side is bounded by
+\[
+2\varepsilon \sup_{n\ge 1}\int_0^T \|u_n(t)\|_V^2\,dt,
+\]
+which is finite by the a priori estimate. Since \(\varepsilon>0\) is arbitrary, this term can be made as small as desired.
+
+The second term involves the \(V'\)-norm:
+\[
+C_\varepsilon \int_0^T \|u_n-u\|_{V'}^2\,dt.
+\]
+Because the sequence converges in the uniform weak-dual topology, this term tends to zero as \(n\to\infty\).
+
+Both terms therefore vanish, and we conclude that
+\[
+u_n\to u
+\qquad
+\text{in } L^2([0,T];H).
+\]
+This proves strong convergence and therefore \(\tau_3\)-tightness.
+
+\subsection*{3.4. The Interpolation Fact}
+To justify the previous inequality, we use the interpolation fact that compactness of the embedding \(V\hookrightarrow H\) implies:
+\[
+\|u\|_H
+\le
+\varepsilon\|u\|_V+C_\varepsilon\|u\|_{V'}
+\]
+for every \(\varepsilon>0\).
+
+This estimate says that the \(H\)-norm can be controlled by an arbitrarily small contribution from the strong \(V\)-norm together with a compensating multiple of the weak \(V'\)-norm.
+
+\subsection*{3.5. Proof by Contradiction}
+The proof of this interpolation fact proceeds by contradiction. Suppose the estimate were false. Then for some fixed \(\varepsilon>0\), one could find a sequence \((u_n)\) such that
+\[
+\|u_n\|_H>\varepsilon\|u_n\|_V+n\|u_n\|_{V'}
+\qquad
+\text{for all } n.
+\]
+
+Normalize by setting
+\[
+\widetilde u_n:=\frac{u_n}{\|u_n\|_H},
+\]
+so that
+\[
+\|\widetilde u_n\|_H=1.
+\]
+Then the inequality becomes
+\[
+1>\varepsilon\|\widetilde u_n\|_V+n\|\widetilde u_n\|_{V'}.
+\]
+
+This has two consequences:
+\begin{enumerate}
+\item the sequence \((\widetilde u_n)\) is bounded in \(V\),
+\item \(\|\widetilde u_n\|_{V'}\to 0\).
+\end{enumerate}
+
+By boundedness in \(V\), one can extract a weakly convergent subsequence in \(V\). Since the embedding \(V\hookrightarrow H\) is compact, that subsequence converges strongly in \(H\). But the convergence to zero in \(V'\) forces the limit to be \(0\). This contradicts the normalization \(\|\widetilde u_n\|_H=1\), because the strong \(H\)-limit would then have norm both \(1\) and \(0\).
+
+The contradiction proves the interpolation fact. With this estimate in hand, the Aubin-Lions lemma applies and the proof of \(\tau_3\)-tightness is complete.
+
+\section*{4. Rough SPDE and the Mild Approach}
+Having completed the tightness machinery for the compactness method, the notes now pivot to a different class of equations where the variational framework itself breaks down.
+
+\subsection*{4.1. The Target Equation and Space-Time White Noise}
+We now turn to a new chapter and consider the nonlinear stochastic partial differential equation
+\[
+\partial_t u=\partial_{xx}u\,dt+f(u)\,dt+g(u)\partial_x u\,dx+\sigma\,dW_t.
+\]
+
+Its components have the following interpretations:
+\begin{enumerate}
+\item \(\partial_{xx}u\,dt\): deterministic diffusion,
+\item \(f(u)\,dt\): a nonlinear reaction term,
+\item \(g(u)\partial_x u\,dx\): a nonlinear transport term,
+\item \(\sigma\,dW_t\): stochastic forcing scaled by \(\sigma\).
+\end{enumerate}
+
+The equation is posed on
+\[
+L^2([0,2\pi])
+\]
+with periodic boundary conditions. The driving noise is space-time white noise, represented by
+\[
+W_t(x)=\sum_{k=1}^\infty \beta_k(t)e_k(x),
+\]
+where \((\beta_k)\) are independent Brownian motions and \((e_k)\) is a spatial basis.
+
+The main objective is to give a rigorous meaning to solutions of this equation.
+
+\subsection*{4.2. The Downfall of the Variational Approach}
+The variational framework fails because of the nonlinear advection term
+\[
+\langle g(u)\partial_x u,u\rangle.
+\]
+In the earlier theory, spatial derivatives were handled by integration by parts. Here that strategy breaks down because the nonlinear coefficient \(g(u)\) sits inside the pairing and prevents the needed cancellations.
+
+To fit into the variational framework, one would need a bound of the form
+\[
+\langle g(u)\partial_x u,u\rangle
+\le
+\gamma\|\partial_x u\|_{L^2}^2+M\|u\|_{L^2}^2+C,
+\]
+but such a bound is not available in general. The equation is therefore not coercive, and the variational method cannot be used.
+
+\subsection*{4.3. The Pivot: The Mild Approach and the Heat Semigroup}
+Since the variational approach fails, we return to the mild approach. The Laplacian is treated as the generator of the heat semigroup
+\[
+P_t=e^{t\partial_{xx}}.
+\]
+This semigroup solves the linear heat equation and provides the required smoothing.
+
+The SPDE is then rewritten in mild form:
+\[
+u(t)=P_tu_0
++
+\int_0^t P_{t-s}\bigl(f(u(s))+g(u(s))\partial_x u(s)\bigr)\,ds
++
+\sigma\int_0^t P_{t-s}\,dW_s.
+\]
+The solution is thus expressed as the sum of the smoothed initial condition, the semigroup-convoluted nonlinear terms, and the stochastic convolution.
+
+\subsection*{4.4. Spectral Decomposition of the Semigroup}
+To work with the mild formulation, we use the spectral decomposition of \(\partial_{xx}\) on the periodic domain. The operator has eigenvalues \(-k^2\) and corresponding Fourier eigenfunctions:
+\[
+e_0(x)=\frac{1}{\sqrt{2\pi}},
+\qquad
+e_k(x)=\frac{1}{\sqrt{\pi}}\cos(kx),
+\qquad
+f_k(x)=\frac{1}{\sqrt{\pi}}\sin(kx),
+\quad k\ge 1.
+\]
+
+With respect to this basis, the semigroup acts diagonally, multiplying each mode by the decay factor
+\[
+e^{-k^2 t}.
+\]
+
+\subsection*{4.5. Evaluating the Stochastic Convolution}
+Applying the semigroup to the stochastic integral gives
+\[
+\int_0^t P_{t-s}\,dW_s.
+\]
+Because the noise is expanded in the same Fourier basis, each spatial mode evolves independently, and the stochastic convolution decomposes into
+\[
+\int_0^t d\beta_0(s)e_0(x)
++
+\sum_{k=1}^\infty
+\int_0^t e^{-k^2(t-s)}\,d\beta_k(s)\,e_k(x).
+\]
+
+The zeroth mode describes the random fluctuation of the spatial average, while the higher modes are driven by independent Brownian motions and damped by the exponential heat factor \(e^{-k^2(t-s)}\).
+
+This mild representation bypasses the coercivity failure of the variational method and opens the way to the rough-SPDE techniques developed by Hairer and others.
+
+\section*{5. Regularity of the Stochastic Convolution and the Decomposition Trick}
+The mild formulation immediately raises a new regularity problem, so the next task is to measure how rough the stochastic convolution really is and how that roughness can be separated from the smoother remainder.
+
+\subsection*{5.1. Measuring Spatial Regularity \((H^{\alpha,2})\)}
+We now use the Fourier expansion of the stochastic convolution to determine its exact spatial regularity. The relevant scale is the fractional Sobolev space
+\[
+H^{\alpha,2}
+=
+\left\{
+u\in L^2:
+\sum_{k=1}^\infty u_k^2(k^{2\alpha}+1)<\infty
+\right\}.
+\]
+Here, \(\alpha\) measures the number of spatial derivatives present in \(L^2\). If \(\alpha=1\), then the function has one full spatial derivative in \(L^2\). Our goal is to determine the largest \(\alpha\) for which the stochastic convolution
+\[
+\int_0^t P_{t-s}\,dW_s
+\]
+has finite expected \(H^{\alpha,2}\)-energy.
+
+\subsection*{5.2. Evaluating the Expectation}
+We consider
+\[
+\mathbb E\left(
+\left\|
+\int_0^t P_{t-s}\,dW_s
+\right\|_{H^{\alpha,2}}^2
+\right).
+\]
+Substituting the Fourier expansion, the expectation acts on the independent Brownian motions. Since the variance of each Brownian increment grows like \(ds\), the stochastic integrals become deterministic time integrals:
+\[
+=
+t
++
+2\sum_{k=1}^\infty
+k^{2\alpha}
+\int_0^t e^{-2k^2(t-s)}\,ds.
+\]
+The term \(t\) comes from the zeroth Fourier mode. Computing the integral gives
+\[
+=
+t
++
+2\sum_{k=1}^\infty
+k^{2\alpha-2}(1-e^{-k^2 t}).
+\]
+Since \(1-e^{-k^2 t}\) remains bounded, convergence is governed entirely by the series
+\[
+\sum_{k=1}^\infty k^{2\alpha-2}.
+\]
+
+\subsection*{5.3. The Convergence Condition and the Main Obstruction}
+A \(p\)-series \(\sum k^\beta\) converges only when \(\beta<-1\). Hence we must require
+\[
+2\alpha-2<-1,
+\]
+which gives
+\[
+\alpha<\frac12.
+\]
+Thus the stochastic convolution is at most of spatial Hölder order \(1/2\). In this sense it behaves like Brownian motion, but now with respect to the spatial variable.
+
+This is the central obstruction. Since \(\alpha<1\), we cannot expect even a single spatial derivative of the mild solution. In particular, the term
+\[
+g(u)\partial_x u
+\]
+from the original equation is not directly meaningful, because \(\partial_x u\) does not exist in the required sense.
+
+\subsection*{5.4. The Rescue: The Decomposition Ansatz}
+To overcome this problem, we decompose the mild solution into a rough stochastic part and a smoother remainder. We write
+\[
+u(t,x)=v(t,x)+\sigma \widetilde W(t,x).
+\]
+Here, \(\sigma \widetilde W(t,x)\) denotes the stochastic convolution, while \(v(t,x)\) is the remainder.
+
+Substituting this ansatz into the mild equation yields
+\[
+\begin{aligned}
+v(t,x)
+&=
+P_tu_0(x)
++
+\int_0^t
+P_{t-s}\bigl(f(u(s))+g(u(s))\partial_x v(s,\cdot)\bigr)(x)\,ds \\
+&\quad
++
+\int_0^t\int_0^{2\pi}
+P_{t-s}(x-y)\,g(u(s,y))\,\partial_y \widetilde W(s,y)\,dy\,ds.
+\end{aligned}
+\]
+The problematic term \(g(u)\partial_x u\) has been split into
+\[
+g(u)\partial_x v
+\qquad\text{and}\qquad
+g(u)\partial_x \widetilde W.
+\]
+Because \(v\) no longer contains the raw stochastic roughness, \(\partial_x v\) is well-defined. For the rough term, we integrate by parts inside the spatial integral, shifting the derivative away from the non-differentiable noise and onto the smooth heat kernel \(P_{t-s}(x-y)\) and the factor \(g(u)\). In this way, the derivative lands on an object with smoothing properties rather than on the rough stochastic convolution itself.
+
+\subsection*{5.5. Variation of Constants and Martingale Structure}
+This entire construction is an infinite-dimensional version of the variation-of-constants formula. For a linear stochastic equation
+\[
+dX_t=AX_t\,dt+dW_t,
+\]
+the mild solution is
+\[
+X_t=e^{tA}X_0+\int_0^t e^{(t-s)A}\,dW_s.
+\]
+The stochastic convolution carries the martingale structure of the equation, while the semigroup handles the smoothing generated by the linear part. By separating the rough martingale contribution from the smoother remainder \(v(t,x)\), the mild approach makes it possible to assign rigorous meaning to highly nonlinear and very rough stochastic partial differential equations.
+
+\section*{Appendix}
+
+\subsection*{A.1. Tightness}
+\begin{definition}
+A sequence of probability measures is tight if, for every \(\varepsilon>0\), there exists a compact set whose complement has measure at most \(\varepsilon\) uniformly in the sequence.
+\end{definition}
+
+\subsection*{A.2. Weak Topology on \(L^2([0,T];V)\)}
+\begin{definition}
+The weak topology on \(L^2([0,T];V)\) is the topology induced by all continuous linear functionals on that space.
+\end{definition}
+
+\subsection*{A.3. Reflexive Hilbert Space}
+\begin{remark}
+Every Hilbert space is reflexive. Therefore bounded closed sets are weakly relatively compact, and this is the key compactness fact used in the \(\tau_1\)-tightness argument.
+\end{remark}
+
+\subsection*{A.4. Markov's Inequality}
+\begin{theorem}
+For a nonnegative random variable \(X\) and \(a>0\),
+\[
+\mathbb P(X\ge a)\le \frac{\mathbb E[X]}{a}.
+\]
+\end{theorem}
+
+\subsection*{A.5. Prokhorov's Theorem}
+\begin{theorem}
+On suitable topological spaces, tightness of a sequence of probability measures implies relative compactness for weak convergence.
+\end{theorem}
+
+\subsection*{A.6. Path Space \(\Omega\)}
+\begin{definition}
+The path space \(\Omega\) is the intersection
+\[
+C([0,T];V'_{\mathrm{weak}})
+\cap
+L^2([0,T];V)
+\cap
+L^2([0,T];H),
+\]
+equipped with the topologies relevant to the compactness argument.
+\end{definition}
+
+\subsection*{A.7. Arzelà-Ascoli Theorem}
+\begin{theorem}
+A family of continuous functions is relatively compact if it is pointwise relatively compact and equicontinuous.
+\end{theorem}
+
+\subsection*{A.8. Hölder Seminorm}
+\begin{definition}
+For \(\beta>0\), the Hölder seminorm of a function \(u\) is
+\[
+\sup_{s<t}\frac{\|u(t)-u(s)\|}{|t-s|^\beta}.
+\]
+\end{definition}
+
+\subsection*{A.9. Burkholder-Davis-Gundy Inequality}
+\begin{theorem}
+The Burkholder-Davis-Gundy inequality bounds moments of the supremum of a martingale by moments of its quadratic variation.
+\end{theorem}
+
+\subsection*{A.10. Aubin-Lions Lemma}
+\begin{theorem}
+If a sequence is bounded in a strong space and equicontinuous in a weaker dual space, then one can often extract a subsequence converging strongly in an intermediate space.
+\end{theorem}
+
+\subsection*{A.11. Interpolation Inequality}
+\begin{remark}
+The interpolation inequality
+\[
+\|u\|_H\le \varepsilon\|u\|_V+C_\varepsilon\|u\|_{V'}
+\]
+is a consequence of the compact embedding \(V\hookrightarrow H\) and is the key estimate used to derive strong convergence.
+\end{remark}
+
+\subsection*{A.12. Heat Semigroup}
+\begin{definition}
+The heat semigroup \(P_t=e^{t\partial_{xx}}\) is the strongly continuous semigroup generated by the Laplacian. It solves the linear heat equation and regularizes initial data.
+\end{definition}
+
+\subsection*{A.13. Mild Solution}
+\begin{definition}
+A mild solution is obtained by integrating the equation against the semigroup generated by the linear part, rather than interpreting derivatives through a variational duality pairing.
+\end{definition}
+
+\subsection*{A.14. Space-Time White Noise}
+\begin{definition}
+Space-time white noise is a generalized Gaussian noise that is white in both time and space. It is often represented formally through an infinite series of Brownian motions against an orthonormal spatial basis.
+\end{definition}
+
+\subsection*{A.15. Fractional Sobolev Space \(H^{\alpha,2}\)}
+\begin{definition}
+The fractional Sobolev space \(H^{\alpha,2}\) consists of functions whose Fourier coefficients are square summable with weight \(k^{2\alpha}+1\). It measures fractional spatial regularity.
+\end{definition}
+
+\subsection*{A.16. Stochastic Convolution}
+\begin{definition}
+The stochastic convolution is the process
+\[
+\int_0^t P_{t-s}\,dW_s,
+\]
+obtained by convolving the driving noise with the heat semigroup. It is the stochastic part of the mild solution.
+\end{definition}
+
+\subsection*{A.17. Da Prato--Debussche Decomposition}
+\begin{remark}
+The Da Prato--Debussche idea is to split the solution into a rough stochastic convolution and a smoother remainder. This allows singular nonlinear terms to be interpreted after separating the worst irregular part.
+\end{remark}
+
+\subsection*{A.18. Variation of Constants Formula}
+\begin{definition}
+For a linear evolution equation generated by \(A\), the variation-of-constants formula expresses the solution as the sum of the propagated initial condition and the time integral of the forcing against the semigroup \(e^{tA}\).
+\end{definition}
+
+\end{document}

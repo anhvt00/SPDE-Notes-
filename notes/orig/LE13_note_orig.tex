@@ -1,0 +1,872 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in]{geometry}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\title{Lecture 13: Rough SPDEs and the First Step into Rough Paths}
+\date{22.01.2026}
+\author{Tien Anh Vu}
+
+\begin{document}
+\maketitle
+
+This lecture continues the rough-SPDE discussion from the mild decomposition and turns it into the first structural entry point for rough path theory. The main themes are the loss of spatial differentiability in the stochastic convolution, the failure of classical integration against rough signals, and the emergence of the second-order iterated integral as the new data needed to make sense of such equations.
+
+\section*{1. From the Mild Decomposition to Rough Path Theory}
+We begin by picking up the mild decomposition from the previous lecture and asking how one can integrate against the rough spatial term it produces.
+
+\subsection*{1.1. Recapping the Decomposition Ansatz}
+We begin with the nonlinear stochastic partial differential equation on \(L^2([0,2\pi])\),
+\[
+du=\partial_{xx}u\,dt+f(u)\,dt+g(u)\partial_xu\,dt+\sigma\,dW_t.
+\]
+To treat it, we use the heat semigroup
+\[
+P_t=e^{t\partial_{xx}}
+\]
+and decompose the solution as
+\[
+u(t,x)=v(t,x)+\sigma W_{\partial_{xx}}(t,x),
+\]
+where
+\[
+W_{\partial_{xx}}(t)=\int_0^t e^{(t-s)\partial_{xx}}\,dW_s
+\]
+is the stochastic convolution.
+
+The key obstruction from the previous lecture remains in force: this convolution belongs to the fractional Sobolev space \(H^{\alpha,2}\) only for
+\[
+\alpha<\frac12,
+\]
+so it is too rough to possess a classical spatial derivative.
+
+Substituting the decomposition into the mild equation gives a formula for the smoother remainder \(v(t,x)\). The deterministic contributions and the term involving \(\partial_x v\) can still be handled. The critical term is
+\[
+\int_0^T P_{t-s}\bigl(g(u(s,\cdot))\partial_x W_{\partial_{xx}}(s,\cdot)\bigr)(x)\,ds.
+\]
+Writing this spatially, we obtain
+\[
+\int_0^{2\pi}
+P_{t-s}(x-y)\,g(u(s,y))\,\partial_y W_{\partial_{xx}}(s,y)\,dy.
+\]
+This is a rough integral with respect to the spatial variable \(y\). Since \(W_{\partial_{xx}}\) is not differentiable, the derivative \(\partial_y W_{\partial_{xx}}\) is not classically defined.
+
+\subsection*{1.2. The Interlude: Transitioning to One-Dimensional Paths}
+To understand how to integrate against such rough objects, we step away from the SPDE and consider one-dimensional paths. Let
+\[
+X,Y:[0,T]\to\mathbb R
+\]
+be Hölder continuous paths of regularity \(C^\alpha\), with
+\[
+\alpha\in\left(\frac13,\frac12\right).
+\]
+This is the natural rough regime, since Brownian motion paths are almost surely Hölder continuous for every exponent below \(1/2\).
+
+The goal is to define the integral
+\[
+\int_S^T Y_r\,dX_r.
+\]
+At first sight, one would try to define it through Riemann--Stieltjes sums, exactly as in classical analysis.
+
+\subsection*{1.3. The Failure of the Riemann--Stieltjes Integral}
+The classical Riemann--Stieltjes construction uses partitions \(\mathcal P\) of \([S,T]\) and considers
+\[
+\lim_{|\mathcal P|\to 0}
+\sum_{[s,t]\in\mathcal P} Y_s(X_t-X_s).
+\]
+However, if \(Y_t=f(X_t)\) for a smooth function \(f\in C^1\), this limit need not exist when \(\alpha<1/2\).
+
+Indeed, the local errors in the Riemann sum scale like
+\[
+|t-s|^{2\alpha}.
+\]
+Since \(2\alpha<1\) in the rough regime, these errors do not shrink fast enough when summed over finer and finer partitions. The classical integral therefore breaks down.
+
+\subsection*{1.4. Expanding the Error: The Taylor Trick}
+To repair the situation, we expand the local error further. Over a small interval \([s,t]\),
+\[
+\int_s^t Y_r\,dX_r-Y_s(X_t-X_s)
+=
+\int_s^t (Y_r-Y_s)\,dX_r.
+\]
+If \(Y_r=f(X_r)\), then by the fundamental theorem of calculus,
+\[
+Y_r-Y_s=\int_s^r f'(X_u)\,dX_u.
+\]
+Substituting this identity yields the double iterated integral
+\[
+\int_s^t Y_r\,dX_r-Y_s(X_t-X_s)
+=
+\int_s^t\int_s^r f'(X_u)\,dX_u\,dX_r.
+\]
+This already shows that the failure of the first-order Riemann sum is not random noise in the argument: it is governed by a second-order object built from the path \(X\) itself.
+
+\subsection*{1.5. Extracting the Rough Path Signature \((X_{s,t})\)}
+On a small interval, the derivative \(f'(X_u)\) does not vary too much, so we freeze it at the left endpoint \(s\). This gives the expansion
+\[
+=
+f'(X_s)\int_s^t (X_r-X_s)\,dX_r+\widetilde R_{s,t}.
+\]
+The central new object is therefore
+\[
+X_{s,t}
+:=
+\int_s^t (X_r-X_s)\,dX_r.
+\]
+This is the second-order iterated integral of the path against itself. It is precisely the quantity singled out by rough path theory.
+
+For rough paths, classical calculus does not provide \(X_{s,t}\). The key insight of Lyons' theory is that the path \(X_t\) alone is not enough data. One must enhance the path by adjoining its second-order iterated integral \(X_{s,t}\). Once this enhancement is given, the remainder \(\widetilde R_{s,t}\) is small enough to be summed consistently, and integration against rough signals becomes possible.
+
+This is exactly the mechanism we need for the spatial rough integral appearing in the SPDE. The rough stochastic convolution cannot be differentiated directly, but once the appropriate second-order structure is supplied, the equation can be interpreted rigorously.
+
+\section*{2. The Second-Order Correction and Rough Integral Convergence}
+With the iterated integral identified in the first section, we now explain why it is exactly the extra structure needed for convergence of rough Riemann sums.
+
+\subsection*{2.1. The Enhanced Convergence Formula}
+We now arrive at the corrected approximation formula that replaces the classical Riemann sum. The integral is defined through the limit
+\[
+\lim_{|\mathcal P|\to 0}
+\sum_{[s,t]\in\mathcal P}
+\left[
+f(X_s)(X_t-X_s)+f'(X_s)X_{s,t}
+\right].
+\]
+The crucial difference is the second-order correction term
+\[
+f'(X_s)X_{s,t}.
+\]
+A classical Riemann sum only keeps the first-order part \(f(X_s)(X_t-X_s)\). For rough paths this is not enough, because the remaining error is too large. The iterated integral \(X_{s,t}\) compensates for that missing second-order structure.
+
+\subsection*{2.2. The Rules of the Rough Path: Chen's Relation}
+The quantity \(X_{s,t}\) cannot be chosen arbitrarily. It must satisfy two structural requirements. First, it must have Hölder regularity of order \(C^{2\alpha}\). Second, it must satisfy Chen's relation: for any \(s<u<t\),
+\[
+X_{s,t}-X_{s,u}-X_{u,t}
+=
+(X_s-X_u)(X_u-X_t).
+\]
+This identity expresses the algebraic compatibility of the iterated integral with the decomposition of intervals. The second-order increment over \([s,t]\) is not just the sum of the increments over \([s,u]\) and \([u,t]\); a cross-term appears because the reference point changes when the interval is split.
+
+\subsection*{2.3. Crushing the Remainder Error}
+To prove convergence of the enhanced sum, we assume
+\[
+f\in C^2
+\]
+and estimate the remainder
+\[
+\widetilde R_{s,t}
+=
+\int_s^t f(X_r)\,dX_r
+-f(X_s)(X_t-X_s)
+-f'(X_s)X_{s,t}.
+\]
+The Taylor estimate yields a bound of the form
+\[
+|\widetilde R_{s,t}|
+\le
+K\|f\|_{C^2}
+\left(
+\|X\|_{C^\alpha}^3
++
+\|X\|_{C^\alpha}\|X\|_{C^{2\alpha}}
+\right)
+|t-s|^{3\alpha}.
+\]
+The decisive point is the power \(3\alpha\). Since we are in the regime
+\[
+\alpha>\frac13,
+\]
+we have
+\[
+3\alpha>1.
+\]
+Equivalently, we can write
+\[
+3\alpha=1+\delta
+\]
+for some \(\delta>0\). Hence, when we sum the remainders over a partition, the total error scales like a sum of terms of order \(|t-s|^{1+\delta}\), which vanishes as the mesh goes to zero. This proves that the enhanced integral exists.
+
+\subsection*{2.4. Evaluating the Iterated Integral: Smooth and Brownian Cases}
+The key object is
+\[
+\int_s^t (X_r-X_s)\,dX_r.
+\]
+If \(X\) is smooth, then classical calculus applies and gives
+\[
+\int_s^t (X_r-X_s)\,dX_r
+=
+\frac12 (X_t-X_s)^2.
+\]
+If instead \(X\) is Brownian motion and the integral is interpreted in the It\^o sense, It\^o's formula gives
+\[
+\int_s^t (X_r-X_s)\,dX_r
+=
+\frac12 (X_t-X_s)^2-\frac12 (t-s).
+\]
+The extra term
+\[
+-\frac12 (t-s)
+\]
+is the quadratic variation correction. This shows that the same formal iterated integral takes different values depending on the calculus used.
+
+\subsection*{2.5. The Rough Path Perspective}
+This comparison explains the central message of rough path theory. Looking only at the path \(X_t\) is not enough to determine the correct integration rule. A smooth path leads to the geometric value
+\[
+\frac12(\Delta X)^2,
+\]
+while a stochastic path in the It\^o sense produces
+\[
+\frac12(\Delta X)^2-\frac12\Delta t.
+\]
+The path must therefore be enhanced by its second-order data \(X_{s,t}\). Once both the first-order increments and the second-order iterated integrals are specified, the integral becomes well-defined and robust enough to treat very rough systems. This is the structure that will eventually let us interpret the singular spatial advection term in the rough SPDE.
+
+\section*{3. Stationary Solutions and Long-Time Equilibrium}
+After clarifying local rough integration, the notes broaden the perspective and turn to the long-time statistical behavior of stochastic systems.
+
+\subsection*{3.1. The Infinite-Dimensional Ornstein--Uhlenbeck Process}
+We now turn from short-scale rough integration to the long-time behavior of stochastic systems and consider the linear SPDE
+\[
+dX_t=(\partial_{xx}-1)X_t\,dt+\sigma\,dW_t.
+\]
+The deterministic operator is
+\[
+\partial_{xx}-1.
+\]
+Compared with the standard heat equation, the additional \(-1\) introduces an exponential damping factor. Consequently, the semigroup governing the deterministic flow is not just the heat semigroup \(P_t\), but the damped family
+\[
+e^{-(t-s)}P_{t-s}.
+\]
+This decay is precisely what prevents the variance from growing indefinitely and allows the system to admit an equilibrium.
+
+\subsection*{3.2. The Two-Sided Wiener Process}
+To describe a truly stationary regime, the system must be viewed as having evolved since the infinite past. For this purpose we extend Brownian motion to negative times by introducing a two-sided Wiener process,
+\[
+W_t=
+\begin{cases}
+W_t, & t\ge 0,\\
+\widetilde W_{-t}, & t<0,
+\end{cases}
+\]
+where \(W\) and \(\widetilde W\) are independent Brownian motions. This guarantees that the increments satisfy the correct Gaussian law
+\[
+W_t-W_s\sim N(0,(t-s)\mathrm{Id})
+\]
+for all times \(s<t\) on the full real line.
+
+With this two-sided noise in place, the natural stochastic convolution for the Ornstein--Uhlenbeck equation becomes
+\[
+\sigma\int_{-\infty}^t e^{-(t-s)}P_{t-s}\,dW_s.
+\]
+This is the candidate stationary process.
+
+\subsection*{3.3. Constructing the Stationary Solution}
+Starting from time \(0\), the standard mild solution of the equation is
+\[
+X_t=e^{-t}P_tX_0+\sigma\int_0^t e^{-(t-s)}P_{t-s}\,dW_s.
+\]
+To force stationarity, we choose the initial condition to already be distributed according to the equilibrium built from the infinite past:
+\[
+X_0=\sigma\int_{-\infty}^0 e^sP_{-s}\,dW_s.
+\]
+Substituting this into the mild formula, the semigroup \(e^{-t}P_t\) passes through the first integral, and the past contribution \((-\infty,0]\) merges with the present contribution \([0,t]\). The result is
+\[
+X_t
+=
+\sigma\int_{-\infty}^t e^{-(t-s)}P_{t-s}\,dW_s.
+\]
+Because this process is obtained by shifting the same infinite history window, its law is invariant under time translation. This is the stationary solution.
+
+\subsection*{3.4. The Stationary Distribution and the Covariance Operator}
+Since the solution is built by integrating Gaussian noise, the stationary law is a centered Gaussian distribution,
+\[
+N(0,Q_\infty).
+\]
+Its covariance operator is obtained by integrating the square of the damped semigroup over time. This gives the operator
+\[
+Q_\infty
+=
+\frac{\sigma^2}{2}(I-\partial_{xx})^{-1}.
+\]
+Hence the stationary distribution can be written as
+\[
+N\left(0,\frac{\sigma^2}{2}(I-\partial_{xx})^{-1}\right).
+\]
+This operator captures the full spatial equilibrium covariance of the process.
+
+\subsection*{3.5. Harmonic Analysis and the Spatial Kernel}
+To understand this covariance more concretely, we express it through its action on Fourier modes. The heat semigroup acts diagonally on the trigonometric basis, and for cosine modes one has
+\[
+(P_{2t}\cos(kx))(x)=e^{-2k^2t}\cos(kx).
+\]
+Integrating this decay over time yields the multiplier
+\[
+\frac{1}{1+k^2}.
+\]
+Therefore the covariance can be represented through a convolution kernel \(K(x-y)\), where
+\[
+K(x)
+=
+\frac{\sigma^2}{2\pi}
+\sum_{k}\frac{\cos(kx)}{1+k^2}.
+\]
+On the periodic domain this Fourier series has the closed form
+\[
+K(x)=\frac{\sigma^2}{2\pi}\frac{\cosh(|x|-\pi)}{\sinh(\pi)}.
+\]
+This kernel is the spatial correlation function of the stationary stochastic heat equation. It describes exactly how fluctuations at one point in space are correlated with fluctuations elsewhere once the system has settled into equilibrium.
+
+\section*{4. Spatial Regularity of the Stationary Equilibrium}
+Once the stationary Gaussian law has been identified, the next natural question is how rough that equilibrium remains in space.
+
+\subsection*{4.1. The Goal: Spatial Regularity via Kolmogorov}
+We now use the stationary covariance kernel to determine the precise spatial regularity of the equilibrium state. The spatial domain is
+\[
+x\in[-\pi,\pi]
+\]
+with periodic extension. The main tool is the Kolmogorov continuity theorem. If one can bound
+\[
+\mathbb E\bigl(|X_t(x)-X_t(y)|^p\bigr)
+\]
+by a sufficiently positive power of \(|x-y|\), then one obtains a Hölder-continuous version of the process.
+
+The first step is therefore to compute
+\[
+\mathbb E\bigl(|X_t(x)-X_t(y)|^2\bigr)
+\]
+and show that it is controlled by the spatial distance \(|x-y|\).
+
+\subsection*{4.2. Leveraging the Covariance Operator}
+We already know that the stationary solution is Gaussian with mean zero,
+\[
+X_t\sim N(0,Q).
+\]
+To compute spatial differences, we begin with smooth test functions \(f\) and \(g\) and consider
+\[
+\mathbb E\bigl(\langle X_t,f-g\rangle^2\bigr).
+\]
+Since the law is Gaussian with covariance operator \(Q\), this equals
+\[
+\int_0^{2\pi}(f-g)(x)\,Q(f-g)(x)\,dx.
+\]
+Using the covariance kernel \(K\), the operator \(Q\) can be represented as a double integral:
+\[
+\int_0^{2\pi}\int_0^{2\pi}
+(f-g)(\bar x)\,K(\bar x-\bar y)\,(f-g)(\bar y)\,d\bar y\,d\bar x.
+\]
+
+\subsection*{4.3. The Dirac Delta Approximation}
+To recover pointwise spatial values, we now let the test functions collapse to Dirac masses,
+\[
+f\to \delta_x,
+\qquad
+g\to \delta_y.
+\]
+In this limit, the pairing against the process becomes
+\[
+\int X_t(z)f(z)\,dz\to X_t(x),
+\qquad
+\int X_t(z)g(z)\,dz\to X_t(y).
+\]
+Substituting these delta distributions into the kernel representation gives
+\[
+\int_0^{2\pi}\int_0^{2\pi}
+(\delta_x-\delta_y)(\bar x)\,K(\bar x-\bar y)\,(\delta_x-\delta_y)(\bar y)\,d\bar y\,d\bar x.
+\]
+This is exactly the covariance expression for the spatial increment \(X_t(x)-X_t(y)\).
+
+\subsection*{4.4. Expanding and Evaluating the Kernel Integral}
+Expanding the product \((\delta_x-\delta_y)(\delta_x-\delta_y)\) yields four terms. The delta functions evaluate the kernel directly:
+\[
+K(x-x)=K(0),
+\qquad
+-K(x-y),
+\qquad
+-K(y-x),
+\qquad
+K(y-y)=K(0).
+\]
+Because the covariance kernel is symmetric,
+\[
+K(x-y)=K(y-x),
+\]
+the sum simplifies to
+\[
+2K(0)-2K(x-y).
+\]
+Hence we have proved
+\[
+\mathbb E\bigl(|X_t(x)-X_t(y)|^2\bigr)
+\le
+2\bigl(K(0)-K(x-y)\bigr).
+\]
+
+\subsection*{4.5. The Lipschitz Conclusion and Spatial Hölder Regularity}
+The final step is to control the kernel difference by the physical distance. The closed-form kernel
+\[
+K(x)=\frac{\sigma^2}{2\pi}\frac{\cosh(|x|-\pi)}{\sinh(\pi)}
+\]
+is Lipschitz continuous. Therefore,
+\[
+|K(0)-K(x-y)|
+\le
+\operatorname{Lip}\,|x-y|.
+\]
+Combining this with the previous estimate gives
+\[
+\mathbb E\bigl(|X_t(x)-X_t(y)|^2\bigr)
+\le
+\operatorname{Lip}\,|x-y|.
+\]
+This is exactly the bound needed in the Kolmogorov theorem. It follows that the stationary solution admits a spatially Hölder-continuous version of every order
+\[
+\alpha<\frac12.
+\]
+Thus, even in equilibrium, the system remains permanently rough: its spatial regularity is the same as that of Brownian motion, and the stochastic forcing prevents any further smoothing.
+
+\section*{5. Solving the Rough SPDE Pathwise}
+This regularity threshold is precisely what forces the analysis back to the rough-path viewpoint, and the next step is to formulate a pathwise solution theory.
+
+\subsection*{5.1. Lifting the Spatial Process to a Rough Path}
+We now reach the main consequence of the spatial regularity result. Since the stationary solution has Hölder regularity only
+\[
+\alpha<\frac12,
+\]
+classical spatial derivatives do not exist. For each fixed time \(t\), the path \(x\mapsto X_t(x)\) must therefore be lifted to a rough path.
+
+This means that we do not work only with the path \(X_t(x)\), but with the pair
+\[
+\bigl(X_t(x),X_t(x,y)\bigr),
+\qquad 0\le x\le y\le 2\pi,
+\]
+where \(X_t(x,y)\) is the second-order spatial iterated integral.
+
+To define this object, we approximate \(X_t\) by a family of smooth Gaussian processes \(X_t^\varepsilon(x)\), smooth in the spatial variable \(x\). For these smooth approximations, the classical iterated integral
+\[
+\int_x^y (X_t^\varepsilon(v)-X_t^\varepsilon(x))\,dX_t^\varepsilon(v)
+\]
+is well-defined. We then define the rough integral \(X_t(x,y)\) as the limit of these classical quantities as \(\varepsilon\downarrow 0\), assuming that
+\[
+\sup_x |X_t^\varepsilon(x)-X_t(x)|^2\to 0.
+\]
+
+\subsection*{5.2. Bounding the Temporal Continuity}
+The rough path must also vary continuously in time. For every spatial regularity parameter
+\[
+\alpha<\frac12,
+\]
+there exists \(\theta>0\) such that
+\[
+\mathbb E\left(
+\|X_s-X_t\|_\alpha^q
++
+\|X_s-X_t\|_{2\alpha}^{q/2}
+\right)
+\le
+C_q |t-s|^{\theta q},
+\qquad q\ge 1.
+\]
+The relevant norms are
+\[
+\|u\|_\alpha
+=
+\sup_{x\ne y}\frac{|u(x)-u(y)|}{|x-y|^\alpha}
+\]
+and
+\[
+\|U\|_{2\alpha}
+=
+\sup_{x\ne y}\frac{|U(x,y)|}{|x-y|^{2\alpha}}.
+\]
+The first controls the spatial Hölder regularity of the path, and the second controls the regularity of the second-order rough integral. Together they ensure that the spatial rough path changes in time in a controlled manner.
+
+\subsection*{5.3. The Main Existence Theorem}
+We now arrive at the main theorem. Choose
+\[
+\beta\in\left(\frac13,\frac12\right)
+\]
+and assume the initial condition satisfies
+\[
+u_0\in C^\beta.
+\]
+Then, for almost every realization of the lifted rough path, there exists a local time horizon \(T>0\) such that the original nonlinear SPDE admits a unique mild solution in
+\[
+C([0,T];C^\beta).
+\]
+This is a pathwise result: once the rough path is fixed, the equation can be solved deterministically.
+
+Moreover, if the nonlinear function \(g\) is bounded and all derivatives of \(f\) and \(g\) are bounded, then the local solution extends globally in time.
+
+\subsection*{5.4. The Proof Strategy: Picard Iteration}
+The proof is based on Picard iteration. One starts with an initial approximation and repeatedly substitutes it into the mild equation. The rough path lift supplies the extra second-order data needed to control the singular nonlinear terms, while the heat semigroup provides the smoothing required to close the fixed-point argument.
+
+In this way, the solution is constructed as the limit of successive approximations in an appropriate Hölder space.
+
+\subsection*{5.5. The Modified Mild Equation}
+The equation actually iterated is the mild equation for the smoother remainder \(v(t,x)\):
+\[
+v(t,x)
+=
+e^{t\partial_{xx}}u_0(x)
++
+\int_0^t e^{(t-s)\partial_{xx}}
+\bigl(
+\widetilde f(u(s,\cdot))
++
+g(u(s,\cdot))\partial_x v(s,\cdot)
+\bigr)(x)\,ds.
+\]
+The original singular term \(g(u)\partial_x u\) has disappeared. In its place stands
+\[
+g(u)\partial_x v,
+\]
+where \(v\) is the smoother remainder obtained after separating off the rough stochastic convolution.
+
+This is the decisive step. By lifting the noise to a rough path and shifting the derivative onto the smooth component through the semigroup formulation, the nonlinear rough SPDE becomes mathematically tractable. The rough path framework completes the transition from an ill-defined equation to a well-posed pathwise mild theory.
+
+\section*{6. Final Rough SPDE Estimates and the Filtering Problem}
+With the pathwise existence argument essentially complete, the notes first record the last analytical estimates and then pivot toward filtering, where stochastic equations describe information rather than physical media.
+
+\subsection*{6.1. Closing the Rough SPDE Proof: The Classical ODE Step}
+We begin by returning to the modified mild equation and clarifying the functional notation
+\[
+\widetilde f(u)=f(u)+u,
+\]
+which is consistent with the decomposition
+\[
+u=v+W_{\partial_{xx}}.
+\]
+The first step in the Picard argument is now classical. Once the rough stochastic contribution has been separated from the derivative term, the equation for \(v\) can be treated as an ordinary differential equation with Lipschitz coefficients, driven by a fixed rough input.
+
+To make this rigorous, we estimate the operator \(M_{T,x}^{(1)}\) acting on \(v\):
+\[
+\|M_{T,x}^{(1)}v\|_{1,T}
+:=
+\sup_{t\le T}\|M_{T,x}^{(1)}v(t)\|_{C^1}
+\le
+C_K(1+\|v\|).
+\]
+This linear growth estimate is valid provided the initial condition and the rough path remain controlled. The required bounds are that the \(C^\beta\)-norm of \(u_0\), the \(C^\beta\)-norm of the rough path \(W\), and the \(C^{2\beta}\)-norm of its second-order lift are all bounded by a constant \(K\).
+
+The combined rough path norm is written as
+\[
+\|X\|
+=
+\sup_{t\le 1}
+\bigl(
+\|X_t\|_{C^\alpha}
++
+\|X_t\|_{C^{2\alpha}}
+\bigr),
+\qquad
+\alpha\in\left(\frac13,\frac12\right).
+\]
+
+\subsection*{6.2. The Heat Kernel Estimates}
+To close the Picard iteration, we must control derivatives of the heat semigroup. In particular, we need estimates for \(\partial_x P_tf\). The key continuity properties are
+\[
+\|P_tf\|_{C^\beta}\le \|f\|_{C^\beta}
+\]
+and
+\[
+\|\nabla P_tf\|_\infty
+\le
+C_\gamma t^{-\frac{1-\gamma}{2}}\|f\|_{C^\gamma},
+\qquad t>0.
+\]
+The second estimate contains the characteristic parabolic singularity as \(t\downarrow 0\). However, because the power
+\[
+\frac{1-\gamma}{2}
+\]
+is strictly less than \(1\) when \(\gamma<1\), the singularity is integrable in time. This is exactly what allows the derivative term to be absorbed into the fixed-point scheme and completes the existence argument for the rough SPDE.
+
+\subsection*{6.3. The Syllabus Pivot: The Filtering Problem}
+With the rough SPDE theory in place, we shift to a new topic: nonlinear filtering. The filtering problem asks how to reconstruct an unobserved stochastic system from noisy measurements. It is one of the most important applications of stochastic calculus, with connections to tracking, navigation, and data assimilation.
+
+\subsection*{6.4. The State and Observation Equations}
+The filtering setup is described by two coupled stochastic equations. The hidden state satisfies
+\[
+dX_t=b(X_t)\,dt+\sigma(X_t)\,dW_t,
+\]
+while the observed process satisfies
+\[
+dY_t=h(X_t)\,dt+dV_t.
+\]
+The process \(X_t\) is the true state of the system, driven by an unobserved Brownian motion \(W_t\). The process \(Y_t\) is the noisy observation: it records the signal \(h(X_t)\), but it is corrupted by an independent Brownian motion \(V_t\).
+
+\subsection*{6.5. The Kushner--Stratonovich Equation}
+The goal is to determine the conditional law of the hidden state given the observation history up to time \(t\). This optimal filter is denoted by
+\[
+\eta_t^Y
+=
+\mathbb P\circ X_t\,|\,Y_{0:t}.
+\]
+The best state estimate is obtained by integrating against this conditional measure:
+\[
+\mathbb E(X_t\,|\,Y_{0:t})
+=
+\int x\,d\eta_t^Y.
+\]
+The evolution of the filter is governed by the Kushner--Stratonovich equation, written in weak form as
+\[
+d\eta_t^Y(f)
+=
+\eta_t^Y(Af)\,dt
++
+\operatorname{Cov}_{\eta_t^Y}(f,h)\bigl(dY_t-\eta_t^Y(h)\,dt\bigr).
+\]
+This equation contains two parts. The first term,
+\[
+\eta_t^Y(Af)\,dt,
+\]
+is the prediction step, driven by the infinitesimal generator \(A\) of the hidden state equation. The second term is the correction or innovation step, based on
+\[
+dY_t-\eta_t^Y(h)\,dt,
+\]
+which measures the discrepancy between the actual observation and the predicted observation. The covariance factor
+\[
+\operatorname{Cov}_{\eta_t^Y}(f,h)
+\]
+acts as a gain, determining how strongly the filter should respond to the new data. This is the starting point of the modern theory of nonlinear stochastic filtering.
+
+\section*{7. The Strong Form of the Filtering Equation}
+The weak filtering equation from the previous section can now be rewritten as an SPDE for the evolving conditional density itself.
+
+\subsection*{7.1. The Density Evolution \(\partial_t\eta_t^Y(x)\)}
+We now pass from the weak filtering equation to its strong form. Instead of an abstract conditional measure \(\eta_t^Y\), we work with its density
+\[
+\eta_t^Y(x).
+\]
+This is the conditional probability density of the hidden state at the point \(x\), given the full observation history up to time \(t\). The goal is to describe directly how this density evolves.
+
+\subsection*{7.2. The Deterministic Flow: The Fokker--Planck Operator}
+The deterministic part of the evolution is
+\[
+L^*\eta_t^Y(x),
+\]
+where \(L^*\) is the adjoint of the generator \(A\). In the weak form, the generator acts on test functions. After integration by parts, the operator is transferred onto the density itself, producing the Fokker--Planck operator.
+
+This is the prediction part of the filter. If no new data were observed, the density would evolve entirely according to
+\[
+\partial_t \eta_t^Y(x)=L^*\eta_t^Y(x),
+\]
+which is exactly the deterministic transport-diffusion of probability under the hidden state dynamics.
+
+\subsection*{7.3. The Bayesian Update: The Covariance Modifier}
+The correction term in strong form becomes
+\[
+\bigl(h(x)-\eta_t^Y(h)\bigr)\eta_t^Y(x).
+\]
+This is the density-level version of the covariance term from the weak equation. Its structure has a direct interpretation:
+\begin{itemize}
+\item \(h(x)\) is the observation that would be produced if the hidden state were exactly \(x\),
+\item \(\eta_t^Y(h)\) is the expected observation under the current belief,
+\item \(h(x)-\eta_t^Y(h)\) measures how atypical the point \(x\) is relative to the current prediction.
+\end{itemize}
+Multiplying by \(\eta_t^Y(x)\) weights this deviation by the current probability density, so the update automatically concentrates on states that are both probable and consistent with the data.
+
+\subsection*{7.4. The Innovation: The Stochastic Driving Force}
+This correction term is driven by the innovation process
+\[
+dY_t-\eta_t^Y(h)\,dt.
+\]
+The innovation measures the discrepancy between the actual incoming observation and the observation predicted by the current filter. It is the real-time stochastic surprise in the data stream.
+
+When the innovation is zero, the current prediction already matches the observation and no correction is required. When the innovation is nonzero, the density is pushed in the direction of states whose observation values are most compatible with the new data.
+
+\subsection*{7.5. The Full Strong-Form Filtering SPDE}
+Putting these pieces together yields the strong-form stochastic partial differential equation for the filtering density:
+\[
+d\eta_t^Y(x)
+=
+L^*\eta_t^Y(x)\,dt
++
+\bigl(h(x)-\eta_t^Y(h)\bigr)\eta_t^Y(x)
+\bigl(dY_t-\eta_t^Y(h)\,dt\bigr).
+\]
+This equation unifies prediction and correction in one continuous-time feedback law. The operator \(L^*\) propagates the density according to the hidden dynamics, while the innovation term updates the density according to the new information carried by the observation process.
+
+This is the strong PDE form of nonlinear filtering. It shows that the evolution of information itself is governed by an SPDE, placing the filtering problem directly inside the same stochastic-analytic framework developed throughout these lectures.
+
+\section*{Appendix}
+
+\subsection*{A.1. Stochastic Convolution}
+\begin{definition}
+The stochastic convolution associated with the heat semigroup is
+\[
+\int_0^t e^{(t-s)\partial_{xx}}\,dW_s.
+\]
+It is the rough stochastic part of the mild solution.
+\end{definition}
+
+\subsection*{A.2. Fractional Sobolev Space \(H^{\alpha,2}\)}
+\begin{definition}
+The space \(H^{\alpha,2}\) consists of functions whose Fourier coefficients are square summable with weight \(k^{2\alpha}+1\). It measures fractional spatial regularity.
+\end{definition}
+
+\subsection*{A.3. Hölder Continuous Path}
+\begin{definition}
+A path \(X:[0,T]\to\mathbb R\) is \(\alpha\)-Hölder continuous if there exists \(C>0\) such that
+\[
+|X_t-X_s|\le C|t-s|^\alpha
+\]
+for all \(s,t\in[0,T]\).
+\end{definition}
+
+\subsection*{A.4. Riemann--Stieltjes Sum}
+\begin{definition}
+Given a partition \(\mathcal P\) of an interval, the Riemann--Stieltjes sum for \(\int Y\,dX\) is
+\[
+\sum_{[s,t]\in\mathcal P} Y_s(X_t-X_s).
+\]
+\end{definition}
+
+\subsection*{A.5. Iterated Integral}
+\begin{definition}
+An iterated integral is an integral of one increment against another integral, such as
+\[
+\int_s^t\int_s^r f'(X_u)\,dX_u\,dX_r.
+\]
+It records second-order information of the path.
+\end{definition}
+
+\subsection*{A.6. Rough Path Enhancement}
+\begin{definition}
+A rough path enhancement consists of the original path together with additional higher-order iterated integrals, beginning with the second-order term \(X_{s,t}\).
+\end{definition}
+
+\subsection*{A.7. Second-Order Signature}
+\begin{remark}
+The quantity
+\[
+X_{s,t}=\int_s^t (X_r-X_s)\,dX_r
+\]
+is the first nontrivial component of the rough path signature. It carries the information missing from classical Hölder calculus below regularity \(1/2\).
+\end{remark}
+
+\subsection*{A.8. Chen's Relation}
+\begin{definition}
+Chen's relation is the algebraic consistency rule satisfied by second-order increments:
+\[
+X_{s,t}-X_{s,u}-X_{u,t}=(X_s-X_u)(X_u-X_t),
+\qquad s<u<t.
+\]
+\end{definition}
+
+\subsection*{A.9. Quadratic Variation}
+\begin{definition}
+The quadratic variation of Brownian motion over \([s,t]\) is \(t-s\). It is the source of the extra correction term in It\^o integration.
+\end{definition}
+
+\subsection*{A.10. Enhanced Riemann Sum}
+\begin{definition}
+An enhanced Riemann sum includes both the first-order increment and the second-order rough path correction:
+\[
+\sum_{[s,t]\in\mathcal P}
+\left[f(X_s)(X_t-X_s)+f'(X_s)X_{s,t}\right].
+\]
+\end{definition}
+
+\subsection*{A.11. Ornstein--Uhlenbeck Process}
+\begin{definition}
+The Ornstein--Uhlenbeck process is a linear stochastic evolution equation with both diffusion and linear damping. In infinite dimensions it often serves as the canonical Gaussian stationary model.
+\end{definition}
+
+\subsection*{A.12. Two-Sided Wiener Process}
+\begin{definition}
+A two-sided Wiener process is a Brownian motion extended to all times \(t\in\mathbb R\) by combining two independent Brownian motions on the positive and negative half-lines.
+\end{definition}
+
+\subsection*{A.13. Stationary Solution}
+\begin{definition}
+A stochastic process is stationary if its probability law is invariant under time shifts.
+\end{definition}
+
+\subsection*{A.14. Covariance Operator}
+\begin{definition}
+For a centered Gaussian process, the covariance operator determines the full second-order structure of the law and therefore characterizes the Gaussian distribution.
+\end{definition}
+
+\subsection*{A.15. Spatial Correlation Kernel}
+\begin{definition}
+The spatial correlation kernel is the integral kernel associated with the covariance operator. It describes how random fluctuations at two spatial points are correlated in equilibrium.
+\end{definition}
+
+\subsection*{A.16. Kolmogorov Continuity Theorem}
+\begin{theorem}
+If the moments of the increments of a stochastic process satisfy a sufficiently strong power-law bound, then the process admits a Hölder-continuous version.
+\end{theorem}
+
+\subsection*{A.17. Dirac Delta Distribution}
+\begin{definition}
+The Dirac delta \(\delta_x\) is the distribution that extracts the value of a test function at the point \(x\).
+\end{definition}
+
+\subsection*{A.18. Gaussian Covariance Identity}
+\begin{remark}
+For a centered Gaussian random variable with covariance operator \(Q\), the second moment of a linear functional is obtained by applying \(Q\) to that functional.
+\end{remark}
+
+\subsection*{A.19. Rough Path Lift}
+\begin{definition}
+A rough path lift enhances a path by adjoining its second-order iterated integral, producing the data needed to define integration below classical regularity thresholds.
+\end{definition}
+
+\subsection*{A.20. Picard Iteration}
+\begin{definition}
+Picard iteration constructs a solution by repeatedly substituting an approximate solution into the right-hand side of the equation and proving convergence of the resulting sequence.
+\end{definition}
+
+\subsection*{A.21. Pathwise Solution}
+\begin{definition}
+A pathwise solution is a solution obtained for almost every fixed realization of the driving rough signal, without relying on martingale or distributional arguments during the construction.
+\end{definition}
+
+\subsection*{A.22. Heat Kernel Smoothing Estimate}
+\begin{remark}
+Heat kernel estimates control how the semigroup \(P_t\) improves spatial regularity and how its derivatives behave for small times.
+\end{remark}
+
+\subsection*{A.23. Filtering Problem}
+\begin{definition}
+The filtering problem asks for the conditional distribution of an unobserved state process given the history of noisy observations.
+\end{definition}
+
+\subsection*{A.24. Infinitesimal Generator}
+\begin{definition}
+The infinitesimal generator \(A\) of a Markov process describes the first-order time evolution of expectations of test functions.
+\end{definition}
+
+\subsection*{A.25. Kushner--Stratonovich Equation}
+\begin{definition}
+The Kushner--Stratonovich equation is the stochastic evolution equation for the conditional law of the hidden state given the observation process.
+\end{definition}
+
+\subsection*{A.26. Innovation Process}
+\begin{definition}
+The innovation process is the difference between the observed increment and the predicted observation increment. It measures the new information carried by the data.
+\end{definition}
+
+\subsection*{A.27. Fokker--Planck Operator}
+\begin{definition}
+The Fokker--Planck operator \(L^*\) is the formal adjoint of the infinitesimal generator. It governs the deterministic evolution of probability densities.
+\end{definition}
+
+\subsection*{A.28. Conditional Density}
+\begin{definition}
+The conditional density \(\eta_t^Y(x)\) is the density of the hidden state conditioned on the observation history up to time \(t\).
+\end{definition}
+
+\subsection*{A.29. Strong Form of the Filter}
+\begin{definition}
+The strong form of the filtering equation is the SPDE satisfied directly by the conditional density, rather than by the expectations of test functions.
+\end{definition}
+
+\end{document}

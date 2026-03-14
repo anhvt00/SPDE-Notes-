@@ -1,0 +1,689 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in]{geometry}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\title{Lecture 15: Continuous-Time Filtering and the Zakai Equation}
+\date{05.02.2026}
+\author{Tien Anh Vu}
+
+\begin{document}
+\maketitle
+
+This lecture continues the filtering chapter by turning the abstract Bayesian formulation into explicit stochastic evolution equations. The main themes are the coupled signal-observation system, the Kallianpur--Striebel representation of the filter, the continuity issues of the data stream, and the It\^o-calculus derivation of the unnormalized filtering equation.
+
+\section*{1. The Filtering System and the Zakai Equation}
+We begin by formalizing the hidden signal and observation pair that underlies the filtering problem.
+
+\subsection*{1.1. The Signal and Observation System}
+We begin with the two stochastic differential equations defining the hidden state and the observation process.
+
+The signal equation is
+\[
+dX_t=B(X_t)\,dt+C(X_t)\,dW_t.
+\]
+This is the hidden state, evolving in the high-dimensional space \(\mathbb R^d\).
+
+The observation equation is
+\[
+dY_t=H(X_t)\,dt+P\,dV_t.
+\]
+The data process lives in a lower-dimensional measurement space \(\mathbb R^p\). We define the covariance matrix
+\[
+R=PP^T
+\]
+and assume that it is positive definite, so that
+\[
+R\ge c
+\]
+for some \(c>0\). This guarantees that \(R^{-1}\) exists, which will be essential in the filtering formula.
+
+\subsection*{1.2. The Filtering Goal and the Kallianpur--Striebel Formula}
+The objective is to compute the conditional probability measure
+\[
+\eta_t(A)=\mathbb P(X_t\in A\mid Y_{0:t}).
+\]
+This is the probability that the hidden state lies in the set \(A\), given the entire history of observed data up to time \(t\).
+
+The notes provide the Kallianpur--Striebel formula:
+\[
+\eta_t(A)
+=
+\frac{
+\mathbb E_{\bar X}
+\left(
+1_A(\bar X_t)
+\exp\left(
+\int_0^t H(\bar X_s)R^{-1}\,dY_s
+-\frac12\int_0^t \langle R^{-1}H(\bar X_s),H(\bar X_s)\rangle\,ds
+\right)
+\right)
+}
+{
+\mathbb E_{\bar X}
+\left(
+\exp\left(
+\int_0^t H(\bar X_s)R^{-1}\,dY_s
+-\frac12\int_0^t \langle R^{-1}H(\bar X_s),H(\bar X_s)\rangle\,ds
+\right)
+\right)
+}.
+\]
+Here \(\bar X\) is an independent copy of the signal process, and the expectation \(\mathbb E_{\bar X}\) is taken with respect to \(\bar X\) only, not the data \(Y\).
+
+\subsection*{1.3. The Continuity Crisis and Rough Paths}
+Although the Kallianpur--Striebel formula is exact, it is not numerically stable as a functional of the raw data stream \(Y_t\). Small perturbations of the observation path can cause large changes in the filter, so the formula is not continuous in a useful computational sense.
+
+This is where rough-path ideas return. By enhancing the observation stream with suitable iterated integrals, one can recover a robust representation of the filter. The rough-path framework restores continuity of the map from data to posterior law and therefore provides a stable mathematical foundation for numerical approximation.
+
+\subsection*{1.4. The Unnormalized Measure}
+To obtain a more tractable stochastic equation, one introduces the unnormalized conditional measure
+\[
+\widetilde\eta_t(A)
+=
+\mathbb E_{\bar X}
+\left(
+1_A(\bar X_t)
+\exp(\cdots)
+\right),
+\]
+which is simply the numerator of the Kallianpur--Striebel formula.
+
+Rather than tracking the nonlinear normalized filter directly, one studies the evolution of this unnormalized quantity. The normalization can then be restored at the end by division.
+
+\subsection*{1.5. Deriving the Evolution via It\^o's Product Rule}
+To derive the evolution equation, let \(f\in C_b^2(\mathbb R^d)\) be a smooth test function and consider
+\[
+f(\bar X_t)\,Z_t(\bar X,Y),
+\]
+where \(Z_t\) is the likelihood weight from the Kallianpur--Striebel formula.
+
+Applying It\^o's product rule gives two essential contributions. The first is the state evolution,
+\[
+Z_t(\bar X,Y)Lf(\bar X_t)\,dt
++
+Z_t(\bar X,Y)\nabla f(\bar X_t)C(\bar X_t)\,dW_t,
+\]
+where \(L\) is the infinitesimal generator of the signal process. The second is the observation update,
+\[
+f(\bar X_t)Z_t(\bar X,Y)H(\bar X_t)R^{-1}\,dY_t.
+\]
+Because the state noise \(W_t\) and the observation noise are independent, the mixed quadratic variation term vanishes. Taking expectation with respect to \(\bar X\) removes the martingale term involving \(dW_t\), leaving a linear stochastic evolution equation for the unnormalized measure.
+
+This is the starting point of the Zakai equation. It shows that the continuous-time Bayesian filter can be represented by a linear SPDE driven by the incoming data stream.
+
+\section*{2. The Weak and Strong Zakai Equations}
+Having set up the signal-observation model and the Kallianpur--Striebel formula, we can now derive the unnormalized filtering equation in both weak and strong form.
+
+\subsection*{2.1. Taking the Expectation: The Weak Zakai Equation}
+We now take expectation with respect to the simulated paths \(\bar X\). The stochastic term involving the hidden-state Brownian motion disappears because the expectation of an It\^o integral is zero. The remaining terms yield
+\[
+d\widetilde\eta_t(f)
+=
+\mathbb E_{\bar X}\bigl(Lf(\bar X_t)Z_t(\bar X,Y)\bigr)\,dt
++
+\mathbb E_{\bar X}\bigl(f(\bar X_t)H(\bar X_t)Z_t(\bar X,Y)\bigr)R^{-1}\,dY_t.
+\]
+Using the notation of the unnormalized measure, this becomes
+\[
+d\widetilde\eta_t(f)
+=
+\widetilde\eta_t(Lf)\,dt
++
+\widetilde\eta_t(fH)R^{-1}\,dY_t.
+\]
+This is the weak form of the Zakai equation. It is weak because it is formulated by testing against smooth functions \(f\).
+
+\subsection*{2.2. The Strong Form: The Density Equation}
+If the unnormalized conditional measure admits a density,
+\[
+\widetilde\eta_t(dx)=\widetilde\eta_t(x)\,dx,
+\]
+then the Zakai equation can be written in strong form. By shifting the generator \(L\) from the test function onto the density through integration by parts, one obtains the adjoint operator \(L^*\), the Fokker--Planck operator. The density then satisfies
+\[
+\partial_t \widetilde\eta_t(x)
+=
+L^*\widetilde\eta_t(x)\,dt
++
+\widetilde\eta_t(x)H(x)R^{-1}\,dY_t.
+\]
+This is the strong Zakai SPDE. It is linear, which makes it far more tractable for analysis and computation than the normalized filtering equation.
+
+\subsection*{2.3. Returning to Normalized Probability}
+The measure \(\widetilde\eta_t\) is not normalized. To recover the true conditional probability, we divide by the total mass:
+\[
+\eta_t(f)
+=
+\frac{\widetilde\eta_t(f)}{\widetilde\eta_t(1)}.
+\]
+This normalized quantity is the actual filter. The Kushner--Stratonovich equation is precisely the stochastic equation satisfied by \(\eta_t\).
+
+\subsection*{2.4. Deriving the Normalized Equation via It\^o's Quotient Rule}
+To differentiate the ratio above, one uses It\^o's formula for the two-variable function
+\[
+h(x,y)=\frac{y}{x}.
+\]
+Both the numerator \(\widetilde\eta_t(f)\) and the denominator \(\widetilde\eta_t(1)\) are semimartingales driven by the observation process \(dY_t\), so the classical quotient rule is not sufficient. The full It\^o expansion is
+\[
+d\eta_t(f)
+=
+h_x(\cdots)\,d\widetilde\eta_t(f)
++
+h_y(\cdots)\,d\widetilde\eta_t(1)
++
+\frac12 h_{xx}(\cdots)\,d\langle\widetilde\eta(f)\rangle_t
++
+h_{xy}(\cdots)\,d\langle\widetilde\eta(f),\widetilde\eta(1)\rangle_t
++
+\frac12 h_{yy}(\cdots)\,d\langle\widetilde\eta(1)\rangle_t.
+\]
+The final three terms are the stochastic corrections coming from quadratic and cross variation.
+
+\subsection*{2.5. Closing the Loop}
+Substituting the Zakai dynamics of the numerator and denominator into this It\^o formula yields the nonlinear Kushner--Stratonovich equation. In this way, the full theory closes:
+\begin{itemize}
+\item Bayes' theorem gives the conceptual filtering formula,
+\item the Kallianpur--Striebel representation rewrites it in continuous time,
+\item the Zakai equation gives a linear SPDE for the unnormalized filter,
+\item It\^o's quotient rule restores the normalized conditional probability.
+\end{itemize}
+This is the central filtering architecture of continuous-time stochastic systems.
+
+\section*{3. The Kushner--Stratonovich Equation and the Kalman--Bucy Filter}
+Once the linear Zakai equation is available, the next step is to return to the normalized filter and then specialize to the classical linear-Gaussian setting.
+
+\subsection*{3.1. The Normalized Kushner--Stratonovich Equation}
+After applying It\^o's quotient rule, the unnormalized terms collapse into normalized expectations. For example,
+\[
+\frac{1}{\widetilde\eta_t(1)}\widetilde\eta_t(Lf)=\eta_t(Lf).
+\]
+This yields the nonlinear Kushner--Stratonovich equation
+\[
+d\eta_t(f)
+=
+\eta_t(Lf)\,dt
++
+\operatorname{Cov}_{\eta_t}(f,H)R^{-1}
+\bigl(dY_t-\eta_t(H)\,dt\bigr).
+\]
+The first term is the deterministic Fokker--Planck-type prediction, while the second is the innovation correction. The factor
+\[
+\operatorname{Cov}_{\eta_t}(f,H)R^{-1}
+\]
+acts as a gain, scaling the influence of the new observation by the correlation between the hidden state and the measurement function.
+
+\subsection*{3.2. The Linear Pivot: The Kalman--Bucy Filter}
+The filtering problem simplifies drastically when the model is linear:
+\[
+B(x)=Bx,\qquad H(x)=Hx,\qquad C(x)=C,
+\]
+and the initial condition is Gaussian,
+\[
+X_0\sim N(m_0,P_0).
+\]
+In this case, the hidden signal is a linear Ornstein--Uhlenbeck process, and the observation map is also linear.
+
+\subsection*{3.3. The Joint Block Matrix System}
+The hidden state and the observation process can then be combined into one block system:
+\[
+d
+\begin{bmatrix}
+X_t\\
+Y_t
+\end{bmatrix}
+=
+\begin{bmatrix}
+B & 0\\
+H & 0
+\end{bmatrix}
+\begin{bmatrix}
+X_t\\
+Y_t
+\end{bmatrix}
+dt
++
+\begin{bmatrix}
+C & 0\\
+0 & R
+\end{bmatrix}
+\begin{bmatrix}
+dW_t\\
+dV_t
+\end{bmatrix}.
+\]
+The initial condition is the block Gaussian vector
+\[
+\begin{bmatrix}
+X_0\\
+Y_0
+\end{bmatrix}
+\sim
+N\left(
+\begin{bmatrix}
+m_0\\
+0
+\end{bmatrix},
+\begin{bmatrix}
+P_0 & 0\\
+0 & 0
+\end{bmatrix}
+\right).
+\]
+This matrix formulation captures both the hidden dynamics and the observation process in one linear Gaussian system.
+
+\subsection*{3.4. Joint Gaussianity and Linear Projection}
+Because the initial condition is Gaussian and the dynamics are linear, the full process is jointly Gaussian on path space. This implies that the conditional expectation is a linear projection:
+\[
+\mathbb E(X\mid Y)=aY+b.
+\]
+Hence the posterior law remains Gaussian,
+\[
+\eta_t=N(m_t,P_t).
+\]
+The entire infinite-dimensional filtering SPDE therefore collapses to tracking just two finite-dimensional objects: the mean \(m_t\) and the covariance matrix \(P_t\).
+
+\subsection*{3.5. The Grand Conclusion: Collapsing the SPDE}
+Substituting the Gaussian ansatz
+\[
+\eta_t=N(m_t,P_t)
+\]
+into the Kushner--Stratonovich equation yields a closed system of ordinary differential equations for \(m_t\) and \(P_t\). These equations are the Kalman--Bucy filter.
+
+This is the key engineering consequence of the abstract theory. In the fully linear Gaussian case, the nonlinear filtering SPDE collapses to a finite-dimensional deterministic-stochastic system for the posterior mean and covariance. This is precisely the mechanism behind the classical Kalman filter and its continuous-time counterpart used throughout control, navigation, and signal processing.
+
+\section*{4. The Kalman--Bucy Equations}
+The Gaussian closure of the previous section now collapses the infinite-dimensional filter to explicit equations for the mean and covariance.
+
+\subsection*{4.1. The Evolution of the Mean}
+We now identify the posterior mean as
+\[
+m_t=\mathbb E(\mathrm{id}_{\mathbb R^d}\mid Y_{0:t})=\eta_t(\mathrm{id}_{\mathbb R^d}).
+\]
+Its evolution is given by
+\[
+dm_t
+=
+Bm_t\,dt
++
+P_tH^TR^{-1}(dY_t-Hm_t\,dt).
+\]
+This equation has three distinct parts. The term \(Bm_t\,dt\) is the prediction step, describing how the estimate evolves under the internal system dynamics when no new data arrive. The term
+\[
+dY_t-Hm_t\,dt
+\]
+is the innovation, namely the discrepancy between the actual data and the observation predicted from the current mean. Finally, the matrix
+\[
+P_tH^TR^{-1}
+\]
+is the Kalman gain, which scales how aggressively the estimate responds to the incoming information.
+
+\subsection*{4.2. The Riccati Equation for the Covariance}
+The covariance matrix evolves according to the Riccati equation
+\[
+dP_t
+=
+(BP_t+P_tB^T+CC^T)\,dt
+-P_tH^TR^{-1}HP_t\,dt.
+\]
+The first group of terms
+\[
+BP_t+P_tB^T+CC^T
+\]
+represents the growth of uncertainty due to the system dynamics and the injection of process noise. The second term,
+\[
+-P_tH^TR^{-1}HP_t,
+\]
+represents the reduction of uncertainty caused by observing the system. This negative term is the mathematical signature of information gain.
+
+A crucial practical consequence is that this covariance equation does not depend on the realized data stream \(Y_t\). It is deterministic once the system matrices are fixed, so \(P_t\) and the Kalman gain can be computed offline in advance.
+
+\subsection*{4.3. Evaluating Performance via Mean Square Error}
+The natural measure of performance is the mean square error
+\[
+\mathbb E\bigl(\|X_t-m_t\|^2\bigr).
+\]
+Using the tower property of conditional expectation, this reduces to the expected conditional variance, which is
+\[
+\mathbb E(\operatorname{tr}(P_t)).
+\]
+Thus the total tracking error is encoded directly by the trace of the covariance matrix. The smaller \(P_t\) becomes, the more accurate the filter.
+
+\subsection*{4.4. The Characteristic Function Proof Strategy}
+To justify the Gaussian ansatz rigorously, one tests the Kushner--Stratonovich equation with the characteristic function
+\[
+f(x)=e^{i\langle u,x\rangle}.
+\]
+Applying the signal generator \(L\) to this function yields
+\[
+Le^{i\langle u,x\rangle}
+=
+-\frac12\|C^Tu\|^2e^{i\langle u,x\rangle}
++
+i\langle Bx,u\rangle e^{i\langle u,x\rangle}.
+\]
+The first term comes from the quadratic variation of the state noise, while the second comes from the deterministic drift. By differentiating the resulting characteristic function with respect to \(u\), one extracts the first and second moments of the distribution.
+
+\subsection*{4.5. The Gaussian Closure}
+When the algebra is completed, the characteristic function takes the Gaussian form
+\[
+e^{i\langle m_t,u\rangle-\frac12\langle P_tu,u\rangle}.
+\]
+This proves that the filtered law remains Gaussian, with mean \(m_t\) and covariance \(P_t\). The infinite-dimensional filtering SPDE therefore closes exactly onto the two finite-dimensional equations above.
+
+This is the final derivation of the Kalman--Bucy filter: the abstract Kushner--Stratonovich equation collapses to explicit evolution equations for the mean and covariance, providing the bridge from stochastic filtering theory to practical engineering algorithms.
+
+\section*{5. The Ensemble Kalman--Bucy Filter}
+After the exact linear theory, the notes move to the practical question of how one approximates nonlinear filters in computation.
+
+\subsection*{5.1. The Algorithm: The Ensemble Approximation}
+We now move beyond the exact linear Gaussian case. For nonlinear systems, the full Kushner--Stratonovich equation cannot be collapsed exactly, so one replaces the infinite-dimensional conditional law by an ensemble of particles.
+
+The conditional expectation is approximated by the empirical mean
+\[
+\mathbb E(X_t\mid Y_{0:t})
+\approx
+\frac1N\sum_{i=1}^N X_t^i
+=
+m_t^N,
+\]
+while the conditional variance is approximated by the sample covariance
+\[
+\operatorname{Var}(X_t\mid Y_{0:t})
+\approx
+\frac{1}{N-1}
+\sum_{i=1}^N
+(X_t^i-m_t^N)\otimes (X_t^i-m_t^N)^T.
+\]
+This is the core approximation principle of the ensemble Kalman--Bucy filter.
+
+\subsection*{5.2. The Particle Evolution SDE}
+The individual particles evolve through a coupled interacting system of stochastic differential equations. Each particle follows the physical dynamics,
+\[
+B(X_t^i)\,dt+C(X_t^i)\,dW_t^i,
+\]
+and is then corrected by an empirical Kalman-type gain constructed from the ensemble cloud. In schematic form, the particle equation reads
+\[
+dX_t^i
+=
+B(X_t^i)\,dt
++
+C(X_t^i)\,dW_t^i
++
+\text{empirical gain}\times \text{innovation}.
+\]
+The innovation compares the true incoming observation \(dY_t\) with the measurement predicted by the ensemble, while the empirical gain is computed from the sample cross-covariance between particle positions and their predicted observations.
+
+\subsection*{5.3. The Mean Field Limit and the Ansatz}
+To understand what happens as the number of particles becomes very large, we pass to a mean-field description. As \(N\to\infty\), the empirical cloud is expected to converge to a probability distribution \(\bar\eta_t\), the law of a representative particle \(\bar X_t\).
+
+The mean-field Ansatz is written as
+\[
+d\bar X_t
+=
+B(\bar X_t)\,dt
++
+C(\bar X_t)\,dV_t
++
+a(t,\bar X_t,\bar\eta_t)\,dt
++
+K(t,\bar X_t,\bar\eta_t)\,dY_t.
+\]
+The drift correction \(a\) and gain term \(K\) depend not only on the individual state \(\bar X_t\) but also on its current law \(\bar\eta_t\). This makes the mean-field dynamics non-Markovian in the classical finite-dimensional sense, because the particle must ``look at'' its own evolving distribution to know how to move.
+
+\subsection*{5.4. Verifying the Mean Field via It\^o's Formula}
+To determine the correct forms of \(a\) and \(K\), one applies It\^o's formula to a test function \(f(\bar X_t)\) and then takes expectation. This yields the evolution equation
+\[
+d\bar\eta_t(f)
+=
+\bar\eta_t(Lf)\,dt
++
+\bar\eta_t(\nabla f\cdot a)\,dt
++
+\bar\eta_t(\nabla f\cdot K(t,\bar\eta_t))R^{-1}\,dY_t
++
+\frac12 \operatorname{tr}(\cdots)\,dt.
+\]
+By matching this evolution to the target Kushner--Stratonovich equation, one identifies the correct mean-field drift correction and gain. In this way the ensemble dynamics are designed so that, in the large-particle limit, they recover the exact nonlinear filter.
+
+\subsection*{5.5. The Computational Meaning}
+The importance of this construction is that it replaces an infinite-dimensional filtering SPDE by a finite interacting particle system that is numerically implementable. The theory therefore provides a direct bridge between abstract stochastic filtering and large-scale computational data assimilation.
+
+The ensemble Kalman--Bucy filter is not exact in general, but it offers a practical and efficient approximation for nonlinear systems where the exact Kushner--Stratonovich equation is computationally out of reach.
+
+\section*{6. Matching the Mean-Field Gain to the Optimal Filter}
+The final step is to tune the mean-field particle system so that its law reproduces the optimal Kushner--Stratonovich dynamics.
+
+\subsection*{6.1. The Target: The Kushner--Stratonovich Equation}
+We begin by restating the normalized Kushner--Stratonovich equation in its expanded form:
+\[
+d\eta_t(f)
+=
+\eta_t(Lf)\,dt
++
+\bigl(\eta_t(fH)-\eta_t(f)\eta_t(H)\bigr)R^{-1}
+\bigl(dY_t-\eta_t(H)\,dt\bigr).
+\]
+The multiplier
+\[
+\eta_t(fH)-\eta_t(f)\eta_t(H)
+\]
+is exactly the covariance term \(\operatorname{Cov}_{\eta_t}(f,H)\). This is the term that must be reproduced by the mean-field particle model.
+
+\subsection*{6.2. The Matching Condition \(\bar\eta_t=\eta_t\)}
+Our goal is to force the mean-field law \(\bar\eta_t\) to coincide with the optimal filter:
+\[
+\bar\eta_t=\eta_t.
+\]
+Comparing the \(dY_t\)-driven terms in the mean-field evolution and in the Kushner--Stratonovich equation leads to the weak matching condition
+\[
+\eta_t(\nabla f\cdot K)=\eta_t\bigl(f(H-\eta_t(H))\bigr).
+\]
+This identity determines the exact gain matrix \(K\) required for the interacting particle system to reproduce the optimal nonlinear filter.
+
+\subsection*{6.3. The Strong Form: The Divergence Equation}
+To obtain an explicit PDE for the gain, one integrates by parts and moves the gradient off the test function \(f\). This yields the strong-form condition
+\[
+-\nabla\cdot(\eta_t K)
+=(H-\eta_t(H))\eta_t.
+\]
+This is the divergence equation satisfied by the gain field \(K\). It describes how the gain must transport the probability density so that the particle law follows the correct Bayesian update.
+
+\subsection*{6.4. Non-Uniqueness and Measure-Preserving Transforms}
+The solution of this divergence equation is not unique. If \(K\) is one solution, then one may add any vector field \(u:\mathbb R^d\to\mathbb R^d\) satisfying
+\[
+\nabla\cdot(\eta_t u)=0.
+\]
+Such a field generates a measure-preserving transform: it moves particles around inside the probability cloud without changing the probability density itself. Hence different particle dynamics may produce the same filtering distribution.
+
+\subsection*{6.5. The Flow Equation and the Final Conclusion}
+The corresponding characteristic flow is determined by
+\[
+\xi_t'(x)=u(\xi_t(x)).
+\]
+This ODE describes how individual points move along the divergence-free vector field \(u\). Although the particle trajectories change, the overall measure remains unchanged.
+
+This is the final structural result of the lecture series. By solving the divergence equation
+\[
+-\nabla\cdot(\eta_t K)=(H-\eta_t(H))\eta_t,
+\]
+one computes the exact gain that makes the mean-field particle system reproduce the optimal nonlinear filter. The course thus closes by unifying rough stochastic analysis, filtering theory, and interacting particle systems in one coherent framework.
+
+\section*{Appendix}
+
+\subsection*{A.1. Signal Process}
+\begin{definition}
+The signal process is the hidden stochastic process \(X_t\) whose state is to be inferred from observations.
+\end{definition}
+
+\subsection*{A.2. Observation Process}
+\begin{definition}
+The observation process is the noisy data stream \(Y_t\) generated from the signal through the measurement equation.
+\end{definition}
+
+\subsection*{A.3. Covariance Matrix}
+\begin{definition}
+The matrix \(R=PP^T\) is the covariance of the observation noise. Positive definiteness ensures the existence of \(R^{-1}\).
+\end{definition}
+
+\subsection*{A.4. Filter}
+\begin{definition}
+The filter is the conditional law of the hidden state given the observation history.
+\end{definition}
+
+\subsection*{A.5. Kallianpur--Striebel Formula}
+\begin{definition}
+The Kallianpur--Striebel formula expresses the conditional law of the signal as a normalized likelihood-weighted expectation over an independent copy of the signal process.
+\end{definition}
+
+\subsection*{A.6. Unnormalized Filter}
+\begin{definition}
+The unnormalized filter is the numerator of the Kallianpur--Striebel formula. Its evolution is governed by the Zakai equation.
+\end{definition}
+
+\subsection*{A.7. Infinitesimal Generator}
+\begin{definition}
+The infinitesimal generator \(L\) of the signal process describes the deterministic first-order evolution of expectations of smooth test functions.
+\end{definition}
+
+\subsection*{A.8. Zakai Equation}
+\begin{definition}
+The Zakai equation is the linear SPDE satisfied by the unnormalized conditional distribution in the filtering problem.
+\end{definition}
+
+\subsection*{A.9. Weak Zakai Equation}
+\begin{definition}
+The weak Zakai equation is the formulation of the unnormalized filter against smooth test functions \(f\).
+\end{definition}
+
+\subsection*{A.10. Strong Zakai Equation}
+\begin{definition}
+The strong Zakai equation is the density form of the Zakai equation, written directly for \(\widetilde\eta_t(x)\).
+\end{definition}
+
+\subsection*{A.11. Adjoint Operator}
+\begin{definition}
+The adjoint operator \(L^*\) is the formal dual of the generator \(L\). In density form it appears as the Fokker--Planck operator.
+\end{definition}
+
+\subsection*{A.12. Normalized Filter}
+\begin{definition}
+The normalized filter is obtained by dividing the unnormalized filter by its total mass.
+\end{definition}
+
+\subsection*{A.13. It\^o Quotient Rule}
+\begin{remark}
+The It\^o quotient rule is obtained by applying multidimensional It\^o's formula to a function of the numerator and denominator semimartingales.
+\end{remark}
+
+\subsection*{A.14. Kushner--Stratonovich Equation}
+\begin{definition}
+The Kushner--Stratonovich equation is the nonlinear stochastic evolution equation satisfied by the normalized conditional distribution.
+\end{definition}
+
+\subsection*{A.15. Innovation Process}
+\begin{definition}
+The innovation process is the difference between the observed data increment and the predicted observation increment under the current filter.
+\end{definition}
+
+\subsection*{A.16. Kalman--Bucy Filter}
+\begin{definition}
+The Kalman--Bucy filter is the continuous-time filtering equation for linear Gaussian systems. It evolves the posterior mean and covariance.
+\end{definition}
+
+\subsection*{A.17. Joint Gaussian Process}
+\begin{definition}
+A joint Gaussian process is a collection of random variables whose finite-dimensional distributions are all Gaussian.
+\end{definition}
+
+\subsection*{A.18. Linear Projection Property}
+\begin{remark}
+For jointly Gaussian variables, conditional expectation is a linear projection. This is the structural reason the Kalman--Bucy filter closes.
+\end{remark}
+
+\subsection*{A.19. Posterior Mean}
+\begin{definition}
+The posterior mean \(m_t\) is the conditional expectation of the hidden state given the observation history.
+\end{definition}
+
+\subsection*{A.20. Riccati Equation}
+\begin{definition}
+A Riccati equation is a matrix differential equation containing both linear and quadratic terms in the unknown matrix.
+\end{definition}
+
+\subsection*{A.21. Mean Square Error}
+\begin{definition}
+The mean square error is the expected squared distance between the true state and its estimator.
+\end{definition}
+
+\subsection*{A.22. Characteristic Function}
+\begin{definition}
+The characteristic function of a probability distribution is the Fourier transform
+\[
+\varphi(u)=\mathbb E(e^{i\langle u,X\rangle}).
+\]
+\end{definition}
+
+\subsection*{A.23. Gaussian Ansatz}
+\begin{definition}
+A Gaussian ansatz assumes that the unknown measure remains Gaussian and is therefore completely determined by its mean and covariance.
+\end{definition}
+
+\subsection*{A.24. Ensemble Approximation}
+\begin{definition}
+An ensemble approximation replaces a probability distribution by a finite collection of interacting sample particles.
+\end{definition}
+
+\subsection*{A.25. Empirical Mean}
+\begin{definition}
+The empirical mean of an ensemble is the average of the particle states. It approximates the conditional expectation.
+\end{definition}
+
+\subsection*{A.26. Empirical Covariance}
+\begin{definition}
+The empirical covariance is the sample covariance matrix of the ensemble. It approximates the conditional variance.
+\end{definition}
+
+\subsection*{A.27. Mean Field Limit}
+\begin{definition}
+The mean field limit is the limiting distribution obtained as the number of interacting particles tends to infinity.
+\end{definition}
+
+\subsection*{A.28. Interacting Particle System}
+\begin{definition}
+An interacting particle system is a collection of stochastic particles whose dynamics depend on the empirical distribution of the ensemble.
+\end{definition}
+
+\subsection*{A.29. Gain Matrix}
+\begin{definition}
+The gain matrix \(K\) is the feedback field that determines how particles respond to the incoming observation increments.
+\end{definition}
+
+\subsection*{A.30. Divergence Equation}
+\begin{definition}
+The divergence equation
+\[
+-\nabla\cdot(\eta_t K)=(H-\eta_t(H))\eta_t
+\]
+characterizes the gain field required to match the nonlinear filter.
+\end{definition}
+
+\subsection*{A.31. Measure-Preserving Transform}
+\begin{definition}
+A measure-preserving transform rearranges particles without changing the underlying probability measure.
+\end{definition}
+
+\subsection*{A.32. Characteristic Flow}
+\begin{definition}
+The characteristic flow associated with a vector field \(u\) is the solution of the ODE \(\xi_t'(x)=u(\xi_t(x))\).
+\end{definition}
+
+\end{document}

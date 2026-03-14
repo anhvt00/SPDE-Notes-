@@ -1,0 +1,732 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in]{geometry}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\title{Lecture 8: Parabolic Evolution Equations, Galerkin Approximation, and Nonlinear Methods}
+\date{04.12.2025}
+\author{Tien Anh Vu}
+
+\begin{document}
+\maketitle
+
+This lecture develops the basic functional analytic framework for parabolic evolution equations, from the Gelfand triple and coercive operators to Galerkin approximation, a priori estimates, monotonicity methods, and compactness arguments for nonlinear problems.
+
+\section*{1. Parabolic Evolution Equations}
+
+\subsection*{1.1. Building the Foundation: Function Spaces and the Gelfand Triple}
+Let \(V\) and \(H\) be separable, real Hilbert spaces such that
+\[
+V\subseteq H.
+\]
+
+A standard example is
+\[
+V=H_0^{1,2}(D),
+\qquad
+H=L^2(D).
+\]
+In this setup, \(V\) is densely and continuously embedded into \(H\), which we write as
+\[
+V\hookrightarrow H.
+\]
+Because the embedding is continuous, the norm of an element in \(H\) is bounded by its norm in \(V\):
+\[
+\|u\|_H\le \|u\|_V.
+\]
+Every element of \(V\) lies in \(H\), but the converse need not hold.
+
+Identifying \(H\) with its dual \(H'\) via the Riesz representation theorem, we obtain the standard Gelfand triple
+\[
+V\hookrightarrow H\cong H'\hookrightarrow V'.
+\]
+
+\subsection*{1.2. Defining the Operator}
+With the spaces fixed, we introduce an operator
+\[
+A:V\to V'.
+\]
+We require \(A\) to be a continuous, linear operator.
+
+The key assumption is coercivity:
+\[
+-\langle Au,u\rangle_{V',V}\ge \alpha\|u\|_V^2-\lambda\|u\|_H^2
+\]
+for some constant \(\alpha>0\) and some real number \(\lambda\in\mathbb R\).
+
+As a guiding example, consider the Laplacian operator
+\[
+Au=\Delta u.
+\]
+If we multiply this by a test function \(v\) and integrate over the domain \(D\), integration by parts yields
+\[
+-\int_D \Delta u\,v\,dx=\int_D \langle \nabla u,\nabla v\rangle\,dx.
+\]
+This shows how \(A\) acts through the duality pairing in \(V'\).
+
+\subsection*{1.3. The Main Theorem: Existence and Regularity}
+We can now state the basic well-posedness theorem.
+
+\begin{theorem}
+Let \(A\in L(V,V')\) be a coercive operator, let the initial data satisfy
+\[
+u_0\in H,
+\]
+and let the source term satisfy
+\[
+f\in L^2([0,T];V').
+\]
+Then the evolution equation
+\[
+\frac{du(t)}{dt}=Au(t)+f(t),
+\qquad
+t\in[0,T],
+\]
+with the initial condition
+\[
+u(0)=u_0,
+\]
+has a unique solution.
+
+Moreover, this unique solution belongs to the intersection space
+\[
+u\in C([0,T];H)\cap L^2([0,T];V).
+\]
+\end{theorem}
+
+This regularity statement has two parts:
+\[
+C([0,T];H)
+\]
+indicates that the solution is continuous in time, while
+\[
+L^2([0,T];V)
+\]
+indicates that the solution possesses space-time regularity measured in the stronger space \(V\).
+
+For the heat equation
+\[
+\frac{du(t)}{dt}=\Delta u(t)+f(t),
+\qquad
+u(0)=u_0,
+\]
+the theorem guarantees a solution taking values in a first-order Sobolev space, namely
+\[
+u(t)\in H_0^{1,2}
+\]
+for almost every time \(t\).
+
+\subsection*{1.4. Proving Uniqueness}
+To prove uniqueness, let \(u\) and \(v\) be two solutions. Since the operator is linear, their difference \(u-v\) solves the homogeneous equation
+\[
+\frac{d}{dt}(u-v)=A(u(t)-v(t))\in V'.
+\]
+Since both solutions start from the same initial data \(u_0\), we also have
+\[
+(u-v)(0)=0.
+\]
+
+We track the \(H\)-norm of the difference and apply the identity
+\[
+\frac{d}{dt}\|u(t)-v(t)\|_H^2
+=
+2\left\langle \frac{d}{dt}(u-v)(t),(u-v)(t)\right\rangle_{V',V}.
+\]
+Substituting the differential equation into the right-hand side gives
+\[
+\frac{d}{dt}\|u(t)-v(t)\|_H^2
+=
+2\langle A(u-v)(t),(u-v)(t)\rangle_{V',V}.
+\]
+Coercivity makes the derivative non-positive. Since the initial difference is zero, we conclude that
+\[
+u(t)=v(t)
+\qquad
+\text{for all } t.
+\]
+
+\section*{2. Galerkin Approximation and Existence}
+
+\subsection*{2.1. Concluding the Uniqueness Proof}
+To finish the uniqueness argument, we use coercivity once more and obtain the bound
+\[
+-\alpha\|u-v\|_V^2,
+\]
+which is inherently less than or equal to zero.
+
+Thus \(t\mapsto \|u(t)-v(t)\|_H\) is non-increasing. Since it starts at zero, it remains zero for all \(t\), and hence
+\[
+u(t)=v(t),
+\]
+proving uniqueness.
+
+\subsection*{2.2. Proving Existence: The Galerkin Method}
+For existence, we use the Galerkin method, replacing the infinite-dimensional problem by finite-dimensional approximations.
+
+Choose a complete orthonormal system \(\{e_k\}\) in \(H\) with \(e_k\in V\), and define
+\[
+V_n:=\operatorname{span}\{e_1,\dots,e_n\}.
+\]
+Then
+\[
+V_n\subset V.
+\]
+
+\subsection*{2.3. Constructing the Finite-Dimensional ODE}
+Projecting the original equation onto \(V_n\) yields a finite-dimensional linear ODE system. Let \(u_n(t)\) denote its unique solution, with
+\[
+u_n\in C([0,T];V_n).
+\]
+
+For each basis vector \(e_k\), the projected equation is
+\[
+\frac{d}{dt}\langle u_n(t),e_k\rangle_H
+=
+\langle Au_n(t),e_k\rangle_{V',V}
++
+\langle f(t),e_k\rangle_{V',V}
+\]
+for \(t>0\). To ensure that this finite system mirrors the original problem, we also project the initial data:
+\[
+\langle u_n(0),e_k\rangle_H=\langle u_0,e_k\rangle_H.
+\]
+
+\subsection*{2.4. The Crucial Bridge: A Priori Energy Estimates}
+To pass to the limit \(n\to\infty\), we need an a priori estimate, that is, a bound derived from the structure of the equation rather than an explicit formula for the solution.
+
+The key estimate is the uniform bound
+\[
+\sup_{n\ge 1}
+\left(
+\sup_{t\in[0,T]}\|u_n(t)\|_H^2
++
+\int_0^T \|u_n(t)\|_V^2\,dt
+\right)
+<\infty.
+\]
+This prevents the approximations from blowing up and provides the compactness needed for the limit passage.
+
+\section*{3. The A Priori Estimate and Passage to the Limit}
+
+\subsection*{3.1. Contextualizing with the Heat Equation}
+For intuition, keep the heat equation in mind. We seek a uniform bound of the form
+\[
+\sup_{n\ge 1}\int_0^T
+\left(
+\|\nabla u_n(t)\|_{L^2(D)}^2+\|u_n(t)\|_{L^2(D)}^2
+\right)\,dt
+<\infty.
+\]
+This explains why Sobolev spaces are the natural choice for \(V\): weak derivatives are needed in order to control gradient terms.
+
+\subsection*{3.2. Proving the A Priori Estimate: Differentiating the Norm}
+Start with the time derivative of
+\[
+\frac12\|u_n(t)\|_H^2.
+\]
+Since \(u_n(t)\) lives in the finite-dimensional space spanned by the basis \(\{e_k\}\), we can write
+\[
+\frac12\frac{d}{dt}\|u_n(t)\|_H^2
+=
+\frac12\frac{d}{dt}\sum_{k=1}^n \langle u_n(t),e_k\rangle_H^2.
+\]
+Applying the chain rule to this finite sum yields
+\[
+\sum_{k=1}^n
+\frac{d}{dt}\langle u_n(t),e_k\rangle_H\,
+\langle u_n(t),e_k\rangle_H.
+\]
+Substituting the finite-dimensional evolution equation gives
+\[
+\sum_{k=1}^n
+\langle Au_n(t)+f(t),e_k\rangle\,
+\langle u_n(t),e_k\rangle_H.
+\]
+Because \(u_n(t)\) is a linear combination of these basis vectors, Parseval's identity collapses the sum into
+\[
+\langle Au_n(t)+f(t),u_n(t)\rangle.
+\]
+By linearity, this becomes
+\[
+\langle Au_n(t),u_n(t)\rangle+\langle f(t),u_n(t)\rangle.
+\]
+
+\subsection*{3.3. Applying Coercivity and Young's Inequality}
+Coercivity gives
+\[
+\langle Au_n(t),u_n(t)\rangle\le -\alpha\|u_n(t)\|_V^2.
+\]
+For the forcing term, we apply the dual Cauchy-Schwarz inequality:
+\[
+\langle f(t),u_n(t)\rangle
+\le
+\|f(t)\|_{V'}\|u_n(t)\|_V.
+\]
+Combining both estimates gives
+\[
+\frac12\frac{d}{dt}\|u_n(t)\|_H^2
+\le
+-\alpha\|u_n(t)\|_V^2+\|f(t)\|_{V'}\|u_n(t)\|_V.
+\]
+To separate the mixed product, we use Young's inequality:
+\[
+\|f(t)\|_{V'}\|u_n(t)\|_V
+\le
+\frac{1}{2\alpha}\|f(t)\|_{V'}^2+\frac{\alpha}{2}\|u_n(t)\|_V^2.
+\]
+Substituting this back into the estimate yields
+\[
+\frac12\frac{d}{dt}\|u_n(t)\|_H^2
+\le
+-\frac{\alpha}{2}\|u_n(t)\|_V^2+\frac{1}{2\alpha}\|f(t)\|_{V'}^2.
+\]
+
+\subsection*{3.4. Integration and Establishing the Bound}
+Integrating the differential inequality from \(0\) to \(t\), and moving the negative \(V\)-norm term to the left-hand side, gives
+\[
+\frac12\|u_n(t)\|_H^2
++
+\frac{\alpha}{2}\int_0^t \|u_n(s)\|_V^2\,ds
+\le
+\frac12\|u_n(0)\|_H^2+\frac{1}{2\alpha}\int_0^t \|f(s)\|_{V'}^2\,ds.
+\]
+Taking the supremum over \(t\in[0,T]\), and using the bound on the projected initial data, yields a finite constant depending only on \(u_0\), \(f\), and \(T\). Hence \((u_n)\) is uniformly bounded in \(n\).
+
+\subsection*{3.5. Passing to the Limit via Weak Convergence}
+Uniform boundedness lets us extract a weakly convergent subsequence, still denoted by \(u_n\), such that
+\[
+u_n\rightharpoonup u
+\qquad
+\text{weakly in } L^2([0,T];V)
+\]
+for some limit function \(u\).
+
+Since \(A\) is linear and continuous, we also have
+\[
+Au_n\rightharpoonup Au
+\qquad
+\text{weakly in } L^2([0,T];V').
+\]
+To verify this, we test against a function \(v(t)\) and write
+\[
+\int_0^T \langle Au_n(t),v(t)\rangle\,dt
+=
+\int_0^T \langle A^*v(t),u_n(t)\rangle\,dt
+\to
+\int_0^T \langle A^*v(t),u(t)\rangle\,dt
+=
+\int_0^T \langle Au(t),v(t)\rangle\,dt.
+\]
+Thus the weak limit satisfies the original infinite-dimensional equation, completing the linear existence proof.
+
+\section*{4. Generalization to the Nonlinear Case}
+
+\subsection*{4.1. The Nonlinear Roadblock}
+We now turn to the nonlinear case. In the linear setting, the a priori bound produced a weakly convergent subsequence \(u_n\rightharpoonup u\), and linearity identified the weak limit of \(A(u_n)\). This is the step that fails in the nonlinear setting.
+
+We still assume that our operator
+\[
+A:V\to V'
+\]
+is continuous and coercive, but we now assume it is not necessarily linear.
+
+The a priori estimate remains valid, so we can still extract a weakly convergent subsequence
+\[
+u_n\rightharpoonup u
+\qquad
+\text{in } L^2([0,T];V).
+\]
+Furthermore, because the sequence of operators is bounded, we can also extract a subsequence such that
+\[
+A(u_n)\rightharpoonup g
+\qquad
+\text{in } L^2([0,T];V')
+\]
+for some limit function \(g\).
+
+Weak convergence does not, in general, commute with nonlinear operators. Therefore, we cannot immediately conclude that
+\[
+A(u)=g.
+\]
+
+\subsection*{4.2. Strategy 1: Monotonicity (Dissipativity)}
+The first way to bridge this gap is monotonicity, also referred to as dissipativity.
+
+We impose three additional conditions on the nonlinear operator \(A\):
+
+\begin{enumerate}
+\item The monotonicity condition
+\[
+\langle A(u)-A(v),u-v\rangle_V\le \lambda\|u-v\|_H^2
+\]
+for some \(\lambda\in\mathbb R\).
+\item Boundedness
+\[
+\|A(u)\|_{V'}\le M(1+\|u\|_V).
+\]
+\item A continuity assumption on the operator.
+\end{enumerate}
+
+By shifting the operator, we may absorb the \(\lambda\)-term and reduce the monotonicity inequality to one with right-hand side less than or equal to zero.
+
+This gives the fundamental integral inequality
+\[
+\int_0^T \langle A(u_n)-A(v),u_n-v\rangle(t)\,dt\le 0
+\]
+for every test function \(v\in L^2([0,T];V)\).
+
+\subsection*{4.3. Expanding and Passing to the Limit}
+Expanding the pairing gives
+\[
+\langle A(u_n),u_n\rangle(t)-\langle A(u_n),v\rangle(t)-\langle A(v),u_n\rangle(t)+\langle A(v),v\rangle(t).
+\]
+Passing to the limit term by term, and using
+\[
+A(u_n)\rightharpoonup g,
+\]
+we obtain the convergence of \(\langle A(u_n),v\rangle\) to \(\langle g,v\rangle\). Likewise, because
+\[
+u_n\rightharpoonup u,
+\]
+the term \(\langle A(v),u_n\rangle\) converges to \(\langle A(v),u\rangle\). The final term is independent of \(n\). The delicate term is \(\langle A(u_n),u_n\rangle\), since both factors vary only weakly.
+
+Because
+\[
+A(u_n)\rightharpoonup g,
+\]
+monotonicity supplies a limit-superior bound by \(\langle g,u\rangle\).
+
+Substituting these limits back into the expanded integral, we arrive at
+\[
+\int_0^T \langle g-A(v),u-v\rangle(t)\,dt\le 0.
+\]
+
+\subsection*{4.4. Minty's Trick: Concluding \(A(u)=g\)}
+To identify \(g\) with \(A(u)\), we use Minty's trick.
+
+Choose the test function
+\[
+v=u+\varepsilon w,
+\]
+where \(w\) is arbitrary and \(\varepsilon>0\). Then
+\[
+u-v=-\varepsilon w,
+\]
+so the inequality becomes
+\[
+\int_0^T \langle g-A(u+\varepsilon w),w\rangle(t)\,dt\le 0.
+\]
+
+By the continuity assumption on \(A\), we may let \(\varepsilon\to 0\). This yields
+\[
+\int_0^T \langle g-A(u),w\rangle(t)\,dt\le 0.
+\]
+Because \(w\) is arbitrary, the only possible conclusion is
+\[
+g-A(u)=0.
+\]
+Therefore
+\[
+g=A(u).
+\]
+
+Thus the weak limit of the nonlinear operator applied to the approximations is exactly the operator applied to the limit solution, completing the existence proof under monotonicity.
+
+\section*{5. The Browder-Minty Trick in Detail}
+
+\subsection*{5.1. Managing the Nonlinear Inner Product}
+We now examine the Browder-Minty argument more closely.
+
+The main difficulty is passing to the limit in the term
+\[
+\int_0^T \langle A(u_n),u_n\rangle(t)\,dt.
+\]
+Because both factors in the pairing are weakly converging sequences, we cannot simply pass the limit inside.
+
+To handle this, we return to the finite-dimensional Galerkin equation
+\[
+\frac{d}{dt}u_n(t)=A(u_n)(t)+f(t).
+\]
+Taking the inner product with \(u_n(t)\) and integrating from \(0\) to \(T\), we can rewrite the problematic term as
+\[
+\int_0^T \langle A(u_n),u_n\rangle(t)\,dt
+=
+\frac12\bigl(\|u_n(T)\|_H^2-\|u_n(0)\|_H^2\bigr)
+-\int_0^T \langle f,u_n\rangle(t)\,dt.
+\]
+This reformulation replaces the nonlinear pairing by terms controlled through weak convergence and energy estimates.
+
+\subsection*{5.2. Weak Lower Semicontinuity and the Limit Inferior}
+Choose a further subsequence such that \(u_n(t)\rightharpoonup u(t)\) weakly, and pass to the limit in the rewritten identity.
+
+The integral involving the fixed source term converges directly:
+\[
+\int_0^T \langle f,u_n\rangle(t)\,dt
+\to
+\int_0^T \langle f,u\rangle(t)\,dt.
+\]
+For the norm terms at the endpoints \(t=0\) and \(t=T\), we use the weak lower semicontinuity of the norm. This gives
+\[
+\frac12\bigl(\|u(T)\|_H^2-\|u(0)\|_H^2\bigr)
+-\int_0^T \langle f,u\rangle(t)\,dt
+\le
+\liminf_{n\to\infty}
+\left[
+\frac12\bigl(\|u_n(T)\|_H^2-\|u_n(0)\|_H^2\bigr)
+-\int_0^T \langle f,u_n\rangle(t)\,dt
+\right].
+\]
+The left-hand side is the limit expression associated with \(g\), so we obtain
+\[
+\int_0^T \langle g(t),u(t)\rangle\,dt
+\le
+\liminf_{n\to\infty}
+\int_0^T \langle A(u_n),u_n\rangle(t)\,dt.
+\]
+This is the key liminf estimate.
+
+\subsection*{5.3. Assembling the Browder-Minty Inequality}
+Returning to the monotonicity condition, for every test function \(v\) we know that
+\[
+\int_0^T \langle A(u_n)-A(v),u_n-v\rangle(t)\,dt\le 0.
+\]
+Expanding this pairing, passing to the weak limits \(A(u_n)\rightharpoonup g\) and \(u_n\rightharpoonup u\), and inserting the liminf bound from the previous step, we arrive at
+\[
+\int_0^T \langle g-A(v),u-v\rangle(t)\,dt
+\le
+\liminf_{n\to\infty}
+\int_0^T \langle A(u_n)-A(v),u_n-v\rangle(t)\,dt
+\le 0.
+\]
+This is the central inequality of the Browder-Minty argument.
+
+\subsection*{5.4. Executing the Browder-Minty Trick}
+Now choose
+\[
+v=u+\varepsilon w,
+\]
+where \(w\) is arbitrary and \(\varepsilon>0\). Then
+\[
+u-v=-\varepsilon w.
+\]
+Substituting this into the inequality and dividing by the positive constant \(\varepsilon\), we are led to the expression
+\[
+\int_0^T \langle g-A(u+\varepsilon w),w\rangle(t)\,dt\le 0.
+\]
+To pass to the limit \(\varepsilon\downarrow 0\), we use the continuity assumption on \(A\), which gives
+\[
+A(u+\varepsilon w)\to A(u)
+\qquad
+\text{in } V'.
+\]
+Hence the inequality simplifies to
+\[
+\int_0^T \langle g-A(u),w\rangle(t)\,dt\le 0.
+\]
+
+\subsection*{5.5. The Final Symmetry Argument}
+Finally, the inequality
+\[
+\int_0^T \langle g-A(u),w\rangle(t)\,dt\le 0
+\]
+holds for every direction \(w\in L^2([0,T];V)\).
+
+Since it holds for every \(w\), it also holds for \(-w\). Substituting \(-w\) yields
+\[
+-\int_0^T \langle g-A(u),w\rangle(t)\,dt\le 0,
+\]
+or equivalently
+\[
+\int_0^T \langle g-A(u),w\rangle(t)\,dt\ge 0.
+\]
+Hence the same quantity is both less than or equal to zero and greater than or equal to zero, so
+\[
+\int_0^T \langle g-A(u),w\rangle(t)\,dt=0
+\qquad
+\text{for all } w.
+\]
+By the fundamental lemma of the calculus of variations, this implies
+\[
+g=A(u)
+\]
+in the space \(L^2([0,T];V')\). This identifies \(g\) with \(A(u)\) and closes the nonlinear existence proof.
+
+\section*{6. Strategy 2: Compactness}
+
+\subsection*{6.1. The Limits of Monotonicity and the Need for Strategy 2}
+We next ask what happens when the operator is not monotone.
+
+The monotonicity argument is powerful, but it does not apply to some important equations from mathematical physics.
+
+The main example is fluid dynamics, specifically the Navier-Stokes equations. Their nonlinear convective term destroys monotonicity, so the Browder-Minty trick cannot be applied directly. A different approach is needed.
+
+This leads to Strategy 2: compactness.
+
+\subsection*{6.2. The Power of Compact Embeddings}
+The starting point is again the Gelfand triple
+\[
+V\hookrightarrow H\hookrightarrow V'.
+\]
+Here continuity is not enough; we need compactness.
+
+Consider again the concrete example
+\[
+V=H_0^{1,2}(D),
+\qquad
+H=L^2(D).
+\]
+A foundational theorem in functional analysis, the Rellich-Kondrachov theorem, tells us that for bounded domains, the embedding
+\[
+H_0^{1,2}(D)\hookrightarrow L^2(D)
+\]
+is not only continuous but compact.
+
+This matters because bounded sequences in compactly embedded spaces admit strongly convergent subsequences in the larger space. Strong convergence is the decisive tool for nonlinear problems.
+
+\subsection*{6.3. Space-Time Compactness for the Galerkin Sequence}
+Applying this to the Galerkin approximations \((u_n)\), the a priori estimate shows that they are bounded in the space-time space
+\[
+L^2([0,T];V).
+\]
+Because the spatial embedding \(V\hookrightarrow H\) is compact, this compactness can be transferred to the corresponding space-time setting under suitable hypotheses, for example through the Aubin-Lions lemma.
+
+As a consequence,
+\[
+L^2([0,T];V)
+\]
+embeds compactly into
+\[
+L^2([0,T];H).
+\]
+
+\subsection*{6.4. Bypassing the Nonlinear Roadblock}
+This changes the situation. Since \((u_n)\) is bounded in \(L^2([0,T];V)\), we can extract a subsequence that converges strongly to the limit \(u\) in
+\[
+L^2([0,T];H).
+\]
+
+This is what we need. If \(u_n\rightharpoonup u\) only weakly, then a continuous nonlinear operator \(A(u_n)\) need not converge to \(A(u)\). But if
+\[
+u_n\to u
+\qquad
+\text{strongly in } L^2([0,T];H),
+\]
+and the nonlinear operator satisfies suitable continuity assumptions with respect to the \(H\)-norm, then we may pass the limit directly through the operator and conclude that
+\[
+A(u_n)\to A(u).
+\]
+Thus compactness upgrades weak convergence to strong convergence and provides a second route for nonlinear evolution equations, including models where monotonicity fails.
+
+\section*{Appendix}
+
+\subsection*{A.1. Gelfand Triple}
+\begin{definition}
+A Gelfand triple is a chain of spaces
+\[
+V\hookrightarrow H\cong H'\hookrightarrow V',
+\]
+where \(V\) is densely and continuously embedded into the Hilbert space \(H\), and \(V'\) is the dual of \(V\).
+\end{definition}
+
+\subsection*{A.2. Coercive Operator}
+\begin{definition}
+An operator \(A:V\to V'\) is called coercive if there exist constants \(\alpha>0\) and \(\lambda\in\mathbb R\) such that
+\[
+-\langle Au,u\rangle_{V',V}\ge \alpha\|u\|_V^2-\lambda\|u\|_H^2
+\qquad
+\text{for all } u\in V.
+\]
+\end{definition}
+
+\subsection*{A.3. Weak Form of the Laplacian}
+\begin{definition}
+The Laplacian can be defined weakly by the relation
+\[
+\langle \Delta u,v\rangle_{V',V}
+:=
+-\int_D \langle \nabla u,\nabla v\rangle\,dx,
+\]
+which makes sense whenever \(u,v\in V\).
+\end{definition}
+
+\subsection*{A.4. Evolution Equation}
+\begin{definition}
+An abstract parabolic evolution equation has the form
+\[
+\frac{du(t)}{dt}=Au(t)+f(t),
+\qquad
+u(0)=u_0,
+\]
+where \(A:V\to V'\), \(f\) is a forcing term, and \(u_0\) is the initial condition.
+\end{definition}
+
+\subsection*{A.5. Uniqueness by Energy Estimate}
+\begin{lemma}
+If the difference of two solutions satisfies a differential inequality forcing the \(H\)-norm of the difference to remain zero when it starts at zero, then the two solutions coincide.
+\end{lemma}
+
+\subsection*{A.6. Monotone Operator}
+\begin{definition}
+An operator \(A:V\to V'\) is called monotone if
+\[
+\langle A(u)-A(v),u-v\rangle_{V',V}\le \lambda\|u-v\|_H^2
+\]
+for all \(u,v\in V\) and some \(\lambda\in\mathbb R\). After shifting by \(\lambda I\), one often reduces to the case \(\lambda=0\).
+\end{definition}
+
+\subsection*{A.7. Galerkin Approximation}
+\begin{definition}
+Given a complete orthonormal system \((e_k)\) in \(H\) with \(e_k\in V\), the Galerkin subspaces are
+\[
+V_n=\operatorname{span}\{e_1,\dots,e_n\}.
+\]
+The Galerkin method replaces the infinite-dimensional evolution equation by its projection onto \(V_n\).
+\end{definition}
+
+\subsection*{A.8. A Priori Estimate}
+\begin{definition}
+An a priori estimate is a bound on approximate or exact solutions derived directly from the structure of the equation, independent of any explicit formula for the solution.
+\end{definition}
+
+\subsection*{A.9. Weak Lower Semicontinuity}
+\begin{lemma}
+If \(x_n\rightharpoonup x\) weakly in a Hilbert or Banach space, then
+\[
+\|x\|\le \liminf_{n\to\infty}\|x_n\|.
+\]
+\end{lemma}
+
+\subsection*{A.10. Browder-Minty Trick}
+\begin{remark}
+The Browder-Minty trick is the standard monotonicity argument used to identify a weak limit \(g\) of \(A(u_n)\) with \(A(u)\). It combines monotonicity, a liminf estimate, and perturbations of the form \(v=u+\varepsilon w\).
+\end{remark}
+
+\subsection*{A.11. Compact Embedding}
+\begin{definition}
+An embedding \(V\hookrightarrow H\) is compact if every bounded sequence in \(V\) has a subsequence that converges strongly in \(H\).
+\end{definition}
+
+\subsection*{A.12. Rellich-Kondrachov Theorem}
+\begin{theorem}
+For bounded domains \(D\), the Sobolev embedding
+\[
+H_0^{1,2}(D)\hookrightarrow L^2(D)
+\]
+is compact.
+\end{theorem}
+
+\subsection*{A.13. Aubin-Lions Compactness Principle}
+\begin{theorem}
+Under suitable assumptions on the spaces and time derivatives, bounded subsets of \(L^2([0,T];V)\) are relatively compact in \(L^2([0,T];H)\) whenever the embedding \(V\hookrightarrow H\) is compact.
+\end{theorem}
+
+\end{document}

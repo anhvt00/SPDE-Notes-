@@ -1,0 +1,878 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in]{geometry}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\title{Lecture 16: Stochastic Reaction-Diffusion Systems}
+\date{12.02.2026}
+\author{Tien Anh Vu}
+
+\begin{document}
+\maketitle
+
+This lecture opens a new chapter on stochastic reaction-diffusion systems after the filtering discussion of the previous lectures. The main themes are the structure of diffusion and reaction terms, the scalar reaction-diffusion equation, and the coercivity and one-sided Lipschitz assumptions that guarantee stability before stochastic forcing is introduced.
+
+\section*{1. Reaction-Diffusion Structure}
+We begin with the deterministic backbone of the chapter before stochastic forcing is added.
+
+\subsection*{1.1. The Two Pillars: Diffusion and Reaction}
+Reaction-diffusion equations balance two competing physical effects.
+
+The first is diffusion. In several spatial dimensions, the diffusion operator has the form
+\[
+\sum_{i,j=1}^d a_{ij}(x)\partial_{ij}v(x).
+\]
+To ensure that this term genuinely spreads mass or heat rather than concentrating it, the operator is assumed to be strictly elliptic:
+\[
+\sum q_i a_{ij} q_j \ge k|q|^2>0
+\]
+for every vector \(q\). The standard isotropic case is \(a_{ij}=\delta_{ij}\), which gives the usual Laplacian. More general coefficients allow diffusion with preferred directions depending on the local medium.
+
+The second ingredient is reaction. This is a zero-order term of the form
+\[
+f(v(x)),
+\]
+typically nonlinear, describing local interactions such as chemical reactions or biological growth and decay.
+
+\subsection*{1.2. The Scalar-Valued Equation}
+To focus on the core structure, we restrict to the scalar-valued case. The main equation is
+\[
+\partial_t v(t,x)=\nu\partial_{xx}v(t,x)+f(v(t,x)).
+\]
+The diffusion term
+\[
+\nu\partial_{xx}v
+\]
+is linear and of highest order. This term controls the spatial regularity of the equation. The lower-order reaction term
+\[
+f(v)
+\]
+is allowed to be nonlinear, since it does not involve derivatives.
+
+\subsection*{1.3. Typical Assumptions: Coercivity}
+To prevent the nonlinear reaction from driving the solution to infinity, one imposes a coercivity condition. A common example is that \(f\) is an odd polynomial such that
+\[
+\lim_{|x|\to\infty}f(x)x=-\infty.
+\]
+This means that for large values of the state, the nonlinearity provides strong negative feedback.
+
+To see the effect of this assumption, we differentiate the \(L^2\)-energy:
+\[
+\frac12\frac{d}{dt}\|v(t,\cdot)\|_{L^2(D)}^2
+=
+\langle \nu\partial_{xx}v(t,\cdot)+f(v(t,\cdot)),v(t,\cdot)\rangle_{L^2(D)}.
+\]
+Expanding the inner product gives two terms. After integration by parts under suitable boundary conditions, the diffusion term becomes
+\[
+-\nu\int_D |\partial_x v(t,x)|^2\,dx,
+\]
+which is non-positive and therefore dissipative. The reaction term is
+\[
+\int_D f(v(t,x))v(t,x)\,dx.
+\]
+Under the coercivity assumption, one can bound it by
+\[
+f(v)v\le M-\alpha v^2.
+\]
+Together these estimates show that the total energy cannot grow without bound, and finite-time blow-up is ruled out.
+
+\subsection*{1.4. Typical Assumptions: One-Sided Lipschitz}
+The second standard hypothesis is the one-sided Lipschitz condition
+\[
+(f(v_1)-f(v_2))(v_1-v_2)\le L(v_1-v_2)^2.
+\]
+Unlike a global Lipschitz condition, this does not force the nonlinearity to have uniformly bounded slope in both directions. It only controls how strongly the function can expand differences in the positive direction.
+
+This is especially useful for nonlinearities such as cubic polynomials, which are not globally Lipschitz but still satisfy a one-sided bound. Combined with coercivity, it ensures that solutions starting from nearby initial data do not diverge uncontrollably and therefore supports uniqueness and stability of the reaction-diffusion system.
+
+\subsection*{1.5. The Road to Stochastic Forcing}
+With diffusion, reaction, coercivity, and one-sided Lipschitz control now in place, the deterministic reaction-diffusion framework is stable enough to support stochastic perturbations. In the next step, one can introduce random forcing and study the corresponding stochastic reaction-diffusion equations within a mathematically controlled setting.
+
+\section*{2. Special Reaction Terms and Traveling Waves}
+With the structural assumptions in place, we can now test them on the canonical nonlinearities that generate traveling fronts.
+
+\subsection*{2.1. Special Case 1: The Fisher--KPP Equation}
+Our first classical example is the Fisher or KPP equation, with reaction term
+\[
+f(v)=v(1-v).
+\]
+This nonlinearity is quadratic, so the strict coercivity assumption from the previous lecture is not fulfilled globally. Its graph is an inverted parabola with roots at
+\[
+0\qquad\text{and}\qquad 1.
+\]
+The equilibrium \(0\) is unstable, while \(1\) is stable. If the state is perturbed slightly above \(0\), the reaction drives it upward. Once it approaches \(1\), the sign of the reaction forces it back toward that equilibrium.
+
+\subsection*{2.2. Special Case 2: The Nagumo Equation}
+The second fundamental example is the Nagumo equation, with cubic reaction term
+\[
+f(v)=v(1-v)(v-a).
+\]
+This nonlinearity has three equilibria:
+\[
+0,\qquad a,\qquad 1.
+\]
+The states \(0\) and \(1\) are stable, while \(a\) is unstable and acts as a threshold. If the state is pushed above \(a\), the reaction term drives it toward \(1\). If it falls below \(a\), it is attracted back to \(0\). This is the canonical bistable reaction structure.
+
+\subsection*{2.3. Numerical Simulation and Physical Meaning}
+When these nonlinearities are coupled with diffusion, numerical simulations reveal coherent structures in the form of moving fronts. The diffusion term spreads the active state into neighboring inactive regions. If a neighbor is pushed past the unstable threshold, it switches into the excited state, and the front continues to propagate.
+
+This mechanism is the mathematical basis of signal propagation in biological tissue. In nerve models, it represents synchronization and wave propagation of electrical activity along an axon.
+
+\subsection*{2.4. The Mathematics of Traveling Waves}
+To study this rigorously, one introduces the traveling-wave Ansatz
+\[
+v(t,x)=\widehat v(x+ct),
+\]
+where \(\widehat v\) is the wave profile and \(c\) is the wave speed. In higher dimensions, a direction \(n\in\mathbb R^d\) with \(\|n\|=1\) is fixed, and the Ansatz becomes
+\[
+v(t,x)=\widehat v(x\cdot n+ct).
+\]
+This reduces the PDE to the study of a profile moving rigidly at constant speed.
+
+\subsection*{2.5. Collapsing the PDE into an ODE}
+Substituting the traveling-wave Ansatz into the scalar reaction-diffusion equation produces a major simplification. The time derivative gives
+\[
+c\widehat v_x,
+\]
+the diffusion term produces
+\[
+\nu\sum_{i=1}^d n_i^2\,\widehat v_{xx},
+\]
+and the reaction term becomes
+\[
+f(\widehat v).
+\]
+Since \(n\) is a unit vector,
+\[
+\sum_{i=1}^d n_i^2=1.
+\]
+The full PDE therefore collapses to the ordinary differential equation
+\[
+c\widehat v_x=\widehat v_{xx}+f(\widehat v).
+\]
+This is the governing ODE for the traveling-wave profile \(\widehat v:\mathbb R\to\mathbb R\). To solve it, one must impose boundary conditions, typically specifying the asymptotic states at the two ends of the wave, such as \(0\) and \(1\).
+
+\section*{3. Explicit Nagumo Waves and Stability}
+The traveling-wave reduction now becomes concrete in the Nagumo model, where the profile can be solved explicitly and then perturbed.
+
+\subsection*{3.1. The Exact Solution to the Nagumo Wave}
+We now study the traveling-wave ODE for the Nagumo equation:
+\[
+c\widehat v_x=\nu \widehat v_{xx}+b\widehat v(1-\widehat v)(\widehat v-a).
+\]
+To solve it, one uses the logistic Ansatz
+\[
+\widehat v(x)=\frac{1}{1+e^{-kx}},
+\qquad k>0.
+\]
+This profile is a smooth monotone transition from \(0\) to \(1\), exactly matching the physical picture of a wave front.
+
+Differentiating the logistic function yields
+\[
+\widehat v_x=k(1-\widehat v)\widehat v.
+\]
+Differentiating once more gives
+\[
+\widehat v_{xx}=k(1-2\widehat v)\widehat v_x
+=
+k^2\widehat v(1-\widehat v)(1-2\widehat v).
+\]
+The remarkable feature is that both derivatives can be written as polynomials in \(\widehat v\), which fits perfectly with the cubic Nagumo reaction term.
+
+\subsection*{3.2. Wave Speed and the Stationary Front}
+Substituting these expressions into the wave ODE leads to explicit parameter relations:
+\[
+k=\sqrt{\frac{b}{2\nu}},
+\qquad
+c=\sqrt{2\nu b}\left(\frac12-a\right).
+\]
+The wave speed therefore depends entirely on the threshold parameter \(a\). If
+\[
+a=\frac12,
+\]
+then
+\[
+c=0.
+\]
+In that case the wave does not move, and the front becomes stationary. This corresponds to a perfect energetic balance between the two stable states \(0\) and \(1\).
+
+\subsection*{3.3. Biological Patterns and Turing Instability}
+These wave fronts have direct physical meaning. In biological systems, they describe the propagation of activity through tissue, such as neural excitation. More generally, reaction-diffusion systems can generate complex spatial patterns through the interaction of diffusion and reaction.
+
+This is closely related to the idea of Turing instability: diffusion, which normally smooths a system, can in the presence of suitable nonlinear reactions destabilize a homogeneous state and create patterns such as stripes, spots, or spirals.
+
+\subsection*{3.4. The Stability Problem}
+The next question is whether the traveling wave is stable. To study this, one perturbs the exact wave profile and writes
+\[
+v(t,x)=\widehat v(x+ct)+u(t,x),
+\]
+where \(u(t,x)\) is the perturbation. The question is whether this error decays or grows over time.
+
+If the perturbation decays, the traveling wave is physically stable under noise and modeling errors. If it grows, the wave profile is not robust.
+
+\subsection*{3.5. Taylor Expansion of the Error Dynamics}
+To obtain the error equation, we substitute the perturbed profile into the original PDE and expand the nonlinear reaction term around the wave profile \(\widehat v\). This gives the linearized operator plus a nonlinear remainder:
+\[
+-\nu\partial_{xx}u(t,x)+bf'(\widehat v(t,x))u(t,x)+R_f(x).
+\]
+The Taylor remainder for the cubic Nagumo nonlinearity is explicitly of the form
+\[
+b(-6\widehat v+2(1+a))u^2(t,x)-bu^3(t,x).
+\]
+It satisfies the bound
+\[
+|R_f(x)|\le Cu^2(t,x)(1+|u(t,x)|).
+\]
+This is the crucial estimate. The remainder is quadratic in the perturbation, so for small errors it is negligible compared with the linear term. Therefore the stability problem reduces to the spectral analysis of the linearized operator
+\[
+\nu\partial_{xx}+bf'(\widehat v).
+\]
+If this linear operator forces small perturbations to decay, then the traveling wave is stable.
+
+\section*{4. Stability, Phase Shifts, and Affine Geometry}
+After obtaining the explicit front and its first perturbation equation, we must refine the very notion of stability to account for translations along the wave manifold.
+
+\subsection*{4.1. The Decay of the Nonlinear Remainder}
+We now return to the nonlinear remainder term from the Taylor expansion. The key observation is that this remainder is quadratic in the perturbation:
+\[
+|R_f(x)|\le Cu(t,x)^2\bigl(1+|u(t,x)|\bigr).
+\]
+This is decisive for the stability analysis. If the perturbation \(u(t,x)\) is already small, then the nonlinear remainder is even smaller. In particular, once the linearized dynamics begin to damp the perturbation, the nonlinear term decays even faster and cannot destabilize the solution.
+
+This is the basic philosophy behind nonlinear stability theory. One first proves that the linearized operator has good decay properties, and then one checks that the higher-order remainder is weak enough to be absorbed by those linear estimates. Because the remainder is of order \(u^2\), it is negligible compared with the leading linear term when \(u\) is small.
+
+\subsection*{4.2. The Main Stability Theorem and the Phase Shift}
+The notes then state the main stability theorem. There exists a threshold \(\delta_0>0\) such that if the initial perturbation is small enough,
+\[
+\|u(0,\cdot)\|_{L^2(\mathbb R)}<\delta_0,
+\]
+then the traveling wave is asymptotically stable. However, the exact statement of stability is more subtle than simple convergence toward the profile \(\widehat v(\cdot+ct)\). The theorem takes the form
+\[
+\|v(t,\cdot)-\widehat v(\cdot+ct+C(t))\|_{L^2(\mathbb R)}
+\le e^{-\nu ct}\|u(0,\cdot)\|_{L^2(\mathbb R)}.
+\]
+The extra term \(C(t)\) is essential. It represents a time-dependent phase shift, correcting the position of the reference wave as time evolves.
+
+This already signals that the relevant notion of stability is not convergence toward one fixed translate of the wave, but convergence toward the whole family of translated waves. A perturbation may not change the shape of the front, but it may move the front slightly to the left or right. The theorem therefore tracks the solution relative to the best moving translate.
+
+\subsection*{4.3. The Geometric Problem of Parallel Waves}
+Why is the phase shift necessary? The reason is geometric. If a perturbation merely shifts the entire traveling wave horizontally, then both the original wave and the shifted wave remain exact solutions of the reaction-diffusion equation, and both travel at the same speed \(c\). Their difference therefore does not decay in the naive frame.
+
+This means that even if the local oscillations of the perturbation disappear, the \(L^2\)-distance to a fixed reference wave may remain constant purely because of translation. The stability problem is therefore not just about damping bumps and wiggles. It is also about correctly identifying the position of the front.
+
+This phenomenon is a standard consequence of translational symmetry. The PDE does not distinguish between \(\widehat v(x+ct)\) and \(\widehat v(x+ct+\theta)\) for any constant shift \(\theta\). Stability can only hold modulo this symmetry, so the analysis must build the shift directly into the formulation.
+
+\subsection*{4.4. Locking the Phase by Orthogonality}
+To choose the correct shift, the notes introduce the distance functional
+\[
+V(\theta)=\|v(\cdot,0)-\widehat v(\cdot+\theta)\|_{L^2}^2.
+\]
+The optimal phase is obtained by minimizing this distance with respect to \(\theta\). Differentiating and setting the derivative equal to zero yields the orthogonality condition
+\[
+\langle \widehat v_x(x+\theta),\,v-\widehat v(\cdot+\theta)\rangle_{L^2}=0.
+\]
+This means that the perturbation is chosen to be perpendicular to the translation mode \(\widehat v_x\). Geometrically, one removes the part of the error that is purely due to horizontal displacement and leaves only the genuinely deforming component.
+
+To maintain this alignment in time, the phase is promoted to a dynamic variable \(C(t)\) satisfying an ordinary differential equation,
+\[
+C'(t)=-m\langle \widehat v_x(\cdot+ct+C(t)),\,v(t,\cdot)-\widehat v(\cdot+ct+C(t))\rangle_{L^2(\mathbb R)},
+\]
+for a sufficiently large constant \(m\). This continuously adjusts the reference wave so that the perturbation stays orthogonal to the neutral translation direction. The notes emphasize that proving existence for this coupled phase equation is delicate, but this mechanism is what restores exponential decay.
+
+\subsection*{4.5. Affine Space and \(L^2\) Integrability}
+The final point on the page addresses an important functional-analytic subtlety. A traveling wave profile \(\widehat v\) connecting \(0\) and \(1\) is not itself square integrable over the whole real line:
+\[
+\widehat v\notin L^2(\mathbb R).
+\]
+Indeed, the profile approaches a nonzero constant at one end of the line, so its square cannot have finite integral over all of \(\mathbb R\).
+
+What is square integrable is the difference between two such profiles, or between a solution and a shifted profile. This difference is localized near the transition layer, and therefore belongs to \(L^2(\mathbb R)\). That is why the correct decomposition is
+\[
+v(t,x)=\widehat v(x+ct)+u(t,x),
+\]
+with the perturbation \(u(t,x)\in L^2(\mathbb R)\). The traveling wave acts as a reference state, while the actual dynamical variable is the localized error measured relative to that reference.
+
+This is naturally described as an affine space rather than a linear space. We do not solve the variational problem directly for the full wave profile, since the wave itself lies outside \(L^2\). Instead, we solve for the perturbation inside the affine space obtained by translating the wave and adding an \(L^2\)-error. This resolves the geometric phase-shift issue and provides the correct framework for proving asymptotic stability of biological traveling fronts.
+
+\section*{5. Sketch of the Stability Proof}
+With the geometric phase correction fixed, the notes can now return to the energy method and close the nonlinear stability argument.
+
+\subsection*{5.1. The Energy Derivative}
+We now complete the stability analysis by deriving an energy estimate for the perturbation \(u(t,x)\). As usual, the natural energy is the squared \(L^2\)-norm. Differentiating this energy in time and using the perturbation equation yields
+\[
+\frac12\frac{d}{dt}\|u(t)\|_{L^2}^2
+=\langle \nu\partial_{xx}u(t)+bf'(\widehat v)u(t),u(t)\rangle
++\langle R_f(x),u(t)\rangle.
+\]
+This identity cleanly separates the dynamics into two pieces. The first inner product contains the linearized operator, built from diffusion and the derivative of the reaction term evaluated at the wave profile. The second inner product contains the nonlinear Taylor remainder.
+
+The whole proof now turns on showing that the linear part gives a strict dissipative contribution, while the nonlinear term remains small enough to be absorbed. This is the standard energy method, but here it is sharpened by the geometry of the traveling wave.
+
+\subsection*{5.2. Expanding the Linear Part and the Spectral Gap}
+We next expand the first inner product. After integrating by parts in the diffusion term, we obtain
+\[
+-\nu\int (\partial_x u(t,x))^2\,dx
++b\int f'(\widehat v(x+ct))u(t,x)^2\,dx.
+\]
+The diffusion term is manifestly negative and therefore dissipative. The subtle point lies in the reaction term, whose sign is not obviously negative. This is exactly where the phase-locking argument from the previous page enters.
+
+Without the orthogonality condition against the translation mode, the linearized operator would possess a neutral direction and we could not expect strict decay. Once the phase shift has been chosen correctly, however, the linearized operator acquires a spectral gap. The notes summarize this as the bound
+\[
+\langle \nu\partial_{xx}u+bf'(\widehat v)u,u\rangle
+\le -k_r\|u\|_{H^{1,2}(\mathbb R)}^2
+\]
+for some constant \(k_r>0\). This is the core linear stability estimate. It says that, after removing the translation mode, the linearized dynamics strictly damp perturbations in the Sobolev norm.
+
+\subsection*{5.3. The Sobolev Embedding Trick}
+The remaining problem is the nonlinear remainder. The notes estimate it by cubic terms of the form
+\[
+\le \frac{b}{2}(4+a)\int u(t,x)^3\,dx.
+\]
+To control this cubic integral using quadratic energy norms, the page inserts a supplementary one-dimensional Sobolev estimate. Starting from the fundamental theorem of calculus, one obtains
+\[
+u(x)^2
+=2\int_{-\infty}^x u_x(t)\,u(t)\,dx
+\le \int_{-\infty}^x u_x^2\,dx+\int_{-\infty}^x u^2\,dx
+\le \|u\|_{H^{1,2}}^2.
+\]
+This proves that the pointwise size of \(u\) is controlled by its \(H^{1,2}\)-norm. In particular,
+\[
+\sup_x |u(x)|\le \|u\|_{H^{1,2}}.
+\]
+With this in hand, the cubic integral becomes manageable:
+\[
+\int u^3\,dx\le \sup_x|u(x)|\int u^2\,dx
+\le \|u\|_{H^{1,2}}\|u\|_{L^2}^2.
+\]
+Thus the nonlinear term is controlled entirely by the same Sobolev norms that already appear in the linear energy estimate.
+
+\subsection*{5.4. The Master Inequality}
+Combining the linear spectral-gap estimate with the bound on the nonlinear remainder gives the master inequality
+\[
+\frac12\frac{d}{dt}\|u(t)\|_{L^2}^2
+\le
+-\Bigl(k_r-\frac{b}{2}(4+a)\|u\|_{L^2}\Bigr)\|u\|_{H^{1,2}}^2.
+\]
+This is the decisive step in the proof. The sign of the time derivative is controlled by the bracketed factor. If the \(L^2\)-norm of the perturbation is sufficiently small, then the positive quantity \(k_r\) dominates the nonlinear correction, and the whole right-hand side stays negative.
+
+In other words, once the perturbation enters a sufficiently small neighborhood of the wave, the energy must decrease. The nonlinear term is not strong enough to reverse the linear damping, because its size is itself proportional to the small error.
+
+\subsection*{5.5. Forward Invariance and Stability}
+The page concludes by turning this inequality into a geometric dynamical statement. If the initial error satisfies a smallness condition of the schematic form
+\[
+\|u\|_{L^2}\le \frac{2k_r}{b(4+a)},
+\]
+then the bracket in the master inequality remains positive and therefore
+\[
+\frac{d}{dt}\|u(t)\|_{L^2}^2<0.
+\]
+Hence the \(L^2\)-energy is strictly decreasing in time. The ball defined by this threshold is therefore forward invariant under the perturbation dynamics: once the solution starts inside it, it can never leave it.
+
+This completes the proof sketch of nonlinear stability. Small perturbations of the traveling wave are continuously suppressed by the interplay between diffusion, the spectral gap of the linearized operator, and the quadratic smallness of the nonlinear remainder. The traveling front is therefore not just an exact formal solution, but a robust physical structure. In the biological interpretation, a nerve pulse or propagating activation front remains coherent under small disturbances and relaxes back toward the wave family rather than disintegrating.
+
+\section*{6. Correcting the Spectral Estimate by Phase Adaptation}
+The previous energy estimate still hid one subtle flaw, so we now sharpen the spectral bound by separating tangential and normal directions.
+
+\subsection*{6.1. The Correction: The True Spectral Bound}
+We now return to the warning from the previous page. The naive assumption that the linearized operator is strictly negative on all perturbations is not correct. The notes replace it with the true spectral estimate
+\[
+\langle \nu\partial_{xx}u+f'(\widehat v)\cdot u,u\rangle
+\le -k_r\|u\|_{H^{1,2}}^2 + C_r\langle u,\widehat v_x\rangle^2.
+\]
+This is the correct form of the linear bound. The first term is the strict dissipative contribution we wanted, while the second term is a positive correction measuring the size of the perturbation in the special direction \(\widehat v_x\).
+
+The constants are explicitly tied to the reaction-diffusion system. The decay rate \(k_r\) depends on the diffusion strength, the reaction coefficient, and the threshold parameter \(a\), while \(C_r\) quantifies the size of the unstable geometric correction. The essential point is not the exact numerical value of these constants, but the structure of the estimate: linear decay holds only up to a single tangential mode.
+
+\subsection*{6.2. The Geometry of the Wave Manifold}
+To understand the extra positive term, the notes introduce the manifold of translated waves
+\[
+M=\{\widehat v(\cdot+c):c\in\mathbb R\}.
+\]
+This manifold is the orbit generated by shifting the traveling profile horizontally. Every element of this family is again a valid traveling wave, so the PDE cannot distinguish between them.
+
+The tangent vector to this manifold is precisely the spatial derivative of the profile,
+\[
+\widehat v_x.
+\]
+This explains the positive term in the spectral bound. If the perturbation \(u\) points in the tangential direction, then it is not deforming the shape of the wave at all; it is merely shifting the wave along the manifold of translates. In the normal directions, the dynamics contract and force the perturbation to decay. In the tangential direction, there is no such contraction, because translation symmetry prevents the PDE from selecting one preferred location.
+
+\subsection*{6.3. The Master Energy Equation}
+The stability analysis must therefore be carried out relative to a moving reference wave rather than a fixed one. We measure the energy of the difference
+\[
+v(t,\cdot)-\widehat v(\cdot+ct+C(t)),
+\]
+where the additional phase function \(C(t)\) is allowed to vary in time. Differentiating the squared \(L^2\)-distance gives the master identity
+\[
+\frac12\frac{d}{dt}\|v(t,\cdot)-\widehat v(\cdot+ct+C(t))\|_{L^2}^2=\cdots.
+\]
+When the derivative is expanded, one recovers the familiar diffusion term, the linearized reaction term, and the nonlinear Taylor remainder. But there is now one new contribution coming from the time dependence of the phase:
+\[
++C'(t)\langle \widehat v_x(\cdot+ct+C(t)),\,v-\widehat v\rangle.
+\]
+This extra term is exactly what allows the tangential instability to be neutralized.
+
+\subsection*{6.4. Absorbing the Tangential Error}
+The notes now substitute the phase-locking ordinary differential equation introduced earlier,
+\[
+C'(t)=-M\langle \widehat v_x,\,v-\widehat v\rangle,
+\]
+with a gain parameter \(M>0\). Once inserted into the master energy identity, this creates a new negative quadratic term,
+\[
+-M\langle \widehat v_x,\,v-\widehat v\rangle^2.
+\]
+This is the crucial mechanism. The moving phase is not just a geometric convenience; it actively contributes dissipation in the one direction where the PDE itself fails to contract.
+
+Combining this phase contribution with the corrected spectral estimate yields
+\[
+\le -k_r\|v-\widehat v\|_{H^{1,2}}^2 + (C_r-M)\langle \widehat v_x,\,v-\widehat v\rangle^2.
+\]
+The tangential mode has therefore been isolated and explicitly controlled. By choosing the phase adaptation strong enough, we can force the previously dangerous term to become negative.
+
+\subsection*{6.5. The Grand Conclusion}
+The whole argument now reduces to one final inequality:
+\[
+C_r-M<0
+\qquad\text{whenever}\qquad
+M>C_r.
+\]
+If we choose the phase-tracking gain \(M\) larger than the geometric constant \(C_r\), then the tangential correction is strictly negative. Together with the normal dissipative term \(-k_r\|v-\widehat v\|_{H^{1,2}}^2\), this makes the full energy derivative negative.
+
+Hence, provided the initial perturbation is sufficiently small in \(L^2\), the shifted error decays and the traveling wave is asymptotically stable. The perturbation may momentarily alter the phase of the wave, but the adaptive shift \(C(t)\) absorbs this drift, while the remaining shape error is forced to zero.
+
+This closes the stability proof. The apparent flaw in the spectral argument was not a failure of the traveling-wave picture, but a reflection of the underlying symmetry of the equation. Once that symmetry is handled correctly through the moving phase, the wave is proved to be robust. A biological traveling front can absorb small disturbances, adjust its timing, and continue propagating without losing its coherent structure.
+
+\section*{7. Stochastic Stability of Traveling Waves}
+Once deterministic phase stability is understood, the natural next question is how much of it survives under persistent stochastic forcing.
+
+\subsection*{7.1. The Stochastic Reaction-Diffusion Equation}
+We now leave the purely deterministic setting and reintroduce stochastic forcing. The traveling-wave equation becomes the stochastic reaction-diffusion SPDE
+\[
+dv(t,x)=\bigl[\nu\partial_{xx}v(t,x)+f(v(t,x))\bigr]dt+\varepsilon\,dW_t.
+\]
+The deterministic part is unchanged: diffusion continues to smooth the profile and the nonlinear reaction continues to create and maintain the wave front. The new term \(\varepsilon\,dW_t\) models continuous environmental fluctuations through space-time white noise, scaled by a small parameter \(\varepsilon\).
+
+When \(\varepsilon=0\), we recover the deterministic theory from the previous lectures. But once noise is present, the perturbation can no longer be expected to decay all the way to zero. Random fluctuations are injected at every instant, so the error around the wave will keep vibrating. The relevant question is therefore no longer whether the error vanishes, but whether it remains uniformly small over long time intervals.
+
+\subsection*{7.2. The Random Phase Shift}
+To describe the noisy wave, the notes use the same decomposition as before,
+\[
+v(t,x)=\widehat v(x+ct+C(t))+u(t,x).
+\]
+The crucial difference is that the phase shift \(C(t)\) is now random. In the deterministic theory, \(C(t)\) was chosen by an ODE that tracked the correct translate of the wave. Once the environment pushes the front around by stochastic forcing, this phase itself becomes a stochastic process.
+
+This is geometrically natural. The noise does not only deform the shape of the wave; it also jitters the wave left and right along its manifold of translates. The random phase shift absorbs that tangential motion, leaving the remainder \(u(t,x)\) to represent only the genuine shape fluctuation around the moving stochastic front.
+
+\subsection*{7.3. The Linearized Approximation \(Z_t\)}
+The true nonlinear perturbation \(u(t,x)\) is difficult to analyze directly, so the notes introduce a linearized approximation at noise scale \(\varepsilon\),
+\[
+u(t,x)\approx \varepsilon Z(t,x).
+\]
+The process \(Z_t\) solves the stochastic evolution equation
+\[
+dZ_t=\bigl(\nu\partial_{xx}+f'(\widehat v(\cdot+ct+C(t)))\bigr)Z_t\,dt+dW_t.
+\]
+This is the natural stochastic analogue of the linearized stability equation from the deterministic setting. Formally, one may write the mild form
+\[
+Z_t=e^{tL}Z_0+\int_0^t e^{(t-s)L}\,dW_s.
+\]
+However, the notes stress that this is not a standard Ornstein-Uhlenbeck process. The reason is that the linear operator itself depends on the random phase \(C(t)\). The coefficients of the linear equation therefore fluctuate in time, and the usual stationary Gaussian OU theory does not apply directly.
+
+\subsection*{7.4. Bounding the Approximation Error and the Stopping Time}
+Despite this complication, the key result is that the linearized approximation remains very accurate on long time intervals. The notes state the bound
+\[
+\sup_{t\le T}\|u_t-\varepsilon Z_t\|_{L^2(\mathbb R)}
+\le C\varepsilon^{\,1-2q}.
+\]
+This means that the true nonlinear perturbation is uniformly approximated by the linear stochastic process \(\varepsilon Z_t\), with an error that is of strictly higher order in \(\varepsilon\).
+
+The estimate is valid up to a stopping time \(T\), defined by the moment when the perturbation becomes too large in either \(L^2\) or \(H^{1,2}\):
+\[
+T=\inf\Bigl\{t>0:\|u_t\|_{L^2}\vee
+\Bigl(\int_0^t\|u_s\|_{H^{1,2}}^2\,ds\Bigr)^{1/2}\ge \cdots \Bigr\}.
+\]
+This stopping time acts as a safety threshold. As long as the perturbation remains inside the controlled small-noise regime, the linearized approximation and the stochastic stability estimates remain valid. If the perturbation ever grows too large, the argument is stopped before the nonlinear terms become dominant.
+
+\subsection*{7.5. Metastability}
+The final conclusion of the page is the asymptotic behavior of this stopping time as the noise level tends to zero:
+\[
+T\to\infty
+\qquad\text{as}\qquad
+\varepsilon\downarrow 0
+\quad (q>0).
+\]
+Thus, if the environmental noise is weak, the perturbation remains controlled for extremely long times. The traveling wave does not collapse immediately under stochastic forcing. Instead, it persists as a metastable structure: it continues to propagate, while experiencing only small random deformations and random shifts in phase.
+
+This is the stochastic counterpart of the deterministic stability theorem. The wave is no longer perfectly rigid, but it is still robust. Diffusion and the linearized restoring mechanism suppress local disturbances, while the random phase shift absorbs the translational wandering. The result is a biologically realistic picture: traveling fronts in noisy media survive for very long periods, even though the surrounding environment is constantly injecting randomness into the system.
+
+\section*{8. Limits of Phase Tracking and Gradient Structure}
+The stochastic analysis reveals both the strength and the limits of phase tracking, and it motivates a broader structural viewpoint on the underlying dynamics.
+
+\subsection*{8.1. The Breakdown of the Phase Shift}
+We begin the final page by writing the shifted decomposition once more:
+\[
+V(t,x)=\widehat V(x+ct+\xi_0)+u(t,x).
+\]
+Here the phase parameter \(\xi_0\) is chosen by minimizing the distance to the reference wave,
+\[
+\xi_0=\operatorname*{argmin}\|V(t,\cdot)-\widehat V(\cdot+ct+\xi_0)\|_{L^2}^2.
+\]
+At first sight this looks like a perfect continuation of the deterministic strategy. We simply slide the profile until it best matches the noisy physical state. However, the notes immediately warn that this minimization is not always well defined once stochastic forcing acts over long times.
+
+The reason is that the noise can produce an unbounded accumulated effect. Brownian forcing does not settle down, and the fluctuations in the front region may grow so large that the shape of the wave is no longer cleanly identifiable. If the top plateau and transition region are heavily distorted, then it is no longer obvious that there is one single sharp front to align with. The \(L^2\)-minimization problem may then become ambiguous or unstable, and the phase variable ceases to be a reliable global coordinate.
+
+\subsection*{8.2. The Multivariate Challenge: FitzHugh--Nagumo}
+The notes then pivot to a broader biological reality: scalar reaction-diffusion equations are only the first step. Real excitable media are often described by multicomponent systems. The canonical example is the FitzHugh--Nagumo model,
+\[
+\partial_t v_t=\Delta v_t+f(v_t)-w_t,
+\]
+\[
+\partial_t w_t=\varepsilon(v_t-\gamma w_t).
+\]
+The variable \(v_t\) is the fast voltage component, while \(w_t\) is the slow recovery variable. Together they produce the isolated pulse, or bump solution, associated with a genuine nerve signal.
+
+Unlike the scalar Nagumo front, this two-component system does not admit a simple explicit formula for the traveling pulse. There is no logistic closed-form profile to insert by hand. One must instead analyze the coupled system through linearization, numerical continuation, and spectral arguments.
+
+\subsection*{8.3. The Coupled Linearization and Oscillatory Behavior}
+When the FitzHugh--Nagumo system is linearized around a pulse, the resulting operator has a block structure of the form
+\[
+\begin{bmatrix}
+\nu\Delta+f'(u) & -1 \\
+\varepsilon & -\varepsilon\gamma
+\end{bmatrix}
+\begin{bmatrix}
+v\\
+w
+\end{bmatrix}.
+\]
+The off-diagonal entries are the key new difficulty. They encode the coupling between the fast and slow variables. In the scalar case, one essentially tracks one profile and one translation mode. In the multicomponent case, the spectrum may combine diffusion, reaction, and coupling in many different ways.
+
+This opens the door to qualitatively new long-time behavior. Instead of simply converging toward a stable wave or equilibrium, the system may oscillate. The notes highlight this by mentioning limit cycles. In a multidimensional phase space, the solution can circulate around a stable closed orbit rather than settling to a fixed state. This is exactly the kind of mechanism that supports rhythmic biological behavior such as repeated firing or oscillatory recovery.
+
+\subsection*{8.4. The Breakthrough: Infinite-Dimensional Gradient Flows}
+To recover structure from this complexity, the notes introduce a major conceptual breakthrough: gradient-flow formulations. For the scalar reaction-diffusion equation, the deterministic dynamics can be rewritten as
+\[
+V_t=-\nabla\Phi(V_t),
+\]
+where \(\Phi\) is an energy functional on an infinite-dimensional function space.
+
+This is powerful because gradient systems come with a built-in monotonicity principle. They behave like a ball rolling downhill on an energy landscape: the solution is always driven toward lower energy states. This point of view bypasses some of the direct PDE complexity and replaces it with a variational picture of energy descent.
+
+\subsection*{8.5. The Energy Functional}
+The notes define the energy by
+\[
+\Phi(v)=\frac{\nu}{2}\int v_x^2\,dx-\int F(v)\,dx,
+\qquad\text{where}\qquad
+F'=f.
+\]
+The first term is the spatial kinetic energy generated by diffusion, while the second term is the potential energy associated with the reaction nonlinearity. Differentiating along the flow yields the key identity
+\[
+\frac{d}{dt}\Phi(V_t)=-\|\nabla\Phi(V_t)\|^2\le 0.
+\]
+So the energy is always nonincreasing. This is the decisive structural fact. A pure gradient system cannot sustain arbitrary oscillation or unbounded growth; it must move downhill through the energy landscape until it approaches a stable critical point or a stable wave-like configuration.
+
+This closes the chapter with a broad perspective. Phase adaptation works beautifully for scalar waves but becomes fragile under large stochastic distortion. Multicomponent biological models introduce coupling and oscillatory phenomena that are far more subtle. Yet underneath this complexity, the gradient-flow viewpoint reveals a deep organizing principle: stability can often be recovered by identifying the hidden energy that the system is dissipating.
+
+\section*{9. Calculating the Gradient Flow Structure}
+That broader viewpoint culminates in the gradient-flow formulation, which we now compute directly from the energy functional.
+
+\subsection*{9.1. The Functional Derivative}
+We now justify the gradient-flow formulation rigorously by differentiating the energy functional itself. In the infinite-dimensional setting, the correct notion of derivative is the G\^ateaux derivative. For a functional \(\Phi\) and a perturbation direction \(h\), it is defined by
+\[
+\nabla\Phi(v)h
+=
+\left.\frac{d}{d\varepsilon}\Phi(v+\varepsilon h)\right|_{\varepsilon=0}.
+\]
+This is the analogue of directional differentiation in ordinary calculus, except that the variable being perturbed is a whole function rather than a single scalar.
+
+We apply this to the diffusion part of the energy,
+\[
+\frac{\nu}{2}\int v_x^2\,dx.
+\]
+Substituting the perturbed state \(v+\varepsilon h\) gives
+\[
+\left.\frac{d}{d\varepsilon}\frac{\nu}{2}\int (v+\varepsilon h)_x^2\,dx\right|_{\varepsilon=0}.
+\]
+The goal is to rewrite this in a form where the perturbation \(h\) appears explicitly and can be identified with the action of the gradient.
+
+\subsection*{9.2. Expanding the Perturbation}
+The key algebraic step is to expand the square:
+\[
+(v_x+\varepsilon h_x)^2
+=v_x^2+2\varepsilon h_xv_x+\varepsilon^2 h_x^2.
+\]
+Differentiating this expression with respect to \(\varepsilon\) and then evaluating at \(\varepsilon=0\) removes the zeroth-order term, kills the quadratic \(\varepsilon^2\)-term, and leaves only the linear contribution. Thus
+\[
+\left.\frac{d}{d\varepsilon}\frac{\nu}{2}\int (v_x+\varepsilon h_x)^2\,dx\right|_{\varepsilon=0}
+=\nu\int v_xh_x\,dx.
+\]
+This is the first concrete formula for the functional derivative of the diffusion energy. It shows that the energy changes linearly with the interaction between the gradient of the state and the gradient of the perturbation.
+
+\subsection*{9.3. Integration by Parts and the Diffusion Operator}
+To identify the actual gradient operator, we now shift the derivative away from the test function \(h_x\). Using integration by parts, and assuming suitable boundary behavior so that boundary terms vanish, we obtain
+\[
+\nu\int v_xh_x\,dx
+=-\nu\int v_{xx}h\,dx.
+\]
+This is the decisive step. It means that the variational derivative of the diffusion energy is exactly the negative Laplacian term:
+\[
+\nabla\Phi_{\mathrm{diff}}(v)=-\nu v_{xx}.
+\]
+So the diffusion operator is not just a convenient analytic term in the PDE; it is literally the gradient of the spatial energy. In the gradient-flow formulation, the evolution equation drives the system in the direction of steepest descent of this functional.
+
+\subsection*{9.4. The Double-Well Energy Landscape}
+The notes then turn to the reaction part of the equation and interpret it geometrically. If \(F'=f\), then the potential contribution to the energy is given by
+\[
+-\int F(v)\,dx.
+\]
+For the Nagumo nonlinearity, the associated potential \(F\) has the shape of a double-well potential. The stable roots \(0\) and \(1\) of the reaction force correspond to the two valleys of this landscape, while the unstable threshold \(a\) becomes the hilltop between them.
+
+This picture gives immediate physical intuition. A state near one of the stable equilibria sits near the bottom of a well. To move from one state to the other, the system must be pushed over the energy barrier at the threshold. Diffusion provides that push by coupling neighboring points in space. Once the state crosses the barrier, the reaction term drives it downhill into the opposite well. This is the energetic mechanism behind bistability and traveling-wave propagation.
+
+\subsection*{9.5. The Multivariate Limitation}
+The final observation on the page is a limitation of this elegant picture. The scalar reaction-diffusion equation fits beautifully into a gradient-flow framework, but this does not extend automatically to multicomponent systems such as FitzHugh--Nagumo. In the multivariate case, the coupling between variables creates rotational effects, and there is in general no single scalar potential whose negative gradient reproduces the full dynamics.
+
+This means that the double-well energy picture, while extremely powerful in the scalar setting, cannot fully describe the richer behavior of coupled biological systems. Oscillations, phase rotation, and limit cycles may appear precisely because the dynamics are no longer forced to move monotonically downhill in one scalar energy landscape.
+
+So this final page marks both a culmination and a boundary. It confirms that scalar reaction-diffusion waves can be understood through a clean variational principle, but it also explains why more sophisticated spectral, stochastic, and geometric techniques become necessary as soon as one enters the genuinely multivariate world of biological excitable media.
+
+\section*{Appendix}
+
+\subsection*{A.1. Strict Ellipticity}
+\begin{definition}
+A second-order operator is strictly elliptic if its coefficient matrix satisfies a positive lower bound on the associated quadratic form.
+\end{definition}
+
+\subsection*{A.2. Reaction Term}
+\begin{definition}
+A reaction term is a zero-order nonlinear term acting pointwise on the state, such as \(f(v)\).
+\end{definition}
+
+\subsection*{A.3. Scalar Reaction-Diffusion Equation}
+\begin{definition}
+A scalar reaction-diffusion equation combines linear diffusion with a nonlinear reaction term for a single scalar state variable.
+\end{definition}
+
+\subsection*{A.4. Coercivity}
+\begin{definition}
+Coercivity is a condition ensuring that the nonlinearity contributes enough negative feedback at large amplitudes to prevent blow-up.
+\end{definition}
+
+\subsection*{A.5. One-Sided Lipschitz Condition}
+\begin{definition}
+A one-sided Lipschitz condition controls the growth of differences under the nonlinearity in a single signed direction and is weaker than global Lipschitz continuity.
+\end{definition}
+
+\subsection*{A.6. Fisher--KPP Equation}
+\begin{definition}
+The Fisher--KPP equation is a reaction-diffusion equation with quadratic reaction term \(f(v)=v(1-v)\), modeling invasion and growth phenomena.
+\end{definition}
+
+\subsection*{A.7. Nagumo Equation}
+\begin{definition}
+The Nagumo equation is a bistable reaction-diffusion model with cubic reaction term \(f(v)=v(1-v)(v-a)\).
+\end{definition}
+
+\subsection*{A.8. Traveling Wave}
+\begin{definition}
+A traveling wave is a solution of the form \(v(t,x)=\widehat v(x+ct)\) or \(v(t,x)=\widehat v(x\cdot n+ct)\), where the profile moves without changing shape.
+\end{definition}
+
+\subsection*{A.9. Bistable Threshold}
+\begin{definition}
+In a bistable system, the unstable equilibrium acts as a threshold separating the basins of attraction of two stable states.
+\end{definition}
+
+\subsection*{A.10. Wave Profile ODE}
+\begin{definition}
+The wave profile ODE is the ordinary differential equation obtained by substituting the traveling-wave Ansatz into the reaction-diffusion PDE.
+\end{definition}
+
+\subsection*{A.11. Logistic Profile}
+\begin{definition}
+The logistic profile
+\[
+\widehat v(x)=\frac{1}{1+e^{-kx}}
+\]
+is a monotone transition layer commonly used to construct explicit traveling-wave solutions.
+\end{definition}
+
+\subsection*{A.12. Wave Speed}
+\begin{definition}
+The wave speed \(c\) is the constant velocity at which the traveling-wave profile propagates through space.
+\end{definition}
+
+\subsection*{A.13. Stationary Front}
+\begin{definition}
+A stationary front is a traveling-wave profile with speed \(c=0\), so the interface does not move in time.
+\end{definition}
+
+\subsection*{A.14. Linearized Operator}
+\begin{definition}
+The linearized operator is the differential operator obtained by Taylor expanding the nonlinear PDE around a special solution such as a traveling wave.
+\end{definition}
+
+\subsection*{A.15. Taylor Remainder}
+\begin{definition}
+The Taylor remainder collects the higher-order nonlinear terms left after linearization. Its size determines whether the linear approximation is valid for small perturbations.
+\end{definition}
+
+\subsection*{A.16. Phase Shift}
+\begin{definition}
+A phase shift is a time-dependent spatial translation used to align a perturbed traveling wave with the closest reference profile.
+\end{definition}
+
+\subsection*{A.17. Translation Mode}
+\begin{definition}
+The translation mode is the neutral direction generated by spatial shifts of the wave profile, typically represented by \(\widehat v_x\).
+\end{definition}
+
+\subsection*{A.18. Orthogonality Condition}
+\begin{definition}
+An orthogonality condition fixes the phase of a traveling wave by requiring the perturbation to be perpendicular to the translation mode.
+\end{definition}
+
+\subsection*{A.19. Affine Space}
+\begin{definition}
+An affine space is a translated linear space, such as the family of states obtained by adding an \(L^2\)-perturbation to a fixed traveling-wave profile.
+\end{definition}
+
+\subsection*{A.20. Asymptotic Stability}
+\begin{definition}
+Asymptotic stability means that solutions starting close to a reference wave converge, up to symmetry corrections such as translation, back toward the wave as time tends to infinity.
+\end{definition}
+
+\subsection*{A.21. Spectral Gap}
+\begin{definition}
+The spectral gap is the strictly positive decay rate separating the neutral translation mode from the remaining stable spectrum of the linearized operator.
+\end{definition}
+
+\subsection*{A.22. Energy Method}
+\begin{definition}
+The energy method proves stability by differentiating a norm of the solution and showing that the resulting time derivative is negative.
+\end{definition}
+
+\subsection*{A.23. Sobolev Embedding in One Dimension}
+\begin{definition}
+In one spatial dimension, \(H^{1,2}\)-control yields pointwise control of the function, allowing cubic terms to be estimated by quadratic energies.
+\end{definition}
+
+\subsection*{A.24. Forward Invariant Set}
+\begin{definition}
+A forward invariant set is a region of phase space such that any solution starting inside it remains inside it for all future times.
+\end{definition}
+
+\subsection*{A.25. Energy Decay}
+\begin{definition}
+Energy decay means that the chosen norm of the perturbation decreases in time, indicating stability of the underlying wave profile.
+\end{definition}
+
+\subsection*{A.26. Wave Manifold}
+\begin{definition}
+The wave manifold is the family of all spatial translates of a traveling-wave profile, viewed as an orbit under translation.
+\end{definition}
+
+\subsection*{A.27. Tangential Direction}
+\begin{definition}
+The tangential direction is the neutral direction along the wave manifold, generated by the derivative of the profile with respect to spatial shifts.
+\end{definition}
+
+\subsection*{A.28. Phase Adaptation}
+\begin{definition}
+Phase adaptation is the use of a time-dependent shift \(C(t)\) to keep a perturbed solution aligned with the nearest translate of the traveling wave.
+\end{definition}
+
+\subsection*{A.29. Corrected Spectral Estimate}
+\begin{definition}
+A corrected spectral estimate separates strict decay in normal directions from neutral or weakly unstable behavior in the tangential translation mode.
+\end{definition}
+
+\subsection*{A.30. Stability Modulo Translation}
+\begin{definition}
+Stability modulo translation means that a perturbed solution converges to some translated traveling wave, rather than necessarily to one fixed reference profile.
+\end{definition}
+
+\subsection*{A.31. Stochastic Stability}
+\begin{definition}
+Stochastic stability means that a traveling wave remains close to its wave manifold under random forcing, typically in a probabilistic or high-probability sense over long times.
+\end{definition}
+
+\subsection*{A.32. Random Phase Shift}
+\begin{definition}
+A random phase shift is a noise-dependent translation process that tracks the stochastic motion of a traveling wave along its manifold of spatial translates.
+\end{definition}
+
+\subsection*{A.33. Linearized Stochastic Approximation}
+\begin{definition}
+A linearized stochastic approximation replaces the full nonlinear perturbation by a linear stochastic equation that captures the leading-order effect of weak noise.
+\end{definition}
+
+\subsection*{A.34. Stopping Time}
+\begin{definition}
+A stopping time is a random time at which a control threshold is first violated, and is used to localize stochastic estimates.
+\end{definition}
+
+\subsection*{A.35. Metastability}
+\begin{definition}
+Metastability means that a system remains close to a stable configuration for very long times, even though weak noise prevents exact convergence to a fixed state.
+\end{definition}
+
+\subsection*{A.36. Phase Minimization}
+\begin{definition}
+Phase minimization selects a spatial shift by minimizing the distance between a perturbed profile and the family of translated reference waves.
+\end{definition}
+
+\subsection*{A.37. FitzHugh--Nagumo System}
+\begin{definition}
+The FitzHugh--Nagumo system is a coupled reaction-diffusion model with a fast voltage variable and a slow recovery variable used to describe excitable media.
+\end{definition}
+
+\subsection*{A.38. Limit Cycle}
+\begin{definition}
+A limit cycle is a stable periodic orbit in phase space to which nearby trajectories may converge.
+\end{definition}
+
+\subsection*{A.39. Gradient Flow}
+\begin{definition}
+A gradient flow is an evolution equation driven by the negative gradient of an energy functional, causing the energy to decrease over time.
+\end{definition}
+
+\subsection*{A.40. Energy Functional}
+\begin{definition}
+An energy functional assigns a scalar energy value to each state of the system and is used to describe variational stability and dissipation.
+\end{definition}
+
+\subsection*{A.41. G\^ateaux Derivative}
+\begin{definition}
+The G\^ateaux derivative is the directional derivative of a functional, obtained by perturbing the state in an arbitrary direction and differentiating with respect to the perturbation size.
+\end{definition}
+
+\subsection*{A.42. Variational Derivative}
+\begin{definition}
+The variational derivative identifies the operator that represents the first-order change of an energy functional under arbitrary perturbations.
+\end{definition}
+
+\subsection*{A.43. Double-Well Potential}
+\begin{definition}
+A double-well potential is an energy landscape with two local minima separated by an unstable barrier, commonly associated with bistable reaction terms.
+\end{definition}
+
+\subsection*{A.44. Energy Barrier}
+\begin{definition}
+An energy barrier is the unstable intermediate level that a system must cross to move from one stable well to another.
+\end{definition}
+
+\subsection*{A.45. Gradient-Flow Limitation}
+\begin{definition}
+The gradient-flow limitation refers to the fact that many multicomponent systems cannot be written as the negative gradient of a single scalar potential.
+\end{definition}
+
+\end{document}

@@ -1,0 +1,819 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in]{geometry}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\title{Lecture 9: Compactness Methods, Aubin-Lions, and Variational SPDEs}
+\date{11.12.2025}
+\author{Tien Anh Vu}
+
+\begin{document}
+\maketitle
+
+This lecture develops the compactness method for nonlinear parabolic equations and then extends the variational framework to stochastic evolution equations. The main themes are the Aubin-Lions Lemma, strong convergence from compact embeddings, and stochastic energy estimates for Galerkin approximations of SPDEs.
+
+\section*{1. Compactness Method for Nonlinear Parabolic Equations}
+
+\subsection*{1.1. Re-establishing the Functional Framework}
+We begin with the spaces in which the solutions live. The entire framework is built on the Gelfand triple
+\[
+V\hookrightarrow H\cong H' \hookrightarrow V'.
+\]
+Without loss of generality, we assume that the \(H\)-norm is strictly bounded by the \(V\)-norm:
+\[
+\|u\|_H\le \|u\|_V.
+\]
+
+We are studying the evolution equation defined by
+\[
+\frac{du}{dt}=Au+f\in V'.
+\]
+Here, \(f\) is our source term belonging to \(L^2([0,T];V')\), and the equation is subject to the initial condition
+\[
+u(0)=u_0\in H.
+\]
+Our operator \(A\) maps \(V\) to \(V'\), that is,
+\[
+A:V\to V',
+\]
+and satisfies the coercivity bound
+\[
+\langle Au,u\rangle_{V',V}\le -\alpha\|u\|_V^2+\lambda\|u\|_H^2
+\]
+for some \(\alpha>0\) and \(\lambda\in\mathbb R\).
+
+The goal is to prove that a unique solution \(u\) exists and belongs to
+\[
+C([0,T];H)\cap L^2([0,T];V).
+\]
+
+\subsection*{1.2. The Galerkin Projection and A Priori Estimates}
+The starting point for existence is the Galerkin approximation. We take a complete orthonormal system \((e_k)\) of the Hilbert space \(H\), choosing the basis vectors in \(V\).
+
+We project our infinite-dimensional initial value problem onto the finite-dimensional subspace spanned by this basis. By testing our main equation with a basis function \(e_k\), we obtain a system of ordinary differential equations:
+\[
+\frac{d}{dt}\langle u_n(t),e_k\rangle
+=
+\langle Au_n+f(t),e_k\rangle_{V',V}.
+\]
+This is paired with the projected initial condition
+\[
+\langle u_n(0),e_k\rangle=\langle u_0,e_k\rangle.
+\]
+
+Solving this finite system yields the approximate solutions \(u_n\). Applying coercivity gives the fundamental a priori estimate
+\[
+\sup_{n\ge 1}
+\left(
+\sup_{t\in[0,T]}\|u_n(t)\|_H^2+\int_0^T \|u_n(s)\|_V^2\,ds
+\right)
+<\infty.
+\]
+
+\subsection*{1.3. The Missing Link: Bounding the Time Derivative}
+The a priori estimate shows that \((u_n)\) is bounded in \(L^2([0,T];V)\). For the compactness method, however, this is not enough.
+
+To use compactness, bounding \(u_n\) in space is not enough; we must also control how fast the solution changes in time. We therefore need a bound on the time derivative \(\frac{du_n}{dt}\).
+
+The finite-dimensional ODE shows that the derivative is driven by the operator \(A(u_n)\). We assume the growth bound
+\[
+\|A(u_n(t))\|_{V'}\le C(1+\|u_n(t)\|_V).
+\]
+Because \(u_n\) is bounded in \(L^2([0,T];V)\), this implies that \(A(u_n(t))\), and hence \(\frac{du_n}{dt}\), is bounded in \(L^2([0,T];V')\).
+
+\subsection*{1.4. Executing the Compactness Method}
+At this stage, we have two key facts about the sequence \((u_n)\):
+\begin{enumerate}
+\item \((u_n)\) is bounded in \(L^2([0,T];V)\).
+\item \(\left(\frac{du_n}{dt}\right)\) is bounded in \(L^2([0,T];V')\), so \(u_n\) is bounded in \(H^{1,2}([0,T];V')\).
+\end{enumerate}
+
+We now use the compact embedding
+\[
+L^2([0,T];V)\cap H^{1,2}([0,T];V')\hookrightarrow L^2([0,T];H).
+\]
+Because \((u_n)\) is bounded in the intersection space on the left, this embedding guarantees that we can extract a subsequence that converges strongly in \(L^2([0,T];H)\).
+
+This strong convergence is what allows the limit passage through a non-monotone nonlinear operator \(A\).
+
+\subsection*{1.5. A Concrete Example: The Laplacian}
+As a concrete example, consider the Laplacian
+\[
+\Delta:H_0^{1,2}(D)\to H_0^{1,2}(D)'.
+\]
+Here \(V=H_0^{1,2}(D)\) and \(V'\) is its dual. To verify the required bounds, we compute the dual norm
+\[
+\|\Delta u\|_{V'}
+=
+\sup_{\|v\|_V\le 1}\langle \Delta u,v\rangle_{V',V}.
+\]
+Using integration by parts, the duality pairing becomes an integral of gradient products:
+\[
+\|\Delta u\|_{V'}
+=
+\sup_{\|v\|_V\le 1}\int_D \langle \nabla u,\nabla v\rangle.
+\]
+This calculation shows that the abstract duality pairing directly controls the spatial derivatives of the system. In particular, it shows that the Laplacian fits naturally into the bounds required by the Galerkin method and the compactness argument.
+
+\section*{2. The Aubin-Lions Lemma}
+
+\subsection*{2.1. The Core Statement of the Aubin-Lions Lemma}
+We now state the compactness result needed for the argument. Define the space-time intersection space
+\[
+X:=L^2([0,T];V)\cap H^{1,2}([0,T];V').
+\]
+Recall that functions in this space are bounded in \(V\) over time, and their time derivatives are bounded in the dual space \(V'\).
+
+The Aubin-Lions Lemma states that if our underlying spatial embedding
+\[
+V\hookrightarrow H
+\]
+is compact, then the embedding of our intersection space \(X\) into the space-time Lebesgue space
+\[
+L^2([0,T];H)
+\]
+is also compact:
+\[
+X\hookrightarrow L^2([0,T];H).
+\]
+
+Before turning to the proof, recall that the embedding \(V\hookrightarrow H\) is compact if every bounded subset \(B\subset V\) is precompact in \(H\). Equivalently, the closure \(\overline{B}^{\,H}\) is compact.
+
+Because of this lemma, the bounded Galerkin sequence \((u_n)\) contains a strongly convergent subsequence in \(L^2([0,T];H)\). Without loss of generality, we denote it again by \((u_n)\) and define
+\[
+u:=\lim_{n\to\infty}u_n.
+\]
+
+\subsection*{2.2. Setting Up the Proof: The Integral Operator}
+The proof uses a smoothing argument. Introduce the integral operator, or mollifier, \(J_\varepsilon\).
+
+For a function \(g\) and a small positive parameter \(\varepsilon\), we define this operator as a moving average over a time window of width \(2\varepsilon\):
+\[
+J_\varepsilon(g)(s):=\frac{1}{2\varepsilon}\int_{s-\varepsilon}^{s+\varepsilon} g(t)\,dt.
+\]
+To make the integration clean, we can perform a simple change of variables to center the integral at zero, rewriting it as
+\[
+J_\varepsilon(g)(s)=\frac{1}{2\varepsilon}\int_{-\varepsilon}^{+\varepsilon} g(s+t)\,dt.
+\]
+Here \(g\) is extended by zero outside \([0,T]\) so that the integral remains well defined near the boundaries.
+
+The operator \(J_\varepsilon\) smooths functions from \(L^2([0,T];V)\) and maps them into
+\[
+C([0,T];V).
+\]
+
+\subsection*{2.3. Bounding the Smoothed Operator}
+We next derive a bound on the smoothed function by evaluating its \(V\)-norm:
+\[
+\|J_\varepsilon(g)(s)\|_V
+=
+\left\|
+\frac{1}{2\varepsilon}\int_{-\varepsilon}^{+\varepsilon} g(s+t)\,dt
+\right\|_V.
+\]
+Using the properties of the Bochner integral, we obtain
+\[
+\|J_\varepsilon(g)(s)\|_V
+\le
+\frac{1}{2\varepsilon}\int_{-\varepsilon}^{+\varepsilon}\|g(s+t)\|_V\,dt.
+\]
+
+At this point, we have an \(L^1\)-type expression, while \(g\) lies in an \(L^2\)-space. Applying Hölder's inequality yields
+\[
+\|J_\varepsilon(g)(s)\|_V
+\le
+\frac{1}{2\varepsilon}
+\left(
+2\varepsilon\int_{-\varepsilon}^{+\varepsilon}\|g(s+t)\|_V^2\,dt
+\right)^{1/2}.
+\]
+Simplifying the \(\varepsilon\)-terms gives the uniform bound
+\[
+\|J_\varepsilon(g)(s)\|_V
+\le
+\frac{1}{\sqrt{2\varepsilon}}
+\|g\|_{L^2([0,T];V)}.
+\]
+
+\subsection*{2.4. Arzelà-Ascoli and Compactness of the Smoothed Family}
+The next step is to show that the mapping
+\[
+J_\varepsilon:X\to C([0,T];H)
+\]
+is actually a compact mapping.
+
+To prove compactness of a set of continuous functions, we use the Arzelà-Ascoli theorem. A subset
+\[
+J\subseteq C([0,T];H)
+\]
+is precompact if it satisfies two distinct conditions:
+
+\begin{enumerate}
+\item Pointwise Boundedness: The functions must be bounded at every point in time. Mathematically,
+\[
+\sup_{u\in J}\|u(t)\|_V<\infty
+\qquad
+\text{for all } t\in[0,T].
+\]
+The stronger \(V\)-norm is used here so that the compact embedding \(V\hookrightarrow H\) gives compactness at each time slice.
+
+\item Equicontinuity: The functions must not oscillate wildly; they must share a uniform continuity. We express this by stating that as we take a small time step \(s\), where \(|s|<h\), the maximum variation goes to zero as \(h\downarrow 0\):
+\[
+\sup_{u\in J}\sup_{|s|<h}\|u(t+s)-u(t)\|_H
+\xrightarrow[h\downarrow 0]{}
+0.
+\]
+\end{enumerate}
+
+To verify equicontinuity, it is enough to prove a Hölder-type bound of the form
+\[
+\|u\|_{\text{Holder}}|s|^\alpha\le ch^\alpha
+\]
+for some constant \(c\) and exponent \(\alpha\).
+
+Applying Arzelà-Ascoli shows that the smoothed family is relatively compact. The remaining step is to let \(\varepsilon\to 0\) and transfer this compactness to the original space \(X\).
+
+\section*{3. Completing the Aubin-Lions Proof}
+
+\subsection*{3.1. Evaluating the Time Variation}
+We now verify the remaining Arzelà-Ascoli condition: equicontinuity.
+
+We measure how much the smoothed function \(J_\varepsilon(g)\) changes between \(t_1\) and \(t_2\):
+\[
+\|J_\varepsilon g(t_1)-J_\varepsilon g(t_2)\|_H.
+\]
+By the Fundamental Theorem of Calculus, we can rewrite this difference as the integral of its time derivative over \([t_1,t_2]\):
+\[
+\left\|
+\int_{t_1}^{t_2}\frac{d}{ds}J_\varepsilon g(s)\,ds
+\right\|_H.
+\]
+
+The derivative of the moving average operator is
+\[
+\frac{d}{ds}J_\varepsilon g(s)
+=
+\frac{1}{2\varepsilon}\bigl(g(s+\varepsilon)-g(s-\varepsilon)\bigr).
+\]
+Substituting this into the integral and passing the norm inside gives
+\[
+\|J_\varepsilon g(t_1)-J_\varepsilon g(t_2)\|_H
+\le
+\frac{1}{2\varepsilon}\int_{t_1}^{t_2}\|g(s+\varepsilon)-g(s-\varepsilon)\|_H\,ds.
+\]
+
+\subsection*{3.2. Applying Hölder's Inequality}
+We now pass from an \(L^1\)-estimate to an \(L^2\)-estimate by applying Hölder's inequality:
+\[
+\|J_\varepsilon g(t_1)-J_\varepsilon g(t_2)\|_H
+\le
+\frac{1}{2\varepsilon}
+\sqrt{t_2-t_1}
+\left(
+\int_{t_1}^{t_2}\|g(s+\varepsilon)-g(s-\varepsilon)\|_H^2\,ds
+\right)^{1/2}.
+\]
+The integral term is controlled by the norm of \(g\) in \(X\), so this simplifies to
+\[
+\|J_\varepsilon g(t_1)-J_\varepsilon g(t_2)\|_H
+\le
+\sqrt{\frac{t_2-t_1}{\varepsilon}}\,
+\|g\|_X.
+\]
+
+\subsection*{3.3. Formalizing Precompactness via Arzelà-Ascoli}
+Let \(A\subset X\) be bounded. We show that \(J_\varepsilon(A)\) is precompact in \(C([0,T];H)\).
+
+From the previous estimate, if \(|t_1-t_2|\le \delta\), then
+\[
+\sup_{g\in A}\sup_{|t_1-t_2|\le \delta}
+\|J_\varepsilon(g)(t_1)-J_\varepsilon(g)(t_2)\|_H
+\le
+\sup_{g\in A}\|g\|_X
+\sqrt{\frac{\delta}{\varepsilon}}.
+\]
+Because \(A\) is bounded, \(\sup_{g\in A}\|g\|_X\) is finite. Hence the right-hand side tends to \(0\) as \(\delta\to 0\), proving uniform equicontinuity.
+
+Together with pointwise boundedness, Arzelà-Ascoli implies that
+\[
+J_\varepsilon(A)\subset C([0,T];H)
+\]
+is precompact. In particular, it is also precompact in \(L^2([0,T];H)\).
+
+\subsection*{3.4. Passing to the Limit as \(\varepsilon\to 0\)}
+We now transfer compactness from \(J_\varepsilon(A)\) to the original set \(A\).
+
+We study the error
+\[
+\|J_\varepsilon(g)-g\|_{L^2([0,T];V)}.
+\]
+Using the properties of the space \(X\), this error can be bounded by a quantity of the form
+\[
+\frac{3}{2}\sqrt{\varepsilon T}\,\|g\|_X.
+\]
+Equivalently, one may estimate the pointwise difference in the \(V\)-norm by a Hölder-type bound involving a power of \(\varepsilon\). In either case, the approximation error tends uniformly to zero as \(\varepsilon\to 0\), controlled by the bounded \(X\)-norm.
+
+Because the approximation error vanishes uniformly, a standard compactness argument transfers the precompactness of \(J_\varepsilon(A)\) to the original set \(A\). Therefore, every bounded sequence in
+\[
+X=L^2([0,T];V)\cap H^{1,2}([0,T];V')
+\]
+has a strongly convergent subsequence in
+\[
+L^2([0,T];H).
+\]
+
+This proves the Aubin-Lions Lemma and yields the strong convergence needed for non-monotone operators.
+
+\section*{4. Strong Convergence in \(L^2([0,T];H)\)}
+
+\subsection*{4.1. The Strong Convergence of the Smoothed Sequence}
+We now formulate the final step in terms of a weakly convergent sequence in \(X\).
+
+Because the smoothed sequence is relatively compact, if
+\[
+g_n\rightharpoonup g
+\]
+in the space \(X\), then applying the smoothing operator upgrades this to strong convergence. More precisely, for any fixed \(\varepsilon>0\),
+\[
+J_\varepsilon(g_n)\to J_\varepsilon(g)
+\qquad
+\text{in } L^2([0,T];H).
+\]
+The remaining task is to prove that \(g_n\to g\) strongly in \(L^2([0,T];H)\).
+
+\subsection*{4.2. An Interpolation Inequality}
+To compare the smoothed and unsmoothed terms, we use an interpolation inequality.
+
+By the structure of the Gelfand triple, we can write
+\[
+\|u\|_H^2=\langle u,u\rangle_{V',V}.
+\]
+Applying the Cauchy-Schwarz inequality gives
+\[
+\|u\|_H^2\le \|u\|_{V'}\|u\|_V.
+\]
+We then apply Young's inequality with an arbitrary parameter \(\widetilde\varepsilon>0\) and obtain
+\[
+\|u\|_H^2
+\le
+\frac{\widetilde\varepsilon}{2}\|u\|_V^2+\frac{1}{2\widetilde\varepsilon}\|u\|_{V'}^2.
+\]
+This controls the \(H\)-norm by a small portion of the \(V\)-norm and a weighted \(V'\)-norm term.
+
+\subsection*{4.3. Splitting the Error via the Triangle Inequality}
+We estimate the difference between \(g_n\) and \(g\) in \(L^2([0,T];H)\) by adding and subtracting the smoothed terms:
+\[
+\|g_n-g\|_{L^2([0,T];H)}^2
+\le
+\|g_n-J_\varepsilon(g_n)\|_{L^2([0,T];H)}^2
++
+\|J_\varepsilon(g_n)-J_\varepsilon(g)\|_{L^2([0,T];H)}^2
++
+\|J_\varepsilon(g)-g\|_{L^2([0,T];H)}^2.
+\]
+The first and third terms are smoothing errors; the middle term measures the distance between the smoothed sequences.
+
+\subsection*{4.4. Bounding the Terms and Passing to the Limit}
+For the first and third terms, we use the smoothing estimates already established. They are bounded by a constant times \(\sqrt{\varepsilon}\), scaled by the \(X\)-norms of the functions:
+\[
+\|g_n-J_\varepsilon(g_n)\|_{L^2([0,T];H)}^2
++
+\|J_\varepsilon(g)-g\|_{L^2([0,T];H)}^2
+\le
+C\sqrt{\varepsilon}\bigl(\|g_n\|_X+\|g\|_X\bigr).
+\]
+Since \((g_n)\) is bounded in \(X\), this term can be made arbitrarily small by choosing \(\varepsilon\) sufficiently small.
+
+For the middle term, we use the strong convergence of the smoothed sequence:
+\[
+J_\varepsilon(g_n)\to J_\varepsilon(g)
+\qquad
+\text{in } L^2([0,T];H).
+\]
+Hence, as \(n\to\infty\),
+\[
+\|J_\varepsilon(g_n)-J_\varepsilon(g)\|_{L^2([0,T];H)}^2\to 0.
+\]
+
+Combining the three estimates gives
+\[
+\|g_n-g\|_{L^2([0,T];H)}^2
+\le
+C\sqrt{\varepsilon}\bigl(\|g_n\|_X+\|g\|_X\bigr)
++
+\|J_\varepsilon(g_n)-J_\varepsilon(g)\|_{L^2([0,T];H)}^2.
+\]
+
+\subsection*{4.5. Conclusion of the Compactness Argument}
+Fix \(\widetilde\varepsilon>0\), choose \(\varepsilon>0\) so that the smoothing error is below \(\widetilde\varepsilon\), and then take the limit superior as \(n\to\infty\). The middle term vanishes, and we obtain
+\[
+\limsup_{n\to\infty}\|g_n-g\|_{L^2([0,T];H)}
+\le
+\widetilde\varepsilon.
+\]
+Since \(\widetilde\varepsilon>0\) is arbitrary, the only possibility is
+\[
+g_n\to g
+\qquad
+\text{strongly in } L^2([0,T];H).
+\]
+
+This completes the proof. Boundedness in
+\[
+X=L^2([0,T];V)\cap H^{1,2}([0,T];V')
+\]
+guarantees a strongly convergent subsequence in
+\[
+L^2([0,T];H).
+\]
+This compact embedding is the key ingredient for passing to the limit through non-monotone operators.
+
+\section*{5. Variational Approach to SPDEs}
+
+\subsection*{5.1. The Stochastic Setup and New Operators}
+We now extend the variational framework from deterministic equations to the stochastic setting.
+
+We let \((W_t)\) be a \(U\)-valued \(Q\)-Wiener process, representing the infinite-dimensional Brownian motion driving the system.
+
+Our functional spaces remain the familiar Gelfand triple
+\[
+V\hookrightarrow H\hookrightarrow V'.
+\]
+There are now two operators:
+
+\begin{enumerate}
+\item The drift operator
+\[
+A:V\to V',
+\]
+which governs the deterministic part of the dynamics.
+
+\item The diffusion operator
+\[
+B:V\to L(U,H),
+\]
+which determines how the noise acts on the state of the system.
+\end{enumerate}
+
+Together they define the stochastic evolution equation
+\[
+du(t)=A(u(t))\,dt+B(u(t))\,dW(t),
+\qquad
+u(0)=u_0.
+\]
+
+\subsection*{5.2. Structural Conditions}
+To guarantee existence and uniqueness, we assume four conditions.
+
+\begin{enumerate}
+\item \textbf{Coercivity:} There exist constants \(\alpha>0\), \(\lambda\), and \(\nu\) such that
+\[
+2\langle A(u),u\rangle+\|B(u)\circ Q^{1/2}\|_{L_2(U,H)}^2
+\le
+-\alpha\|u\|_V^2+\lambda\|u\|_H^2+\nu
+\qquad
+\text{for all } u\in V.
+\]
+
+\item \textbf{Monotonicity:} There exists \(\lambda>0\) such that
+\[
+2\langle A(u)-A(v),u-v\rangle
++
+\|(B(u)-B(v))\circ Q^{1/2}\|_{L_2(U,H)}^2
+\le
+\lambda\|u-v\|_H^2
+\]
+for all \(u,v\in V\).
+
+\item \textbf{Boundedness:} There exists \(M>0\) such that
+\[
+\|A(u)\|_{V'}\le M(1+\|u\|_V)
+\qquad
+\text{for all } u\in V.
+\]
+
+\item \textbf{Hemicontinuity:} For all \(u,v,w\in V\), the map
+\[
+\lambda\mapsto \langle A(u+\lambda v),w\rangle
+\]
+is continuous.
+\end{enumerate}
+
+\subsection*{5.3. Theorem 3.5: Existence and Uniqueness}
+Under these assumptions, we obtain the main variational existence theorem for SPDEs.
+
+\begin{theorem}
+Let \(u_0\in H\). If the operator pair \((A,B)\) satisfies the coercivity, monotonicity, boundedness, and hemicontinuity assumptions above, then there exists a uniquely determined adapted process \(u(t)\), \(t\ge 0\), solving the stochastic evolution equation.
+
+Moreover, almost surely,
+\[
+u\in C([0,T];H)\cap L^2([0,T];V).
+\]
+\end{theorem}
+
+Thus the stochastic solution retains the same basic space-time regularity as in the deterministic theory.
+
+\subsection*{5.4. The Weak Formulation and Semimartingale Decomposition}
+To interpret the equation, we test it against an arbitrary element \(v\in V\). Since \(A(u(s))\in V'\), the equation is understood in weak form:
+\[
+\langle u(t),v\rangle
+=
+\langle u_0,v\rangle
++
+\int_0^t \langle A(u(s)),v\rangle\,ds
++
+\int_0^t \langle v,B(u(s))\,dW(s)\rangle.
+\]
+
+This decomposition has the standard stochastic structure:
+
+\begin{enumerate}
+\item The process \(\langle u(t),v\rangle\) is a real-valued continuous semimartingale.
+\item The deterministic integral
+\[
+\int_0^t \langle A(u(s)),v\rangle\,ds
+\]
+is the finite variation part.
+\item The It\^o integral
+\[
+\int_0^t \langle v,B(u(s))\,dW(s)\rangle
+\]
+is the martingale part.
+\end{enumerate}
+
+Thus the variational framework extends naturally to stochastic partial differential equations.
+
+\section*{6. Stochastic Energy Estimates and Galerkin SPDEs}
+
+\subsection*{6.1. An Infinite-Dimensional It\^o Formula}
+The next step is to compute stochastic energy bounds. In the deterministic case, this came from the chain rule applied to \(\|u(t)\|_H^2\). In the stochastic case, Brownian paths are nowhere differentiable, so we need an infinite-dimensional It\^o-type formula.
+
+Let \(u_0\in H\), let \(u\) be an adapted stochastic process with paths in \(L^2([0,T];V)\), and let \(v\) be a drift process in \(L^2([0,T];V')\). Assume that
+\[
+u(t)=u_0+\int_0^t v(s)\,ds+M_t,
+\]
+where \(M_t\) is a continuous \(H\)-valued local martingale.
+
+Then, for \(t\in[0,T]\), the It\^o-like lemma states that
+\[
+\|u(t)\|_H^2
+=
+\|u_0\|_H^2
++
+2\int_0^t \langle v(s),u(s)\rangle_{V',V}\,ds
++
+2\int_0^t \langle u(s),dM_s\rangle_H
++
+\langle M\rangle_t.
+\]
+Compared with the deterministic energy identity, the new terms are the stochastic integral and the quadratic variation \(\langle M\rangle_t\), which records the energy injected by the noise.
+
+\subsection*{6.2. Projection to Real-Valued Semimartingales}
+To prove this formula, we return to Galerkin projections. Let \((e_k)\) be an orthonormal basis of \(H\), and define the scalar process
+\[
+u_k(t)=\langle u(t),e_k\rangle_H.
+\]
+Since \(u(t)\) is an \(H\)-valued semimartingale, each \(u_k(t)\) is a real-valued semimartingale.
+
+We can therefore apply the one-dimensional It\^o formula to \(u_k(t)^2\):
+\[
+d(u_k^2(t))
+=
+2\langle u(t),e_k\rangle\langle v(t),e_k\rangle\,dt
++
+2\langle u(t),e_k\rangle\,dM_t^k
++
+d\langle M_k\rangle_t.
+\]
+Here \(M_t^k\) denotes the \(k\)-th projection of the martingale part.
+
+\subsection*{6.3. Summing Up and Applying Parseval's Identity}
+Summing over all basis vectors \(k\), Parseval's identity gives the square of the \(H\)-norm. The three terms on the right converge as follows:
+
+\begin{enumerate}
+\item The drift term converges to
+\[
+2\langle u(t),v(t)\rangle_{V',V}\,dt.
+\]
+
+\item The sum of the scalar stochastic integrals converges to
+\[
+2\langle u(t),dM_t\rangle_H.
+\]
+
+\item The sum of the scalar quadratic variations converges to the total quadratic variation
+\[
+d\langle M\rangle_t.
+\]
+\end{enumerate}
+
+This yields the infinite-dimensional It\^o formula for \(\|u(t)\|_H^2\).
+
+\subsection*{6.4. The Finite-Dimensional SPDE}
+To use this formula in the existence proof, we return to finite-dimensional approximations. For every \(n\), there exists a strong solution \(u_n(t)\) in the space
+\[
+C([0,T];V_n),
+\]
+where \(V_n\) is the \(n\)-dimensional Galerkin subspace.
+
+The projected process solves the finite-dimensional stochastic differential equation
+\[
+d\langle u_n(t),e_k\rangle
+=
+\langle A(u_n(t)),e_k\rangle\,dt
++
+B_k(u_n(t))\,dW_t^n.
+\]
+Here the projected noise operator is defined by
+\[
+B_k(u)h=\langle B(u)h,e_k\rangle.
+\]
+
+The driving noise \(W^n(t)\) is the truncated Wiener process obtained from an orthonormal basis \((f_l)\) of the noise space \(U\):
+\[
+W^n(t)=\sum_{l=1}^n \langle W(t),f_l\rangle f_l.
+\]
+Thus both the state space and the noise are projected to finite dimension. On this truncated system, the It\^o formula applies directly and yields uniform a priori bounds for \((u_n)\).
+
+\section*{7. Stochastic A Priori Bounds}
+
+\subsection*{7.1. The Stochastic A Priori Estimate}
+We now use the It\^o formula to derive the fundamental stochastic a priori estimate for the approximations \(u_n\).
+
+The goal is to prove a uniform bound on the approximate solutions \(u_n(t)\). Specifically, we need to show that
+\[
+\sup_n
+\mathbb E\left(
+\sup_{t\in[0,T]}\|u_n(t)\|_H^2
++
+\int_0^T \|u_n(s)\|_V^2\,ds
+\right)
+<\infty.
+\]
+The essential difference from the deterministic case is the presence of the expectation \(\mathbb E\): the relevant notion of boundedness is bounded expected energy.
+
+\subsection*{7.2. Applying the Finite-Dimensional It\^o Lemma}
+Applying the It\^o lemma to the squared \(H\)-norm of \(u_n(t)\), we obtain
+\[
+d\|u_n(t)\|^2
+=
+2\langle A(u_n(t)),u_n(t)\rangle\,dt
++
+2\langle u_n(t),B_n(u_n(t))\,dW_t^n\rangle
++
+\operatorname{tr}(B_n(B_n)^T).
+\]
+
+The three terms have the following interpretation:
+
+\begin{enumerate}
+\item The drift term
+\[
+2\langle A(u_n(t)),u_n(t)\rangle\,dt
+\]
+is the deterministic contribution and will be controlled by coercivity.
+
+\item The martingale term
+\[
+2\langle u_n(t),B_n(u_n(t))\,dW_t^n\rangle
+\]
+captures the stochastic fluctuations.
+
+\item The It\^o correction term
+\[
+\operatorname{tr}(B_n(B_n)^T)
+\]
+comes from the quadratic variation of the noise and corresponds to the Hilbert-Schmidt norm of the projected diffusion operator.
+\end{enumerate}
+
+\subsection*{7.3. Controlling the Stochastic Fluctuations}
+After integrating over time and taking the supremum, the main difficulty is the martingale term. We need to estimate
+\[
+\mathbb E\left(
+\sup_{t\in[0,T]}
+\int_0^t \langle u_n(s),B_n(u_n(s))\,dW_s^n\rangle
+\right).
+\]
+Since this is the supremum of a martingale, we cannot use that its expectation is zero. Instead, we apply the Burkholder-Davis-Gundy inequality, which bounds the expected supremum by the expected square root of the quadratic variation.
+
+\subsection*{7.4. Concluding the Space-Time Bound}
+Combining the Burkholder-Davis-Gundy estimate with the coercivity bounds on the drift and trace terms yields the finite constant required in Section 7.1.
+
+As a consequence, the sequence \((u_n(t))\) is bounded in the stochastic space-time space
+\[
+L^2(\Omega;L^2([0,T];V)).
+\]
+This means that the approximations are square-integrable in time, take values in the regular space \(V\), and are also square-integrable with respect to the probability space \(\Omega\).
+
+This uniform stochastic space-time bound is the compactness input for the final existence argument.
+
+\section*{Appendix}
+
+\subsection*{A.1. Compact Embedding}
+\begin{definition}
+An embedding \(V\hookrightarrow H\) is compact if every bounded subset of \(V\) is relatively compact in \(H\).
+\end{definition}
+
+\subsection*{A.2. The Space \(H^{1,2}([0,T];V')\)}
+\begin{definition}
+The Sobolev space \(H^{1,2}([0,T];V')\) consists of functions whose values and weak time derivatives both belong to \(L^2([0,T];V')\).
+\end{definition}
+
+\subsection*{A.3. Mollifier}
+\begin{definition}
+A mollifier is an averaging operator that regularizes a function by replacing its value at a point with a local average over a small neighborhood.
+\end{definition}
+
+\subsection*{A.4. Bochner Integral}
+\begin{definition}
+The Bochner integral extends the Lebesgue integral to functions taking values in Banach or Hilbert spaces.
+\end{definition}
+
+\subsection*{A.5. Arzelà-Ascoli Theorem}
+\begin{theorem}
+A family of continuous functions is relatively compact in \(C([0,T];H)\) if it is pointwise relatively compact and equicontinuous.
+\end{theorem}
+
+\subsection*{A.6. Aubin-Lions Lemma}
+\begin{theorem}
+If \(V\hookrightarrow H\) is compact and the relevant time-derivative bounds hold, then bounded subsets of
+\[
+L^2([0,T];V)\cap H^{1,2}([0,T];V')
+\]
+are relatively compact in
+\[
+L^2([0,T];H).
+\]
+\end{theorem}
+
+\subsection*{A.7. Gelfand Triple}
+\begin{definition}
+A Gelfand triple is a chain of continuous embeddings
+\[
+V\hookrightarrow H\cong H'\hookrightarrow V',
+\]
+where \(V\) and \(H\) are Hilbert spaces, \(V\) is dense in \(H\), and \(V'\) is the dual of \(V\).
+\end{definition}
+
+\subsection*{A.8. Coercivity}
+\begin{definition}
+An operator \(A:V\to V'\) is coercive if there exist constants \(\alpha>0\) and \(\lambda\in\mathbb R\) such that
+\[
+\langle Au,u\rangle_{V',V}\le -\alpha\|u\|_V^2+\lambda\|u\|_H^2
+\]
+for all \(u\in V\).
+\end{definition}
+
+\subsection*{A.9. Monotonicity}
+\begin{definition}
+An operator \(A:V\to V'\) is monotone if
+\[
+\langle A(u)-A(v),u-v\rangle_{V',V}\le 0
+\]
+for all \(u,v\in V\). Variants with a right-hand side bounded by \(C\|u-v\|_H^2\) are often called weak monotonicity conditions.
+\end{definition}
+
+\subsection*{A.10. \(Q\)-Wiener Process}
+\begin{definition}
+A \(Q\)-Wiener process on a Hilbert space \(U\) is an infinite-dimensional Gaussian process with covariance operator \(Q\), generalizing Brownian motion to Hilbert spaces.
+\end{definition}
+
+\subsection*{A.11. Hilbert-Schmidt Operator}
+\begin{definition}
+An operator \(T:U\to H\) is Hilbert-Schmidt if, for one and hence every orthonormal basis \((f_k)\) of \(U\),
+\[
+\sum_{k=1}^\infty \|Tf_k\|_H^2<\infty.
+\]
+The square root of this sum defines the Hilbert-Schmidt norm \(\|T\|_{L_2(U,H)}\).
+\end{definition}
+
+\subsection*{A.12. Semimartingale}
+\begin{definition}
+A semimartingale is a stochastic process that can be decomposed into the sum of a local martingale and a finite-variation process. This is the natural class of processes for It\^o calculus.
+\end{definition}
+
+\subsection*{A.13. Quadratic Variation}
+\begin{definition}
+The quadratic variation \(\langle M\rangle_t\) of a continuous martingale \(M\) measures the accumulated variance of its fluctuations up to time \(t\).
+\end{definition}
+
+\subsection*{A.14. Burkholder-Davis-Gundy Inequality}
+\begin{theorem}
+For a continuous martingale \(M\) and \(p\ge 1\), the expected supremum of \(M\) is controlled by the expected \(p/2\)-moment of its quadratic variation. In particular, this inequality is used to bound stochastic integrals in terms of their quadratic variation.
+\end{theorem}
+
+\subsection*{A.15. Galerkin Approximation}
+\begin{definition}
+Galerkin approximation replaces an infinite-dimensional evolution equation by its projection onto a finite-dimensional subspace, solves the projected equation there, and then passes to the limit.
+\end{definition}
+
+\end{document}
